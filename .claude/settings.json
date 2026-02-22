@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE_PATH=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty') && case \"$FILE_PATH\" in *.html) npx htmlhint \"$FILE_PATH\" ;; esac",
+            "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "FILE_PATH=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty') && case \"$FILE_PATH\" in *.css) npx stylelint \"$FILE_PATH\" ;; esac",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
