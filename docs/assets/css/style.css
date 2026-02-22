@@ -1291,3 +1291,14 @@ a[data-v-757b86f2] {
   border-width: 0;
   white-space: nowrap;
 }
+
+/* Insight tab active state */
+.button.sd.insight-tab-active {
+  background: transparent !important;
+  border: 2px solid #333333;
+  box-sizing: border-box;
+}
+
+.button.sd.insight-tab-active .text.link {
+  color: #333333 !important;
+}
