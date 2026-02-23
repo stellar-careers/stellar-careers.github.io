@@ -17,21 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function initCarousels() {
   // Career Insight carousel
   initCarousel({
-    container: '.s246',
-    leftBtn: '.s251',
-    rightBtn: '.s258',
-    pauseBtn: '.s253',
-    slideSelector: '.s247',
+    container: '.insight-carousel',
+    leftBtn: '.insight-carousel-prev',
+    rightBtn: '.insight-carousel-next',
+    pauseBtn: '.insight-carousel-pause',
+    slideSelector: '.insight-carousel-slide',
     autoplayInterval: 4000,
   });
 
   // YouTube Contents carousel
   initCarousel({
-    container: '.s292',
-    leftBtn: '.s296',
-    rightBtn: '.s303',
-    pauseBtn: '.s298',
-    slideSelector: '.s293',
+    container: '.yt-carousel',
+    leftBtn: '.yt-carousel-prev',
+    rightBtn: '.yt-carousel-next',
+    pauseBtn: '.yt-carousel-pause',
+    slideSelector: '.yt-carousel-slide',
     autoplayInterval: 4000,
   });
 }
@@ -135,8 +135,8 @@ function initCarousel(config) {
    Fixed Banner / Modal
    ======================================== */
 function initFixedBanner() {
-  const banner = document.querySelector('.s351');
-  const closeBtn = document.querySelector('.s352');
+  const banner = document.querySelector('.banner-fixed');
+  const closeBtn = document.querySelector('.banner-close-btn');
 
   if (banner && closeBtn) {
     closeBtn.addEventListener('click', (e) => {
@@ -150,12 +150,12 @@ function initFixedBanner() {
    Hamburger Menu (Mobile)
    ======================================== */
 function initHamburgerMenu() {
-  const menuBtn = document.querySelector('.s18');
+  const menuBtn = document.querySelector('.header-hamburger');
   if (!menuBtn) return;
 
   // Find the navigation list that's hidden on mobile
-  const navList = document.querySelector('.s7');
-  const ctaButtons = document.querySelector('.s12');
+  const navList = document.querySelector('.header-nav');
+  const ctaButtons = document.querySelector('.header-cta-primary');
 
   let isOpen = false;
 
@@ -204,7 +204,7 @@ function initHamburgerMenu() {
    Success Stories Horizontal Scroll
    ======================================== */
 function initSuccessStoriesScroll() {
-  const list = document.querySelector('.s103');
+  const list = document.querySelector('.stories-list');
   if (!list) return;
 
   // Enable horizontal scroll
