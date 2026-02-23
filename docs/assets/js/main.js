@@ -17,21 +17,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function initCarousels() {
   // Career Insight carousel
   initCarousel({
-    container: '[data-s-ef8b84d1-b98a-4878-ac14-ed60ba468d56]',
-    leftBtn: '[data-s-935cd5ef-4742-4984-8bf9-b1e4685131b9]',
-    rightBtn: '[data-s-91f540f1-c064-42be-b92d-abcdb210697b]',
-    pauseBtn: '[data-s-6c0e81c8-f002-4c25-a1b4-d98c813cdfa9]',
-    slideSelector: '[data-s-07ff3849-c273-4220-9b21-36a2b61c98d5]',
+    container: '.s246',
+    leftBtn: '.s251',
+    rightBtn: '.s258',
+    pauseBtn: '.s253',
+    slideSelector: '.s247',
     autoplayInterval: 4000,
   });
 
   // YouTube Contents carousel
   initCarousel({
-    container: '[data-s-aa2672ef-73ea-4921-9c26-ac958cd2b32f]',
-    leftBtn: '[data-s-b625550b-9fe3-4ea7-a6a1-e974baa9b4d0]',
-    rightBtn: '[data-s-95df33db-e68f-4d54-b1dd-fdf975bc7cb8]',
-    pauseBtn: '[data-s-b0c47a24-ad71-4864-801e-41582d1a7f38]',
-    slideSelector: '[data-s-a4af2623-26f1-4204-8f4f-d336107616e9]',
+    container: '.s292',
+    leftBtn: '.s296',
+    rightBtn: '.s303',
+    pauseBtn: '.s298',
+    slideSelector: '.s293',
     autoplayInterval: 4000,
   });
 }
@@ -135,8 +135,8 @@ function initCarousel(config) {
    Fixed Banner / Modal
    ======================================== */
 function initFixedBanner() {
-  const banner = document.querySelector('[data-s-4c1da30a-ec74-45d5-9c06-440ea440beda]');
-  const closeBtn = document.querySelector('[data-s-d8eff7e8-5cb1-4665-8edc-533600b00efd]');
+  const banner = document.querySelector('.s351');
+  const closeBtn = document.querySelector('.s352');
 
   if (banner && closeBtn) {
     closeBtn.addEventListener('click', (e) => {
@@ -150,12 +150,12 @@ function initFixedBanner() {
    Hamburger Menu (Mobile)
    ======================================== */
 function initHamburgerMenu() {
-  const menuBtn = document.querySelector('[data-s-eb6b0a9c-00c1-4f38-9492-72a971ff9063]');
+  const menuBtn = document.querySelector('.s18');
   if (!menuBtn) return;
 
   // Find the navigation list that's hidden on mobile
-  const navList = document.querySelector('[data-s-d07ceb86-af8f-4408-bf0d-873881f52340]');
-  const ctaButtons = document.querySelector('[data-s-1d0626e4-879a-4d8b-a3af-4ec41d69174e]');
+  const navList = document.querySelector('.s7');
+  const ctaButtons = document.querySelector('.s12');
 
   let isOpen = false;
 
@@ -204,7 +204,7 @@ function initHamburgerMenu() {
    Success Stories Horizontal Scroll
    ======================================== */
 function initSuccessStoriesScroll() {
-  const list = document.querySelector('[data-s-292f451a-948a-4527-b317-6b754d9af353]');
+  const list = document.querySelector('.s103');
   if (!list) return;
 
   // Enable horizontal scroll
