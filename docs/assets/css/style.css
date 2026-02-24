@@ -18919,6 +18919,10 @@ a.text {
   color: var(--coach-white);
 }
 
+.coach-compare-highlight td strong {
+  color: var(--coach-white);
+}
+
 .coach-compare-price {
   font-size: 1.5rem;
   font-weight: 900;
