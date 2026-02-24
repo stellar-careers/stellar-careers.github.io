@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initHamburgerMenu();
   initSuccessStoriesScroll();
   initTrackRecordScroll();
+  initCoachTabs();
+  initCoachFadeUp();
 });
 
 /* ========================================
@@ -267,4 +269,83 @@ function initTrackRecordScroll() {
     });
   });
   observer.observe(trackRecord);
+}
+
+/* ========================================
+   Stellar Coach - Tab UI
+   ======================================== */
+function initCoachTabs() {
+  const tablist = document.querySelector('.coach-tabs[role="tablist"]');
+  if (!tablist) return;
+
+  const tabs = Array.from(tablist.querySelectorAll('[role="tab"]'));
+  const panels = tabs.map(tab =>
+    document.getElementById(tab.getAttribute('aria-controls'))
+  );
+
+  function activate(index) {
+    tabs.forEach((tab, i) => {
+      const isActive = i === index;
+      tab.setAttribute('aria-selected', isActive);
+      tab.tabIndex = isActive ? 0 : -1;
+      tab.classList.toggle('coach-tab-btn-active', isActive);
+    });
+    panels.forEach((panel, i) => {
+      if (i === index) {
+        panel.hidden = false;
+        panel.classList.add('coach-tab-panel-active');
+      } else {
+        panel.hidden = true;
+        panel.classList.remove('coach-tab-panel-active');
+      }
+    });
+  }
+
+  tablist.addEventListener('click', (e) => {
+    const tab = e.target.closest('[role="tab"]');
+    if (!tab) return;
+    activate(tabs.indexOf(tab));
+    tab.focus();
+  });
+
+  tablist.addEventListener('keydown', (e) => {
+    const currentIndex = tabs.indexOf(document.activeElement);
+    if (currentIndex === -1) return;
+    let nextIndex;
+    if (e.key === 'ArrowRight') nextIndex = (currentIndex + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    else return;
+    e.preventDefault();
+    activate(nextIndex);
+    tabs[nextIndex].focus();
+  });
+}
+
+/* ========================================
+   Stellar Coach - Scroll Animations
+   ======================================== */
+function initCoachFadeUp() {
+  const elements = document.querySelectorAll('.coach-fade-up');
+  if (!elements.length) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    elements.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    elements.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  elements.forEach(el => observer.observe(el));
 }

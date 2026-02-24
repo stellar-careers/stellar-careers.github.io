@@ -18843,3 +18843,875 @@ a[data-v-757b86f2] {
   }
 }
 
+/* ========================================
+   Stellar Coach Page
+   ======================================== */
+
+/* --- Coach Design Tokens --- */
+:root {
+  --coach-black: #0a0a0a;
+  --coach-gray-900: #1a1a1a;
+  --coach-gray-700: #4a4a4a;
+  --coach-gray-500: #7a7a7a;
+  --coach-gray-300: #b0b0b0;
+  --coach-gray-100: #e8e8e8;
+  --coach-gray-50: #f5f5f5;
+  --coach-white: #ffffff;
+  --coach-line-green: #06C755;
+  --coach-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --coach-duration: 0.6s;
+}
+
+/* --- Coach Layout --- */
+.coach-page {
+  width: 100%;
+  align-items: stretch;
+}
+
+.coach-wrapper {
+  width: min(100% - 2rem, 68rem);
+  margin-inline: auto;
+}
+
+.coach-section {
+  padding-block: 6rem;
+}
+
+.coach-section-alt {
+  background: var(--coach-gray-50);
+}
+
+.coach-section-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--coach-black);
+  position: relative;
+}
+
+.coach-section-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--coach-black);
+  margin: 1rem auto 0;
+}
+
+.coach-section-lead {
+  text-align: center;
+  color: var(--coach-gray-700);
+  font-size: clamp(0.9375rem, 1.5vw + 0.25rem, 1.125rem);
+  margin-bottom: 3rem;
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+/* --- Coach Buttons --- */
+.coach-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 4px;
+  border: 2px solid var(--coach-black);
+  transition: background var(--coach-duration) var(--coach-ease-out), color var(--coach-duration) var(--coach-ease-out), border-color var(--coach-duration) var(--coach-ease-out);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.coach-btn-primary {
+  background: var(--coach-black);
+  color: var(--coach-white);
+}
+
+.coach-btn-primary:hover {
+  background: var(--coach-gray-700);
+  border-color: var(--coach-gray-700);
+}
+
+.coach-btn-ghost {
+  background: transparent;
+  color: var(--coach-black);
+}
+
+.coach-btn-ghost:hover {
+  background: var(--coach-black);
+  color: var(--coach-white);
+}
+
+.coach-btn-line {
+  background: var(--coach-line-green);
+  color: var(--coach-white);
+  border-color: var(--coach-line-green);
+  font-size: 1.125rem;
+}
+
+.coach-btn-line:hover {
+  opacity: 0.9;
+}
+
+.coach-btn-lg {
+  padding: 1rem 2.5rem;
+  font-size: 1.125rem;
+}
+
+/* --- Coach Hero --- */
+.coach-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding-top: 8rem;
+  padding-bottom: 8rem;
+  background: linear-gradient(180deg, var(--coach-white) 0%, var(--coach-gray-50) 100%);
+}
+
+.coach-hero-inner {
+  width: min(100% - 2rem, 68rem);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.coach-hero-kicker {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--coach-gray-500);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.coach-hero-title {
+  font-size: clamp(1.75rem, 4vw + 0.5rem, 3.25rem);
+  font-weight: 900;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--coach-black);
+  max-width: 48rem;
+  margin-bottom: 1.5rem;
+}
+
+.coach-hero-sub {
+  font-size: clamp(0.9375rem, 1.5vw + 0.25rem, 1.125rem);
+  color: var(--coach-gray-700);
+  max-width: 36rem;
+  margin-bottom: 3rem;
+}
+
+.coach-hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* --- Coach Cards --- */
+.coach-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.coach-card {
+  background: var(--coach-white);
+  border-top: 3px solid var(--coach-black);
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s var(--coach-ease-out), box-shadow 0.3s var(--coach-ease-out);
+}
+
+.coach-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.coach-card-icon {
+  margin-bottom: 1.5rem;
+}
+
+.coach-card-number {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--coach-gray-300);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.coach-card-title {
+  font-size: clamp(1.125rem, 2vw + 0.25rem, 1.5rem);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--coach-black);
+  margin-bottom: 1rem;
+}
+
+.coach-card-body {
+  color: var(--coach-gray-700);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+
+/* --- Coach Strengths --- */
+.coach-strength {
+  max-width: 48rem;
+  margin-inline: auto;
+  margin-bottom: 6rem;
+  position: relative;
+  text-align: center;
+}
+
+.coach-strength:last-child {
+  margin-bottom: 0;
+}
+
+.coach-strength-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.coach-strength-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--coach-black);
+  color: var(--coach-white);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.coach-strength-title {
+  font-size: clamp(1.125rem, 2vw + 0.25rem, 1.5rem);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--coach-black);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.coach-strength-body {
+  color: var(--coach-gray-700);
+  font-size: clamp(0.9375rem, 1.5vw + 0.25rem, 1.0625rem);
+  margin-bottom: 2rem;
+  max-width: 40rem;
+  margin-inline: auto;
+  line-height: 1.8;
+}
+
+.coach-strength-note {
+  margin-top: 1.5rem;
+  font-size: 0.8125rem;
+  color: var(--coach-gray-500);
+  text-align: center;
+}
+
+/* --- Coach Person Grid --- */
+.coach-person-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.coach-person {
+  text-align: center;
+}
+
+.coach-person-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--coach-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  border: 2px solid var(--coach-gray-300);
+}
+
+.coach-person-initial {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--coach-gray-500);
+}
+
+.coach-person-name {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.coach-person-role {
+  font-size: 0.8125rem;
+  color: var(--coach-gray-500);
+}
+
+/* --- Coach Logo Banner --- */
+.coach-logo-banner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.coach-logo-item {
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.coach-logo-item:hover {
+  opacity: 1;
+}
+
+/* --- Coach Compare Table --- */
+.coach-table-wrap {
+  overflow-x: auto;
+  max-width: 36rem;
+  margin-inline: auto;
+  margin-top: 2rem;
+}
+
+.coach-compare-table {
+  font-size: 0.9375rem;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.coach-compare-table th {
+  text-align: left;
+  padding: 1rem;
+  border-bottom: 2px solid var(--coach-black);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--coach-gray-500);
+}
+
+.coach-compare-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--coach-gray-100);
+}
+
+.coach-compare-highlight {
+  background: var(--coach-black);
+  color: var(--coach-white);
+}
+
+.coach-compare-highlight td {
+  border-bottom-color: var(--coach-black);
+}
+
+.coach-compare-price {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.coach-compare-yen {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.coach-compare-table tbody tr:not(.coach-compare-highlight):nth-child(odd) {
+  background: var(--coach-gray-50);
+}
+
+/* --- Coach CTA Section --- */
+.coach-cta {
+  background: var(--coach-black);
+  color: var(--coach-white);
+  text-align: center;
+  padding-block: 6rem;
+}
+
+.coach-cta-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.coach-cta-title {
+  font-size: clamp(1.5rem, 3vw + 0.5rem, 2.5rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--coach-white);
+  margin-bottom: 1rem;
+}
+
+.coach-cta-title::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 3px;
+  background: var(--coach-white);
+  margin: 1rem auto 0;
+}
+
+.coach-cta-body {
+  color: var(--coach-gray-300);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* --- Coach Tabs --- */
+.coach-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--coach-gray-100);
+}
+
+.coach-tab-btn {
+  padding: 1rem 2rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 1.125rem;
+  font-family: inherit;
+  color: var(--coach-gray-500);
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s;
+  margin-bottom: -2px;
+}
+
+.coach-tab-btn-active {
+  color: var(--coach-black);
+  font-weight: 700;
+  border-bottom-color: var(--coach-black);
+}
+
+.coach-tab-btn:hover {
+  color: var(--coach-black);
+}
+
+.coach-tab-btn:focus-visible {
+  outline: 2px solid var(--coach-black);
+  outline-offset: -2px;
+}
+
+.coach-tab-panel {
+  padding-top: 1rem;
+}
+
+/* --- Coach Plans --- */
+.coach-plan {
+  max-width: 40rem;
+  margin-inline: auto;
+  background: var(--coach-white);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.coach-plan-header {
+  background: var(--coach-black);
+  color: var(--coach-white);
+  padding: 2rem;
+  text-align: center;
+}
+
+.coach-plan-label {
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  color: var(--coach-gray-300);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.coach-plan-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.coach-plan-amount {
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.coach-plan-unit {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.coach-plan-tax {
+  font-size: 0.875rem;
+  color: var(--coach-gray-300);
+}
+
+.coach-plan-content {
+  padding: 2rem;
+}
+
+.coach-plan-subtitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--coach-gray-100);
+}
+
+.coach-plan-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3rem;
+}
+
+.coach-plan-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--coach-gray-100);
+  font-size: 0.9375rem;
+  color: var(--coach-gray-700);
+}
+
+.coach-plan-list li:last-child {
+  border-bottom: none;
+}
+
+.coach-check-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* --- Coach Refund Box --- */
+.coach-plan-refund {
+  margin-bottom: 3rem;
+}
+
+.coach-refund-box {
+  border: 2px solid var(--coach-black);
+  border-radius: 4px;
+  padding: 1.5rem;
+  background: var(--coach-gray-50);
+}
+
+.coach-refund-box p {
+  font-size: 0.9375rem;
+  color: var(--coach-gray-700);
+  line-height: 1.8;
+}
+
+/* --- Coach Demo Grid --- */
+.coach-demo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+.coach-demo-card {
+  text-align: center;
+  padding: 1.5rem;
+  border: 1px solid var(--coach-gray-100);
+  border-radius: 8px;
+  background: var(--coach-gray-50);
+}
+
+.coach-demo-icon {
+  margin-bottom: 1rem;
+}
+
+.coach-demo-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.coach-demo-desc {
+  font-size: 0.8125rem;
+  color: var(--coach-gray-500);
+  margin-bottom: 1rem;
+}
+
+.coach-demo-badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--coach-gray-500);
+  background: var(--coach-gray-100);
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+}
+
+/* --- Coach Apply Section --- */
+.coach-apply-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 48rem;
+  margin-inline: auto;
+  margin-bottom: 3rem;
+}
+
+.coach-apply-subtitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.coach-apply-form-wrap {
+  flex: 1;
+}
+
+.coach-form-embed {
+  max-width: 100%;
+  margin-inline: auto;
+  border-radius: 8px;
+  border: 1px solid var(--coach-gray-100);
+  overflow: hidden;
+}
+
+.coach-form-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: var(--coach-white);
+  color: var(--coach-gray-500);
+  text-align: center;
+}
+
+.coach-form-placeholder p {
+  margin-top: 1rem;
+  font-size: 0.9375rem;
+}
+
+.coach-apply-divider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--coach-gray-300);
+  font-size: 0.875rem;
+}
+
+.coach-apply-divider::before,
+.coach-apply-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--coach-gray-100);
+}
+
+.coach-apply-line-wrap {
+  text-align: center;
+}
+
+.coach-apply-line-desc {
+  font-size: 0.9375rem;
+  color: var(--coach-gray-700);
+  margin-bottom: 1.5rem;
+}
+
+/* --- Coach Consent --- */
+.coach-consent {
+  max-width: 36rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.coach-consent-label {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--coach-gray-700);
+  text-align: left;
+}
+
+.coach-consent-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.coach-consent-checkmark {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--coach-gray-300);
+  border-radius: 3px;
+  margin-top: 2px;
+  transition: background 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.coach-consent-checkbox:checked + .coach-consent-checkmark {
+  background: var(--coach-black);
+  border-color: var(--coach-black);
+}
+
+.coach-consent-checkbox:checked + .coach-consent-checkmark::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 6px;
+  height: 10px;
+  border: solid var(--coach-white);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.coach-consent-checkbox:focus-visible + .coach-consent-checkmark {
+  outline: 2px solid var(--coach-black);
+  outline-offset: 2px;
+}
+
+.coach-consent-text a {
+  color: var(--coach-black);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.coach-consent-text a:hover {
+  color: var(--coach-gray-700);
+}
+
+/* --- Coach Disclaimer --- */
+.coach-disclaimer-section {
+  padding: 3rem 0;
+}
+
+.coach-disclaimer {
+  border: 1px solid var(--coach-gray-100);
+  border-radius: 4px;
+  padding: 1.5rem;
+  background: var(--coach-gray-50);
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.coach-disclaimer p {
+  font-size: 0.8125rem;
+  color: var(--coach-gray-500);
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* --- Coach Fade-up Animation --- */
+.coach-fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--coach-duration) var(--coach-ease-out), transform var(--coach-duration) var(--coach-ease-out);
+}
+
+.coach-fade-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.coach-card-grid .coach-card:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.coach-card-grid .coach-card:nth-child(3) {
+  transition-delay: 0.2s;
+}
+
+/* --- Coach Responsive --- */
+
+/* Tablet */
+@media (min-width: 600px) {
+  .coach-person-photo {
+    width: 112px;
+    height: 112px;
+  }
+
+  .coach-person-initial {
+    font-size: 2.5rem;
+  }
+
+  .coach-apply-options {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .coach-apply-divider {
+    flex-direction: column;
+    width: auto;
+  }
+
+  .coach-apply-divider::before,
+  .coach-apply-divider::after {
+    width: 1px;
+    height: auto;
+    flex: 1;
+  }
+
+  .coach-apply-line-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+/* Small Desktop */
+@media (min-width: 900px) {
+  .coach-section {
+    padding-block: 8rem;
+  }
+
+  .coach-cta {
+    padding-block: 8rem;
+  }
+
+  .coach-person-photo {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+  .coach-wrapper {
+    width: min(100% - 4rem, 68rem);
+  }
+
+  .coach-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coach-fade-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .coach-card,
+  .coach-logo-item,
+  .coach-tab-btn {
+    transition: none;
+  }
+}
+
