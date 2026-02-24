@@ -29,7 +29,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           # Clone the preview repository
-          git clone git@github.com:stellar-careers/preview.git preview-repo
+          git clone git@github.com:stellar-careers/homepage-preview.git preview-repo
 
           # Clean the PR directory and copy fresh content
           rm -rf "preview-repo/${PR_NUMBER}"
@@ -55,7 +55,7 @@ jobs:
         with:
           script: |
             const prNumber = context.issue.number;
-            const body = `**Preview deployed!**\nhttps://stellar-careers.github.io/preview/${prNumber}/`;
+            const body = `**Preview deployed!**\nhttps://stellar-careers.github.io/homepage-preview/${prNumber}/`;
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -97,7 +97,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git clone git@github.com:stellar-careers/preview.git preview-repo
+          git clone git@github.com:stellar-careers/homepage-preview.git preview-repo
           cd preview-repo
           if [ -d "${PR_NUMBER}" ]; then
             git rm -rf "${PR_NUMBER}"
