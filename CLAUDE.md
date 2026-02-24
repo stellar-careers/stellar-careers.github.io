@@ -68,6 +68,11 @@ This makes the site work on ANY hosting path without a build step.
 When adding a new page, calculate relative paths based on its depth.
 Use an existing page at the same depth as a template.
 
+### Directory naming
+
+**Do NOT use `_` (underscore) as the first character of directory or file names.**
+GitHub Pages runs Jekyll by default, which ignores paths starting with `_`.
+
 ## CSS Architecture
 
 ### Single CSS file: `docs/assets/css/style.css`
@@ -147,7 +152,7 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 
 ### insight/{id}
 - 30+ article pages at depth 2
-- Article IDs can start with `-` or `_` (e.g., `-ilnF14x`, `_SFs8TsC`)
+- Article IDs can start with `-` (e.g., `-ilnF14x`)
 - `robots: noindex, nofollow` on article pages
 - "Go back to Insight" link uses relative path `../../insight`
 
