@@ -221,7 +221,7 @@ function initSuccessStoriesScroll() {
   });
 
   // Find scroll indicator arrow
-  const scrollIndicator = list.parentElement?.querySelector('[data-s-2a7259e2-51f4-4fe7-b2d4-3abfb2ecd1ef]');
+  const scrollIndicator = list.parentElement?.querySelector('.stories-scroll-btn');
   if (scrollIndicator) {
     scrollIndicator.addEventListener('click', () => {
       list.scrollBy({ left: 300, behavior: 'smooth' });
@@ -234,7 +234,7 @@ function initSuccessStoriesScroll() {
    ======================================== */
 function initTrackRecordScroll() {
   // The track record section has company logos that scroll
-  const trackRecord = document.querySelector('[data-s-df0e16ba-8d68-464d-a773-b419e671e81e]');
+  const trackRecord = document.querySelector('.track-logos');
   if (!trackRecord) return;
 
   trackRecord.style.overflowX = 'auto';
