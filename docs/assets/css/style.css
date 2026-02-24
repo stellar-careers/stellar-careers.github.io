@@ -18916,16 +18916,19 @@ a.text {
 
 .coach-compare-highlight td {
   border-bottom-color: var(--coach-black);
+  color: var(--coach-white);
 }
 
 .coach-compare-price {
   font-size: 1.5rem;
   font-weight: 900;
+  color: var(--coach-white);
 }
 
 .coach-compare-yen {
   font-size: 0.875rem;
   font-weight: 700;
+  color: var(--coach-white);
 }
 
 .coach-compare-table tbody tr:not(.coach-compare-highlight):nth-child(odd) {
@@ -19046,11 +19049,13 @@ a.text {
   font-size: clamp(3rem, 6vw, 4.5rem);
   font-weight: 900;
   line-height: 1;
+  color: var(--coach-white);
 }
 
 .coach-plan-unit {
   font-size: 1.5rem;
   font-weight: 700;
+  color: var(--coach-white);
 }
 
 .coach-plan-tax {
