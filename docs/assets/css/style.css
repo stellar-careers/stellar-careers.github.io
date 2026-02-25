@@ -18819,15 +18819,15 @@ a.text {
 
 /* --- Coach Person Grid --- */
 .coach-person-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 3rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
   margin-top: 2rem;
 }
 
 .coach-person {
   text-align: center;
+  min-width: 0;
 }
 
 .coach-person-photo {
@@ -18836,6 +18836,7 @@ a.text {
   border-radius: 50%;
   background: var(--coach-gray-100);
   display: flex;
+  margin-inline: auto;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
@@ -18933,6 +18934,28 @@ a.text {
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--coach-white);
+}
+
+.coach-compare-table th:first-child,
+.coach-compare-table td:first-child {
+  width: 120px;
+  white-space: nowrap;
+}
+
+.coach-compare-table th:nth-child(2),
+.coach-compare-table td:nth-child(2) {
+  width: 140px;
+  white-space: nowrap;
+}
+
+.coach-compare-unit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--coach-gray-500);
+}
+
+.coach-compare-highlight .coach-compare-unit {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .coach-compare-table tbody tr:not(.coach-compare-highlight):nth-child(odd) {
@@ -19370,6 +19393,10 @@ a.text {
 
 /* Tablet */
 @media (min-width: 600px) {
+  .coach-person-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
   .coach-person-photo {
     width: 112px;
     height: 112px;
