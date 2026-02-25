@@ -2,11 +2,15 @@ name: Deploy PR Preview
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened, ready_for_review, closed]
 
 jobs:
   deploy-preview:
-    if: github.event.action != 'closed'
+    # Skip: closed PRs, and newly opened draft PRs (e.g. GitHub Copilot creates draft first)
+    # Deploy on: synchronize (new commits), reopened, ready_for_review, and non-draft opened
+    if: >-
+      github.event.action != 'closed' &&
+      !(github.event.action == 'opened' && github.event.pull_request.draft)
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -39,9 +43,6 @@ jobs:
           # Inject noindex into all HTML files (preview only)
           find "preview-repo/${PR_NUMBER}" -name '*.html' -exec \
             sed -i 's|<head>|<head><meta name="robots" content="noindex, nofollow">|' {} +
-
-          # Add robots.txt at repo root to block all crawlers
-          printf 'User-agent: *\nDisallow: /\n' > preview-repo/robots.txt
 
           # Commit and push
           cd preview-repo
