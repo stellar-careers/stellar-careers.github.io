@@ -1,0 +1,18 @@
+name: Notify Slack on Pages Deploy
+
+on:
+  page_build:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.event.build.status == 'built'
+    steps:
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v2
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
+          payload: |
+            channel: "C09KJ7UJ5HQ"
+            text: "GitHub Pages デプロイ完了 :white_check_mark:\nCommit: `${{ github.event.build.commit }}`\nBy: ${{ github.event.sender.login }}\nhttps://stellar-careers.github.io/"
