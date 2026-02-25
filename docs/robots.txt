@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /homepage-preview/
 
 Sitemap: https://stellar-careers.com/sitemap.xml
