@@ -18999,6 +18999,18 @@ a.text {
   margin-bottom: 2rem;
 }
 
+.coach-signup-note {
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: var(--coach-gray-600);
+  max-width: 36rem;
+  text-align: center;
+}
+
+.coach-cta .coach-signup-note {
+  color: var(--coach-gray-300);
+}
+
 /* --- Coach Tabs --- */
 .coach-tabs {
   display: flex;
