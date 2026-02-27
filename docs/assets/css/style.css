@@ -18547,7 +18547,7 @@ a.text {
 
 /* --- Coach Announce Banner --- */
 .coach-announce-banner {
-  background: var(--coach-black);
+  background: var(--coach-accent-blue);
   color: var(--coach-white);
   text-align: center;
   padding: 0.6rem 1rem;
@@ -18593,6 +18593,7 @@ a.text {
   --coach-gray-50: #f5f5f5;
   --coach-white: #ffffff;
   --coach-line-green: #06C755;
+  --coach-accent-blue: #1a6fe8;
   --coach-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --coach-duration: 0.6s;
 }
