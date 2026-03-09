@@ -1,0 +1,83 @@
+name: "記事追加：転職体験記"
+description: "転職体験記（insight-case）の新しい記事を追加するための依頼テンプレート"
+labels: ["転職体験記"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 転職体験記の記事追加依頼
+
+        以下のフォームに記入してください。
+        記事ID（URL）の生成や HTML への変換は開発者が対応します。
+
+        ### 画像について
+        - **カバー画像**: 記事ページ上部に表示される大きい画像。**1200 x 630 px** 推奨。
+        - **カード画像**: 一覧ページのカードに表示される小さい画像。**600 x 315 px** 推奨。
+        - 画像は各欄にドラッグ&ドロップで添付してください。
+
+  - type: input
+    id: title
+    attributes:
+      label: 記事タイトル
+      description: "記事の見出しになるタイトルを入力してください。"
+      placeholder: "例：【体験記】コンサルtoコンサル転職：年収150万アップを実現"
+    validations:
+      required: true
+
+  - type: textarea
+    id: cover-image
+    attributes:
+      label: カバー画像（記事ページ用）
+      description: "1200 x 630 px 推奨。ここに画像をドラッグ&ドロップしてください。"
+      placeholder: "ここに画像をドラッグ&ドロップ"
+    validations:
+      required: true
+
+  - type: textarea
+    id: card-image
+    attributes:
+      label: カード画像（一覧ページ用）
+      description: "600 x 315 px 推奨。ここに画像をドラッグ&ドロップしてください。"
+      placeholder: "ここに画像をドラッグ&ドロップ"
+    validations:
+      required: true
+
+  - type: textarea
+    id: body-content
+    attributes:
+      label: 記事本文
+      description: |
+        Markdown 形式で自由に記述してください。
+        見出しは `###` で、段落は空行で区切ります。
+      placeholder: |
+        ### ステラキャリアズとの出会い
+
+        入社4年目のタイミングでキャリアアップを目指し...
+
+        ### サポート体制
+
+        不明点があった際に、LINEで即レスポンスいただけるので...
+
+        ### 最後に
+
+        新しい職場でもしっかりと結果を出し...
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: ogp-description
+    attributes:
+      label: OGP 説明文
+      description: "SNS でシェアされたときに表示される短い説明文（1〜2文）。未入力の場合は開発者が本文から抜粋します。"
+      placeholder: "例：SIerからコンサル業界への転職に挑戦し、年収150万アップを実現した体験談。"
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足・備考
+      description: "その他の要望や注意事項があれば記入してください。"
+    validations:
+      required: false
