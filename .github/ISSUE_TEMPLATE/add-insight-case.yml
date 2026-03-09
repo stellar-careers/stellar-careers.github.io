@@ -1,6 +1,8 @@
 name: "記事追加：転職体験記"
 description: "転職体験記（insight-case）の新しい記事を追加するための依頼テンプレート"
 labels: ["転職体験記"]
+assignees:
+  - copilot
 body:
   - type: markdown
     attributes:
