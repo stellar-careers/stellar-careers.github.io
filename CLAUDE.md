@@ -73,6 +73,11 @@ Use an existing page at the same depth as a template.
 See `.claude/skills/add-insight-case/SKILL.md` for the full procedure.
 Carousel update: see `.claude/skills/pickup-insight-for-carousel/SKILL.md`
 
+### Adding a Blog article
+
+See `.claude/skills/add-blog/SKILL.md` for the full procedure.
+Homepage Blog section update: see `.claude/skills/update-homepage-blog/SKILL.md`
+
 ### Directory naming
 
 **Do NOT use `_` (underscore) as the first character of directory or file names.**

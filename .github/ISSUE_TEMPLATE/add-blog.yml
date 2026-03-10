@@ -1,0 +1,102 @@
+name: "記事追加：Blog"
+description: "Blog の新しい記事を追加するための依頼テンプレート"
+labels: ["blog"]
+assignees:
+  - copilot
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Blog 記事の追加依頼
+
+        以下のフォームに記入してください。
+        記事ID（URL）の生成や HTML への変換は自動で対応します。
+
+        ### 画像について
+        - **カバー画像**: 記事ページ上部・一覧ページに表示される画像。**1200 x 675 px** 推奨。
+        - **カード画像**: ホームページの Blog セクションに表示される小さい画像。**600 x 337 px** 推奨。
+        - 画像は各欄にドラッグ&ドロップで添付してください。
+
+  - type: input
+    id: title
+    attributes:
+      label: 記事タイトル
+      description: "Blog 記事の見出しになるタイトルを入力してください。"
+      placeholder: "例：ケース面接対策セミナーを開催します"
+    validations:
+      required: true
+
+  - type: input
+    id: publish-date
+    attributes:
+      label: 公開日
+      description: "YYYY/MM/DD 形式で入力してください。"
+      placeholder: "例：2026/03/10"
+    validations:
+      required: true
+
+  - type: textarea
+    id: cover-image
+    attributes:
+      label: カバー画像（記事・一覧用）
+      description: "1200 x 675 px 推奨。ここに画像をドラッグ&ドロップしてください。"
+      placeholder: "ここに画像をドラッグ&ドロップ"
+    validations:
+      required: true
+
+  - type: textarea
+    id: card-image
+    attributes:
+      label: カード画像（ホームページ用）
+      description: "600 x 337 px 推奨。ここに画像をドラッグ&ドロップしてください。"
+      placeholder: "ここに画像をドラッグ&ドロップ"
+    validations:
+      required: true
+
+  - type: textarea
+    id: body-content
+    attributes:
+      label: 記事本文
+      description: |
+        Markdown 形式で自由に記述してください。
+        見出しは `##` や `###` で、段落は空行で区切ります。
+      placeholder: |
+        ## イベント概要
+
+        戦略・総合系コンサルティングファームへの転職を目指す方に向けて...
+
+        ## セミナー内容
+
+        本ウェビナーでは、実践形式のワークショップを行います。
+
+        - ケース面接における評価基準
+        - ケース問題にチャレンジ
+      render: markdown
+    validations:
+      required: true
+
+  - type: textarea
+    id: excerpt
+    attributes:
+      label: 抜粋文
+      description: "一覧ページ・ホームページに表示される短い要約（1〜2文）。"
+      placeholder: "例：戦略・総合系コンサルティングファームへの転職を目指す方に向けて、ケース面接対策に特化した無料オンラインウェビナーを開催します。"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ogp-description
+    attributes:
+      label: OGP 説明文
+      description: "SNS でシェアされたときに表示される短い説明文（1〜2文）。未入力の場合は抜粋文を流用します。"
+      placeholder: "例：ケース面接対策に特化した無料オンラインウェビナーを開催します。"
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足・備考
+      description: "その他の要望や注意事項があれば記入してください。"
+    validations:
+      required: false
