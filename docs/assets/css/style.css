@@ -18561,16 +18561,19 @@ a.text {
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  color: var(--coach-white);
 }
 
 .coach-announce-banner-main {
   font-weight: 700;
   font-size: 0.95rem;
+  color: var(--coach-white);
 }
 
 .coach-announce-banner-sub {
   font-weight: 400;
   font-size: 0.8rem;
+  color: var(--coach-white);
 }
 
 @media (min-width: 600px) {
