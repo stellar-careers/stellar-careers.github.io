@@ -1,0 +1,18 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      COPILOT_AGENT_FIREWALL_ALLOW_LIST_ADDITIONS: "github-production-user-asset-6210df.s3.amazonaws.com"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
