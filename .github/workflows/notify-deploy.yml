@@ -21,6 +21,6 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
           payload: |
             channel: "C09KJ7UJ5HQ"
-            text: "本番デプロイ完了。直近の変更は「${{ steps.commit.outputs.message }}」です！ 確認は<https://stellar-careers.com/|こちら> ;)"
+            text: "ホームページ更新完了。直近の変更は「${{ steps.commit.outputs.message }}」です！ 確認は<https://stellar-careers.com/|こちら> ;)"
             unfurl_links: false
             unfurl_media: false
