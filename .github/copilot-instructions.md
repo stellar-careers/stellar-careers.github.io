@@ -2,6 +2,12 @@
 
 Refer to [CLAUDE.md](../CLAUDE.md) for full project conventions (directory structure, URL/path rules, CSS architecture, JS features, etc.).
 
+## Language
+
+- コミットメッセージ、PRタイトル・本文はすべて **日本語** で書く
+- コード中のコメントも日本語
+- 変数名・クラス名・ファイル名は英語のまま
+
 ## Linting
 
 After editing any `.html` file, ALWAYS run `npx htmlhint <file>` and fix all reported errors before considering the task complete.

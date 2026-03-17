@@ -3,6 +3,12 @@
 Static clone of https://stellar-careers.com/ served from `docs/` directory.
 Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure static HTML.
 
+## Language
+
+- コミットメッセージ、PRタイトル・本文はすべて **日本語** で書く
+- コード中のコメントも日本語
+- 変数名・クラス名・ファイル名は英語のまま
+
 ## Quick Start
 
     npm run dev        # http://localhost:3000/
