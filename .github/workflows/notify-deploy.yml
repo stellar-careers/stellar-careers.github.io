@@ -8,6 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.build.status == 'built'
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
+      - name: Get latest non-merge commit message
+        id: commit
+        run: echo "message=$(git log --no-merges --format=%s -1)" >> "$GITHUB_OUTPUT"
       - name: Notify Slack
         uses: slackapi/slack-github-action@v2
         with:
@@ -15,4 +21,6 @@ jobs:
           token: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
           payload: |
             channel: "C09KJ7UJ5HQ"
-            text: "GitHub Pages デプロイ完了 :white_check_mark:\nCommit: `${{ github.event.build.commit }}`\nBy: ${{ github.event.sender.login }}\nhttps://stellar-careers.github.io/"
+            text: "本番デプロイ完了。直近の変更は「${{ steps.commit.outputs.message }}」です！ 確認は<https://stellar-careers.com/|こちら> ;)"
+            unfurl_links: false
+            unfurl_media: false
