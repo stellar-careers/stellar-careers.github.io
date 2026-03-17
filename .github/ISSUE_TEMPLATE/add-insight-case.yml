@@ -13,9 +13,8 @@ body:
         記事ID（URL）の生成や HTML への変換は開発者が対応します。
 
         ### 画像について
-        - **カバー画像**: 記事ページ上部に表示される大きい画像。**1200 x 630 px** 推奨。
-        - **カード画像**: 一覧ページのカードに表示される小さい画像。**600 x 315 px** 推奨。
-        - 画像は各欄にドラッグ&ドロップで添付してください。
+        - **カバー画像**: 記事ページ上部・一覧カード・ホームカルーセルに共通で使用されます。**1200 x 630 px** 推奨。
+        - 画像は欄にドラッグ&ドロップで添付してください。
 
   - type: input
     id: title
@@ -29,17 +28,8 @@ body:
   - type: textarea
     id: cover-image
     attributes:
-      label: カバー画像（記事ページ用）
-      description: "1200 x 630 px 推奨。ここに画像をドラッグ&ドロップしてください。"
-      placeholder: "ここに画像をドラッグ&ドロップ"
-    validations:
-      required: true
-
-  - type: textarea
-    id: card-image
-    attributes:
-      label: カード画像（一覧ページ用）
-      description: "600 x 315 px 推奨。ここに画像をドラッグ&ドロップしてください。"
+      label: カバー画像
+      description: "1200 x 630 px 推奨。記事ページ・一覧カード・ホームカルーセルに共通で使用されます。ここに画像をドラッグ&ドロップしてください。"
       placeholder: "ここに画像をドラッグ&ドロップ"
     validations:
       required: true

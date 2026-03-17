@@ -12,8 +12,7 @@ Issue のフォームから以下を取得する:
 | フィールド | 用途 |
 |-----------|------|
 | 記事タイトル | `<h2>` 見出し、一覧カードの `<h3>` |
-| カバー画像 (1200x630) | 記事ページのカバー画像 |
-| カード画像 (600x315) | 一覧ページのカードサムネイル |
+| カバー画像 (1200x630) | 記事ページ・一覧カード・ホームカルーセル共通 |
 | 記事本文 (Markdown) | 記事本文（HTML に変換） |
 | OGP 説明文 | `<meta>` description（任意） |
 
@@ -24,8 +23,7 @@ Issue のフォームから以下を取得する:
    - テンプレート: `docs/insight/wbcTHhtv/index.html` を複製して編集
    - depth 2 なので asset パスは `../../assets/` 、他ページへのリンクは `../../{page}`
 3. 画像ファイルを `docs/assets/images/` に配置
-   - カバー画像: `*_middle.webp` として保存
-   - カード画像: `*_small.webp` として保存
+   - カバー画像: `*_middle.webp` として保存（記事ページ・一覧カード・カルーセルすべてで共通利用）
 4. 本文の Markdown を HTML に変換
    - `###` 見出し → `<h3><strong>...</strong></h3>`
    - 段落 → `<p>...</p>`、改行 → `<br>`
@@ -43,7 +41,7 @@ Issue のフォームから以下を取得する:
 <a href="../insight/{id}" class="link sd appear insight-cat-card">
   <div class="sd appear insight-cat-card-body">
     <h3 class="text sd appear insight-cat-card-title">{タイトル}</h3>
-  </div><img class="sd insight-cat-card-img" alt="" src="../assets/images/{card_image_small.webp}">
+  </div><img class="sd insight-cat-card-img" alt="" src="../assets/images/{cover_image_middle.webp}">
 </a>
 ```
 
