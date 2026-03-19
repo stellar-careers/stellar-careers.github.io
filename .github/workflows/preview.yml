@@ -28,6 +28,7 @@ jobs:
       - name: Deploy to preview repository
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -44,14 +45,11 @@ jobs:
           find "preview-repo/${PR_NUMBER}" -name '*.html' -exec \
             sed -i 's|<head>|<head><meta name="robots" content="noindex, nofollow">|' {} +
 
-          # Get latest non-merge commit message from the PR
-          LATEST_MSG=$(git log --no-merges --format=%s -1)
-
           # Commit and push
           cd preview-repo
           git add -A
           git diff --cached --quiet && echo "No changes to deploy" && exit 0
-          git commit -m "Deploy preview for PR #${PR_NUMBER}: ${LATEST_MSG}"
+          git commit -m "Deploy preview for PR #${PR_NUMBER}: ${PR_TITLE}"
           git push origin main
 
       - name: Comment PR with preview URL
