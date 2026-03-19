@@ -19165,6 +19165,12 @@ a.text {
   color: var(--coach-gray-300);
 }
 
+.coach-plan-inquiry {
+  font-size: 1rem;
+  color: var(--coach-gray-300);
+  margin-top: 0.75rem;
+}
+
 .coach-plan-content {
   padding: 2rem;
 }
