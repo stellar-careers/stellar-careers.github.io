@@ -60,3 +60,32 @@ bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh
 - [ ] `docs/insight/index.html` のカード一覧に新記事が追加されている
 - [ ] `bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh` が正常に完了した
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
+
+### 6. PR の作成
+
+PR のタイトルと説明を以下の形式で日本語で作成する。
+
+**タイトル:**
+```
+転職体験記追加：{記事タイトル}
+```
+
+**説明:**
+```
+Closes #{Issue番号}
+
+## 変更内容
+
+Issue #{Issue番号} に基づき、以下の転職体験記を追加しました。
+
+- 記事タイトル: {記事タイトル}
+- 記事URL: https://stellar-careers.com/insight/{id}
+
+## 変更ファイル
+
+- `docs/insight/{id}/index.html` — 新規記事ページ
+- `docs/insight/index.html` — 全記事一覧にカードを追加
+- `docs/insight-case/index.html` — 転職体験記カテゴリにカードを追加
+- `docs/index.html` — ホームページのカルーセルを更新
+- `docs/assets/images/{カバー画像ファイル名}` — カバー画像
+```

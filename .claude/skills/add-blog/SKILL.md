@@ -88,3 +88,33 @@ bash .claude/skills/update-homepage-blog/scripts/update-blog-cards.sh
 - [ ] `bash .claude/skills/update-homepage-blog/scripts/update-blog-cards.sh` が正常に完了した
 - [ ] `docs/index.html` の Blog セクションが更新されている
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
+
+### 8. PR の作成
+
+PR のタイトルと説明を以下の形式で日本語で作成する。
+
+**タイトル:**
+```
+Blog記事追加：{記事タイトル}
+```
+
+**説明:**
+```
+Closes #{Issue番号}
+
+## 変更内容
+
+Issue #{Issue番号} に基づき、以下のBlog記事を追加しました。
+
+- 記事タイトル: {記事タイトル}
+- 公開日: {公開日}
+- 記事URL: https://stellar-careers.com/blog/{id}
+
+## 変更ファイル
+
+- `docs/blog/{id}/index.html` — 新規記事ページ
+- `docs/blog/index.html` — 記事一覧にカードを追加
+- `docs/index.html` — ホームページのBlogセクションを更新
+- `docs/assets/images/blog_{id}_middle.webp` — カバー画像
+- `docs/assets/images/blog_{id}_small.webp` — カード画像
+```
