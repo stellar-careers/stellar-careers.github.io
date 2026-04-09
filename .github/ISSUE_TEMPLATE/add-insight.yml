@@ -1,13 +1,13 @@
-name: "記事追加：転職体験記"
-description: "転職体験記（insight-case）の新しい記事を追加するための依頼テンプレート"
-labels: ["転職体験記"]
+name: "記事追加：Insight（転職体験記・面接対策・仕事術）"
+description: "Insight記事の新しい記事を追加するための依頼テンプレート"
+labels: ["insight記事"]
 assignees:
   - copilot
 body:
   - type: markdown
     attributes:
       value: |
-        ## 転職体験記の記事追加依頼
+        ## Insight 記事の追加依頼
 
         以下のフォームに記入してください。
         記事ID（URL）の生成や HTML への変換は開発者が対応します。
@@ -15,6 +15,18 @@ body:
         ### 画像について
         - **カバー画像**: 記事ページ上部・一覧カード・ホームカルーセルに共通で使用されます。**1200 x 630 px** 推奨。
         - 画像は欄にドラッグ&ドロップで添付してください。
+
+  - type: dropdown
+    id: insight-type
+    attributes:
+      label: 記事カテゴリ
+      description: "追加する記事のカテゴリを選択してください。"
+      options:
+        - "転職体験記（insight-case）"
+        - "面接対策（insight-interview）"
+        - "仕事術（insight-work）"
+    validations:
+      required: true
 
   - type: input
     id: title

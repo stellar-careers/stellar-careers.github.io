@@ -74,9 +74,9 @@ This makes the site work on ANY hosting path without a build step.
 When adding a new page, calculate relative paths based on its depth.
 Use an existing page at the same depth as a template.
 
-### Adding an Insight article (転職体験記)
+### Adding an Insight article
 
-See `.claude/skills/add-insight-case/SKILL.md` for the full procedure.
+See `.claude/skills/add-insight/SKILL.md` for the full procedure.
 Carousel update: see `.claude/skills/pickup-insight-for-carousel/SKILL.md`
 
 ### Adding a Blog article
