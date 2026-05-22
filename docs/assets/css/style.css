@@ -19470,6 +19470,119 @@ a.text {
   transition-delay: 0.2s;
 }
 
+.coach-card-grid .coach-card:nth-child(4) {
+  transition-delay: 0.3s;
+}
+
+/* --- Coach hero note (warning under hero sub) --- */
+.coach-hero-note {
+  margin-top: -1rem;
+  margin-bottom: 2rem;
+  font-size: 0.8125rem;
+  color: var(--coach-gray-600);
+  max-width: 36rem;
+  line-height: 1.6;
+}
+
+/* --- Coach section sublead (lead 補足コピー) --- */
+.coach-section-sublead {
+  text-align: center;
+  color: var(--coach-gray-700);
+  font-size: clamp(0.875rem, 1.2vw + 0.25rem, 1rem);
+  margin-top: -2rem;
+  margin-bottom: 3rem;
+  max-width: 40rem;
+  margin-inline: auto;
+  line-height: 1.7;
+}
+
+/* --- 単一プラン（タブ廃止後）の中央寄せラッパ --- */
+.coach-plan-single {
+  display: flex;
+  justify-content: center;
+}
+
+.coach-plan-single .coach-plan {
+  max-width: 48rem;
+  width: 100%;
+}
+
+/*
+ * 価格表記が ¥78,000 のようにテキスト主体になったため、
+ * coach-plan-amount のフォントサイズを抑えめにする
+ */
+.coach-plan-single .coach-plan-amount {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+/* --- Coach Privacy ページ --- */
+.coach-privacy-page {
+  background: var(--coach-white, #fff);
+  color: var(--coach-black, #0a0a0a);
+}
+
+.coach-privacy-main {
+  width: 100%;
+  padding: clamp(2rem, 6vw, 4rem) 0;
+}
+
+.coach-privacy-wrapper {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2rem);
+  align-items: stretch;
+  line-height: 1.8;
+}
+
+.coach-privacy-heading {
+  border-bottom: 1px solid var(--coach-gray-300, #d1d5db);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.coach-privacy-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+  text-align: center;
+}
+
+.coach-privacy-meta {
+  font-size: 0.875rem;
+  color: var(--coach-gray-600, #4b5563);
+  text-align: right;
+  margin: 0;
+}
+
+.coach-privacy-intro {
+  margin-bottom: 2rem;
+}
+
+.coach-privacy-section {
+  margin-bottom: 2rem;
+}
+
+.coach-privacy-section-title {
+  font-size: clamp(1.125rem, 2vw, 1.25rem);
+  font-weight: 700;
+  margin: 0 0 0.75rem;
+}
+
+.coach-privacy-list {
+  padding-left: 1.5rem;
+  margin: 0.5rem 0 0;
+  list-style: disc;
+}
+
+.coach-privacy-list li {
+  margin-bottom: 0.5rem;
+}
+
+.coach-privacy-section a {
+  color: var(--coach-black, #0a0a0a);
+  text-decoration: underline;
+}
+
 /* --- Coach Responsive --- */
 
 /* Tablet */
