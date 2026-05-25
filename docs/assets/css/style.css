@@ -19208,6 +19208,99 @@ a.text {
   margin-top: 2px;
 }
 
+/*
+ * --- Coach Plan Highlight ---
+ * 「含まれるもの」のうち、対人振り返りセッションを主役として強調表示する。
+ * AIケース問題などの学習教材は coach-plan-sub-list 側で控えめに見せる。
+ */
+.coach-plan-highlight {
+  display: block;
+  align-items: stretch;
+  border: 2px solid var(--coach-black);
+  border-radius: 6px;
+  padding: 1.75rem 1.5rem;
+  margin-bottom: 1.75rem;
+  background: var(--coach-gray-50);
+  text-align: center;
+}
+
+.coach-plan-highlight-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--coach-white);
+  background: var(--coach-black);
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+.coach-plan-highlight-title {
+  font-size: clamp(1.25rem, 3.2vw, 1.625rem);
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--coach-black);
+  margin: 0 0 0.5rem;
+}
+
+.coach-plan-highlight-meta {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--coach-black);
+  margin: 0 0 0.875rem;
+}
+
+.coach-plan-highlight-desc {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--coach-gray-700);
+  margin: 0;
+  text-align: left;
+}
+
+/* --- Coach Plan Sub List (学習教材・カウンセリング) --- */
+.coach-plan-sub-lead {
+  font-size: 0.8125rem;
+  color: var(--coach-gray-600);
+  margin: 0 0 0.75rem;
+  align-self: flex-start;
+}
+
+.coach-plan-sub-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3rem;
+  width: 100%;
+}
+
+.coach-plan-sub-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.5rem 0;
+  font-size: 0.8125rem;
+  color: var(--coach-gray-600);
+  line-height: 1.6;
+}
+
+.coach-plan-sub-icon {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* レスポンシブ：540px 以下はハイライトの余白とフォントを 1 段詰める */
+@media (max-width: 540px) {
+  .coach-plan-highlight {
+    padding: 1.25rem 1rem;
+  }
+
+  .coach-plan-highlight-desc {
+    font-size: 0.875rem;
+    line-height: 1.75;
+  }
+}
+
 /* --- Coach Refund Box --- */
 .coach-plan-refund {
   margin-bottom: 3rem;
