@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link rel="stylesheet" href="../../assets/css/style.css" crossorigin="">
   <meta name="robots" content="all">
+  <!-- og:site_name と apple-mobile-web-app-title はサイト共通のブランド表記。記事固有値への置換は不要。 -->
   <meta property="og:site_name" content="Stellar careers | コンサル特化の転職エージェント">
   <meta property="og:title" content="{{TITLE}}">
   <meta property="og:image" content="https://stellar-careers.com/assets/images/{{COVER_IMAGE_BASENAME}}">

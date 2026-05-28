@@ -37,7 +37,6 @@ Issue のフォームから以下を取得する:
    - `<h2 class="text sd blog-post-heading r9">` → 記事タイトル
    - `<img class="sd blog-post-featured-img">` の `src` → `../../assets/images/blog_{id}_middle.webp`
    - `<div class="richText sd blog-post-richtext">` の中身 → 本文 HTML（既存記事の中身は全て削除して、Issue 本文を変換した HTML を挿入）
-   - `<a href="../../4"` → `<a href="../../blog"` （戻るリンクを修正）
    - 本文に Studio.Design 残骸属性 (`data-uid`, `data-time`, `data-has-link`) があれば全て除去
 
 ### 3. 画像を配置
