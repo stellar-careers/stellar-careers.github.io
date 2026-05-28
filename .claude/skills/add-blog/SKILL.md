@@ -25,19 +25,20 @@ Issue のフォームから以下を取得する:
    - 英数字 [A-Za-z0-9] のみ使用
    - 先頭が `_` にならないこと（GitHub Pages の Jekyll 制約）
 2. `docs/blog/{id}/index.html` を作成
-   - テンプレート: `docs/blog/lHJC6vQA/index.html` を複製して編集
+   - 既存記事 `docs/blog/lHJC6vQA/index.html` を複製して `<body>` の構造を流用する
    - depth 2 なので asset パスは `../../assets/`、他ページへのリンクは `../../{page}`
-   - `robots: all`（Blog 記事はインデックス可）
-3. テンプレートから変更する箇所:
-   - `<meta property="og:url">` → `https://stellar-careers.com/blog/{id}`
-   - `<link rel="canonical">` → `https://stellar-careers.com/blog/{id}`
-   - `<meta property="og:description">` → OGP 説明文（未入力時は抜粋文）
-   - `<meta name="description">` → OGP 説明文（未入力時は抜粋文）
+3. **`<head>` ブロックは `.claude/skills/add-blog/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
+   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| Stellar Careers` サフィックスが付く）
+   - `{{OG_DESCRIPTION}}` → OGP 説明文（未入力時は抜粋文）
+   - `{{COVER_IMAGE_BASENAME}}` → `blog_{id}_middle.webp`
+   - `{{ARTICLE_ID}}` → 生成した記事 ID
+4. `<body>` 内で変更する箇所:
    - `<p class="text sd blog-post-date r8">` → 公開日
    - `<h2 class="text sd blog-post-heading r9">` → 記事タイトル
-   - `<img class="sd blog-post-featured-img">` の `src` → カバー画像パス
-   - `<div class="richText sd blog-post-richtext">` の中身 → 本文 HTML
+   - `<img class="sd blog-post-featured-img">` の `src` → `../../assets/images/blog_{id}_middle.webp`
+   - `<div class="richText sd blog-post-richtext">` の中身 → 本文 HTML（既存記事の中身は全て削除して、Issue 本文を変換した HTML を挿入）
    - `<a href="../../4"` → `<a href="../../blog"` （戻るリンクを修正）
+   - 本文に Studio.Design 残骸属性 (`data-uid`, `data-time`, `data-has-link`) があれば全て除去
 
 ### 3. 画像を配置
 
@@ -45,6 +46,7 @@ Issue のフォームから以下を取得する:
    - カバー画像: `blog_{id}_middle.webp` として保存
    - カード画像: `blog_{id}_small.webp` として保存
 2. GitHub の添付画像 URL から `curl -L -o` でダウンロード
+3. GitHub 添付画像は JPEG/PNG なので、必ず WebP に変換してから保存する（`cwebp` 等）。`.webp` 拡張子で JPEG 実体を置くと GitHub Pages が `Content-Type: image/webp` を返してブラウザが描画失敗する。
 
 ### 4. 本文の Markdown を HTML に変換
 
