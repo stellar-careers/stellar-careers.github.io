@@ -33,14 +33,21 @@ Issue のフォームから以下を取得する:
 
 1. ランダムな 8 文字の ID を生成（例: `RzP2RcvL`）
 2. `docs/insight/{id}/index.html` を作成
-   - テンプレート: `docs/insight/wbcTHhtv/index.html` を複製して編集
+   - 既存記事 `docs/insight/wbcTHhtv/index.html` を複製して `<body>` の構造を流用する
    - depth 2 なので asset パスは `../../assets/` 、他ページへのリンクは `../../{page}`
-3. 画像ファイルを `docs/assets/images/` に配置
+3. **`<head>` ブロックは `.claude/skills/add-insight/templates/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
+   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| Stellar Careers` サフィックスが付く）
+   - `{{OG_DESCRIPTION}}` → OGP 説明文（未入力時は本文冒頭から抜粋）
+   - `{{COVER_IMAGE_BASENAME}}` → カバー画像のファイル名（例: `insight_bcg_200interviews_middle.webp`）
+   - `{{ARTICLE_ID}}` → 生成した記事 ID
+4. 画像ファイルを `docs/assets/images/` に配置
    - カバー画像: `*_middle.webp` として保存（記事ページ・一覧カード・カルーセルすべてで共通利用）
-4. 本文の Markdown を HTML に変換
+   - GitHub 添付画像は JPEG/PNG なので、必ず WebP に変換してから保存する（`cwebp` 等）
+5. 本文の Markdown を HTML に変換
    - `###` 見出し → `<h3><strong>...</strong></h3>`
    - 段落 → `<p>...</p>`、改行 → `<br>`
-5. CTA iframe は含めない（Studio.Design の残骸のため不要）
+   - 本文に Studio.Design 残骸属性 (`data-uid`, `data-time`, `data-has-link`) があれば全て除去
+6. CTA iframe は含めない（Studio.Design の残骸のため不要）
 
 ### 4. 一覧ページにカードを追加
 
