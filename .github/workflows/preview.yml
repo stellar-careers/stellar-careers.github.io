@@ -4,6 +4,14 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, closed]
 
+# 同じ PR の preview deploy / cleanup を直列化する。
+# Copilot が短時間に複数イベント (synchronize / ready_for_review 等) を
+# 発火させると複数 job が同時に homepage-preview.git#main へ push しようとして
+# remote rejected (cannot lock ref) で fail する race condition を防ぐ。
+concurrency:
+  group: preview-deploy-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   deploy-preview:
     # Skip: closed PRs, and newly opened draft PRs (e.g. GitHub Copilot creates draft first)
