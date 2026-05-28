@@ -35,7 +35,7 @@ Issue のフォームから以下を取得する:
 2. `docs/insight/{id}/index.html` を作成
    - 既存記事 `docs/insight/wbcTHhtv/index.html` を複製して `<body>` の構造を流用する
    - depth 2 なので asset パスは `../../assets/` 、他ページへのリンクは `../../{page}`
-3. **`<head>` ブロックは `.claude/skills/add-insight/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
+3. **`<head>` ブロックは `.claude/skills/add-insight/templates/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
    - `{{TITLE}}` → 記事タイトル（テンプレ側で `| Stellar Careers` サフィックスが付く）
    - `{{OG_DESCRIPTION}}` → OGP 説明文（未入力時は本文冒頭から抜粋）
    - `{{COVER_IMAGE_BASENAME}}` → カバー画像のファイル名（例: `insight_bcg_200interviews_middle.webp`）
