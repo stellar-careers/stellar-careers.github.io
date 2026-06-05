@@ -1,0 +1,48 @@
+name: Notify Slack on Article Issue
+
+# 記事追加の Issue（insight記事 / blog ラベル付き）が起票されたら Slack に通知する。
+# エンジニア向けの Issue は通知しない（ラベルで絞り込み）。
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    # 記事ラベルが付いている Issue のみ通知。
+    # labeled イベントでも発火するので、テンプレでラベルが付かず後から手動で
+    # 付けた場合もカバーできる。
+    if: >-
+      contains(github.event.issue.labels.*.name, 'insight記事') ||
+      contains(github.event.issue.labels.*.name, 'blog')
+    steps:
+      # Issue タイトルなどの信頼できない入力を ${{ }} で展開すると YAML が壊れたり
+      # ペイロード注入される恐れがあるため、context.payload から JS 変数として安全に扱う。
+      - name: Notify Slack
+        uses: actions/github-script@v7
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const text =
+              `新しい記事の追加依頼が届きました📝（Issue #${issue.number}）` +
+              `タイトルは「${issue.title}」です！ 開発側で順次対応します。` +
+              `内容は<${issue.html_url}|こちら> ;)`;
+            const res = await fetch('https://slack.com/api/chat.postMessage', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+                'Content-Type': 'application/json; charset=utf-8',
+              },
+              body: JSON.stringify({
+                channel: 'C09KJ7UJ5HQ',
+                text,
+                unfurl_links: false,
+                unfurl_media: false,
+              }),
+            });
+            const data = await res.json();
+            if (!data.ok) {
+              core.setFailed(`Slack API error: ${data.error}`);
+            }

@@ -1,8 +1,6 @@
 name: "記事追加：Insight（転職体験記・面接対策・仕事術）"
 description: "Insight記事の新しい記事を追加するための依頼テンプレート"
 labels: ["insight記事"]
-assignees:
-  - copilot
 body:
   - type: markdown
     attributes:

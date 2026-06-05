@@ -1,8 +1,6 @@
 name: "記事追加：Blog"
 description: "Blog の新しい記事を追加するための依頼テンプレート"
 labels: ["blog"]
-assignees:
-  - copilot
 body:
   - type: markdown
     attributes:
