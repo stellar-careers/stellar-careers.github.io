@@ -1,0 +1,76 @@
+name: Auto-assign Copilot to Article Issues
+
+# 記事追加の Issue（insight記事 / blog ラベル付き）に Copilot coding agent を自動アサインする。
+#
+# 背景: Issue テンプレートの `assignees: [copilot]` は機能しない（Issue フォームの
+# assignees はリポジトリに write 権限を持つ実ユーザにしか効かず、Copilot coding agent は
+# この方法では割り当てられない）。そのため従来は人手でアサインしていた。
+# このワークフローは GraphQL の replaceActorsForAssignable で Copilot を割り当てる。
+#
+# 注意: 既定の GITHUB_TOKEN で割り当てできない場合は、Copilot を割り当て可能な PAT を
+# secrets.COPILOT_ASSIGN_TOKEN として用意し、下の github-token をそれに切り替える。
+on:
+  issues:
+    types: [opened, labeled]
+
+jobs:
+  assign:
+    runs-on: ubuntu-latest
+    if: >-
+      contains(github.event.issue.labels.*.name, 'insight記事') ||
+      contains(github.event.issue.labels.*.name, 'blog')
+    permissions:
+      issues: write
+    steps:
+      - name: Assign Copilot coding agent
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // 1) このリポジトリでアサイン可能な actor から Copilot coding agent を探す
+            const { repository } = await github.graphql(`
+              query($owner: String!, $name: String!) {
+                repository(owner: $owner, name: $name) {
+                  suggestedActors(capabilities: [CAN_BE_ASSIGNED], first: 100) {
+                    nodes { login __typename ... on Bot { id } }
+                  }
+                }
+              }`, { owner: context.repo.owner, name: context.repo.repo });
+
+            const bot = repository.suggestedActors.nodes
+              .find(n => n.login === 'copilot-swe-agent');
+            if (!bot) {
+              core.warning('Copilot coding agent はこのリポジトリでアサインできません（Copilot が有効化されていない、または権限不足）。');
+              return;
+            }
+
+            // 2) 現在のアサイン先（人を含む）を取得し、Copilot を加えた和集合で置き換える。
+            //    replaceActorsForAssignable は全アサインを置換するため、既存の担当者を
+            //    消さないよう union する。
+            const issueNodeId = context.payload.issue.node_id;
+            const { node } = await github.graphql(`
+              query($id: ID!) {
+                node(id: $id) {
+                  ... on Issue {
+                    assignedActors(first: 20) {
+                      nodes { login ... on User { id } ... on Bot { id } }
+                    }
+                  }
+                }
+              }`, { id: issueNodeId });
+
+            const current = (node.assignedActors?.nodes ?? []).filter(a => a.id);
+            if (current.some(a => a.login === 'copilot-swe-agent')) {
+              core.info('Copilot は既にアサイン済みです。');
+              return;
+            }
+            const actorIds = [...new Set([...current.map(a => a.id), bot.id])];
+
+            await github.graphql(`
+              mutation($assignableId: ID!, $actorIds: [ID!]!) {
+                replaceActorsForAssignable(input: { assignableId: $assignableId, actorIds: $actorIds }) {
+                  assignable { ... on Issue { number } }
+                }
+              }`, { assignableId: issueNodeId, actorIds });
+
+            core.info(`Copilot を Issue #${context.payload.issue.number} にアサインしました。`);
