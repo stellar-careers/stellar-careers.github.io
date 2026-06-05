@@ -23,6 +23,7 @@ body:
         - "転職体験記（insight-case）"
         - "面接対策（insight-interview）"
         - "仕事術（insight-work）"
+        - "各ファーム情報（insight-firm）"
     validations:
       required: true
 

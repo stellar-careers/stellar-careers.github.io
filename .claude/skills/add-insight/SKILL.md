@@ -1,6 +1,6 @@
 # add-insight
 
-Insight 記事（転職体験記・面接対策・仕事術）の新しい記事を追加するスキル。
+Insight 記事（転職体験記・面接対策・仕事術・各ファーム情報）の新しい記事を追加するスキル。
 Issue テンプレート「記事追加：Insight」から起票された Issue を元に作業する。
 
 ## 手順
@@ -26,6 +26,7 @@ Issue のフォームから以下を取得する:
 | `転職体験記（insight-case）` | `insight-case` | `docs/insight-case/index.html` | 転職体験記 |
 | `面接対策（insight-interview）` | `insight-interview` | `docs/insight-interview/index.html` | 面接対策 |
 | `仕事術（insight-work）` | `insight-work` | `docs/insight-work/index.html` | 仕事術 |
+| `各ファーム情報（insight-firm）` | `insight-firm` | `docs/insight-firm/index.html` | 各ファーム情報 |
 
 以降、スラッグを `{slug}`、日本語ラベルを `{label}` として記載する。
 
