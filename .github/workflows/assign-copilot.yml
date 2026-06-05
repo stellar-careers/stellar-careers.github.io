@@ -7,8 +7,11 @@ name: Auto-assign Copilot to Article Issues
 # この方法では割り当てられない）。そのため従来は人手でアサインしていた。
 # このワークフローは GraphQL の replaceActorsForAssignable で Copilot を割り当てる。
 #
-# 注意: 既定の GITHUB_TOKEN で割り当てできない場合は、Copilot を割り当て可能な PAT を
-# secrets.COPILOT_ASSIGN_TOKEN として用意し、下の github-token をそれに切り替える。
+# 重要: 既定の GITHUB_TOKEN は実体が GitHub App のインストールトークンで、Copilot の
+# アサイン API は App トークンを拒否する（suggestedActors に copilot-swe-agent が出ない）。
+# そのため fine-grained PAT を secrets.COPILOT_ASSIGN_TOKEN に登録して使う必要がある。
+# PAT のスコープ: 対象リポジトリの Issues / Pull requests / Contents（いずれも Write）。
+# 未設定の場合は GITHUB_TOKEN にフォールバックするが、その場合アサインはスキップされる。
 on:
   issues:
     types: [opened, labeled]
@@ -25,7 +28,9 @@ jobs:
       - name: Assign Copilot coding agent
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # PAT 優先。未設定なら GITHUB_TOKEN だが、その場合 Copilot は assignable に出ず
+          # 下の bot 探索で見つからずスキップされる。
+          github-token: ${{ secrets.COPILOT_ASSIGN_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
             // 1) このリポジトリでアサイン可能な actor から Copilot coding agent を探す
             const { repository } = await github.graphql(`
@@ -40,7 +45,7 @@ jobs:
             const bot = repository.suggestedActors.nodes
               .find(n => n.login === 'copilot-swe-agent');
             if (!bot) {
-              core.warning('Copilot coding agent はこのリポジトリでアサインできません（Copilot が有効化されていない、または権限不足）。');
+              core.warning('Copilot coding agent が assignable に見つかりません。secrets.COPILOT_ASSIGN_TOKEN（fine-grained PAT）が未設定の可能性が高い（GITHUB_TOKEN では割り当て不可）。');
               return;
             }
 
