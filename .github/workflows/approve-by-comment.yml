@@ -55,8 +55,10 @@ jobs:
             const phrases = (cfg.triggerPhrases ?? []).map(s => s.toLowerCase());
 
             // 2) コメントが承認トリガーか判定（コメント全体がトリガー語、または /approve 始まり）
+            //    末尾の記号・空白は無視して照合を緩める（「承認！」≈「承認」、「了解です。」≈「了解です」）。
+            //    絵文字単体（👍 等）もトリガーにしたいので、絵文字は落とさず句読点系のみ除去する。
             const body = (comment.body ?? '').trim();
-            const norm = body.toLowerCase();
+            const norm = body.toLowerCase().replace(/[\s!！。.、，,；;：:～~…\-]+$/u, '');
             const isTrigger = phrases.some(p => norm === p) || norm.startsWith('/approve');
             if (!isTrigger) {
               core.info('承認トリガーではないコメントのためスキップします。');
