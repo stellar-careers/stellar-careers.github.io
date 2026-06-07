@@ -25,10 +25,27 @@ jobs:
         with:
           script: |
             const issue = context.payload.issue;
-            const text =
-              `新しい記事の追加依頼が届きました📝（Issue #${issue.number}）` +
-              `タイトルは「${issue.title}」です！ 開発側で順次対応します。` +
-              `内容は<${issue.html_url}|こちら> ;)`;
+            // Slack mrkdwn 用に最小限のエスケープ（タイトルに < & > が含まれても壊れないように）
+            const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const labels = (issue.labels || []).map(l => l.name);
+            const kind = labels.includes('blog') ? 'ブログ記事' : 'Insight記事';
+
+            const text = `📝 新しい${kind}の追加依頼（Issue #${issue.number}）：${issue.title}`;
+            const blocks = [
+              { type: 'header', text: { type: 'plain_text', text: '📝 新しい記事の追加依頼', emoji: true } },
+              { type: 'section', fields: [
+                { type: 'mrkdwn', text: `*種別*\n${kind}` },
+                { type: 'mrkdwn', text: `*Issue*\n<${issue.html_url}|#${issue.number}>` },
+              ]},
+              { type: 'section', text: { type: 'mrkdwn', text: `*タイトル*\n${esc(issue.title)}` } },
+              { type: 'context', elements: [
+                { type: 'mrkdwn', text: '🤖 開発側（Copilot）が自動で対応を始めます。記事の準備ができたらプレビューのお知らせを送りますね ;)' },
+              ]},
+              { type: 'actions', elements: [
+                { type: 'button', text: { type: 'plain_text', text: '📋 Issueを開く', emoji: true }, url: issue.html_url },
+              ]},
+            ];
+
             const res = await fetch('https://slack.com/api/chat.postMessage', {
               method: 'POST',
               headers: {
@@ -38,6 +55,7 @@ jobs:
               body: JSON.stringify({
                 channel: 'C09KJ7UJ5HQ',
                 text,
+                blocks,
                 unfurl_links: false,
                 unfurl_media: false,
               }),
