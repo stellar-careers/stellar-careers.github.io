@@ -1,29 +1,30 @@
 name: Approve article PR by comment
 
-# 記事系PR（Copilot=Bot 作）を、PR への「コメント」で承認・自動マージできるようにする。
+# 記事系PR（Copilot=Bot 作）を、PR への「コメント」で承認し、その場でマージ→本番公開する。
 #
 # 背景: 非エンジニア（Hina さん等）に GitHub の「Approve（レビュー承認）」ボタンを押させるのは
-# UI 的にハードルが高い。そこで、PR にひとこと（例:「承認」）コメントするだけで承認扱いにする。
+# UI 的にハードルが高い。そこで、PR にひとこと（例:「承認」）コメントするだけで公開できるようにする。
 # 承認できる人の GitHub ログインは .github/article-approvers.json の `approvers` 配列で管理し、
 # 増える場合はそこに追記するだけでよい（このワークフローは触らない）。
 #
-# 仕組み:
+# 仕組み（マージ可否は branch protection ではなくこのワークフローが完全に制御する）:
 #  1. allowlist のユーザが triggerPhrases のいずれかをコメントしたら
-#  2. PR 作者が Bot(Copilot) = 記事系PR であることを確認し
-#  3. PAT(COPILOT_ASSIGN_TOKEN) で APPROVE レビューを代理送信 + auto-merge を有効化する
-#  4. branch protection の「1承認必須」が満たされ、CI 通過後に自動マージ→本番公開
+#  2. PR 作者が Bot(Copilot) = 記事系PR であること・draft でなく open であることを確認し
+#  3. PR head の CI（プレビューデプロイ等のチェック）が全て成功しているか確認し
+#  4. 問題なければ PAT(COPILOT_ASSIGN_TOKEN) で「その場でマージ」→本番公開する
 #
 # 注意:
 #  - GitHub Actions には絵文字リアクション（👍スタンプ）を直接トリガーにするイベントが無いため、
 #    トリガーはコメントのみ。スタンプ運用が必要なら別途ポーリングが要る。
-#  - 既定の GITHUB_TOKEN による APPROVE は branch protection の必須承認にカウントされないことが
-#    あるため、書き込み権を持つ実ユーザの fine-grained PAT (COPILOT_ASSIGN_TOKEN) を使う。
+#  - マージは実ユーザの fine-grained PAT (COPILOT_ASSIGN_TOKEN) で行う。GITHUB_TOKEN による
+#    push/merge は後続ワークフロー（page_build→公開通知）を再帰防止のため発火させないため、
+#    PAT を使って「人によるマージ」として扱わせる。
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  approve:
+  approve-and-merge:
     runs-on: ubuntu-latest
     # PR へのコメントのみ対象（issue へのコメントは pull_request フィールドが無い）
     if: ${{ github.event.issue.pull_request }}
@@ -31,16 +32,17 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      checks: read
+      statuses: read
     steps:
       - name: Checkout (approver list を読むため)
         uses: actions/checkout@v4
 
-      - name: Approve & enable auto-merge if commented by an approver
+      - name: Merge if commented by an approver and CI is green
         uses: actions/github-script@v7
         with:
-          # PAT 優先。承認レビューが branch protection にカウントされるよう、書き込み権を持つ
-          # 実ユーザの fine-grained PAT を使う。未設定なら GITHUB_TOKEN にフォールバックするが、
-          # その場合 APPROVE が必須承認にカウントされず自動マージされない可能性がある。
+          # PAT 優先。マージを実ユーザ操作として扱わせ、後続の page_build→公開通知を発火させる。
+          # 未設定なら GITHUB_TOKEN にフォールバック（その場合は公開通知が飛ばない可能性あり）。
           github-token: ${{ secrets.COPILOT_ASSIGN_TOKEN || secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
@@ -77,7 +79,7 @@ jobs:
               return;
             }
 
-            // 4) PR を取得し、記事系PR（Bot=Copilot 作）か・draft でないかを確認
+            // 4) PR を取得し、記事系PR（Bot=Copilot 作）か・draft でなく open かを確認
             const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
             if (pr.user.type !== 'Bot') {
               await reply('このPRはエンジニア（人間）によるPRのため、コメント承認の対象外です。通常のレビュー・マージ手順で進めてください。');
@@ -92,31 +94,40 @@ jobs:
               return;
             }
 
-            // 5) PAT で APPROVE レビューを代理送信
-            try {
-              await github.rest.pulls.createReview({
-                owner, repo, pull_number: prNumber,
-                event: 'APPROVE',
-                body: `@${commenter} さんのコメント「${body}」に基づき承認しました。`,
-              });
-              core.info(`PR #${prNumber} を承認しました（commenter: ${commenter}）。`);
-            } catch (e) {
-              core.warning(`承認レビューの送信に失敗しました: ${e.message}`);
-              await reply(`承認の記録に失敗しました😢（${e.message}）。secrets.COPILOT_ASSIGN_TOKEN が未設定/権限不足の可能性があります。`);
+            // 5) PR head の CI を確認（プレビューデプロイ等のチェック / コミットステータス）
+            const ref = pr.head.sha;
+            const { data: checks } = await github.rest.checks.listForRef({ owner, repo, ref, per_page: 100 });
+            const { data: combined } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref });
+
+            const OK = ['success', 'neutral', 'skipped'];
+            const badRuns = checks.check_runs.filter(r => r.status === 'completed' && !OK.includes(r.conclusion));
+            const pendingRuns = checks.check_runs.filter(r => r.status !== 'completed');
+            // コミットステータスは存在する場合のみ評価（Actions のみの構成では空になる）
+            const badStatuses = combined.statuses.filter(s => s.state === 'failure' || s.state === 'error');
+            const statusPending = combined.statuses.length > 0 && combined.state === 'pending';
+
+            if (badRuns.length || badStatuses.length) {
+              const names = [...badRuns.map(r => r.name), ...badStatuses.map(s => s.context)].join(', ');
+              await reply(`CI が失敗しているためマージできません🙏（${names}）。修正後にもう一度「承認」とコメントしてください。`);
+              return;
+            }
+            if (pendingRuns.length || statusPending) {
+              const names = pendingRuns.map(r => r.name).join(', ') || 'CI';
+              await reply(`CI（${names}）が実行中です⏳ 完了後にもう一度「承認」とコメントしてください。`);
               return;
             }
 
-            // 6) auto-merge を有効化（auto-merge-copilot.yml で既に有効でも冪等に再試行）
+            // 6) その場でマージ → 本番公開
             try {
-              await github.graphql(`
-                mutation($id: ID!) {
-                  enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: MERGE }) {
-                    pullRequest { number }
-                  }
-                }`, { id: pr.node_id });
-              core.info('auto-merge を有効化しました。');
+              await github.rest.pulls.merge({
+                owner, repo, pull_number: prNumber,
+                merge_method: 'merge',
+                commit_title: `${pr.title} (#${prNumber})`,
+                commit_message: `@${commenter} さんのコメント「${body}」に基づきマージしました。`,
+              });
+              core.info(`PR #${prNumber} をマージしました（commenter: ${commenter}）。`);
+              await reply('✅ 承認を受け付け、マージしました！ まもなく本番に公開されます🚀');
             } catch (e) {
-              core.warning(`auto-merge の有効化はスキップ/失敗: ${e.message}`);
+              core.warning(`マージに失敗しました: ${e.message}`);
+              await reply(`マージに失敗しました😢（${e.message}）。コンフリクトの解消が必要か、secrets.COPILOT_ASSIGN_TOKEN の権限不足の可能性があります。`);
             }
-
-            await reply('✅ 承認を受け付けました！ CI（プレビューデプロイ等）の通過後に自動でマージ→本番公開されます🚀');
