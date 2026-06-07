@@ -1,0 +1,15 @@
+{
+  "description": "記事PR（Copilot=Bot作）を GitHub のコメントで承認・自動マージできる人の一覧。ここに GitHub ログインを追記すれば承認権限が増える。approve-by-comment.yml が参照する。",
+  "approvers": [
+    "car-hina",
+    "Jellyfish314"
+  ],
+  "triggerPhrases": [
+    "承認",
+    "承認する",
+    "approve",
+    "/approve",
+    "lgtm",
+    "✅"
+  ]
+}
