@@ -1,0 +1,122 @@
+name: Approve article PR by comment
+
+# 記事系PR（Copilot=Bot 作）を、PR への「コメント」で承認・自動マージできるようにする。
+#
+# 背景: 非エンジニア（Hina さん等）に GitHub の「Approve（レビュー承認）」ボタンを押させるのは
+# UI 的にハードルが高い。そこで、PR にひとこと（例:「承認」）コメントするだけで承認扱いにする。
+# 承認できる人の GitHub ログインは .github/article-approvers.json の `approvers` 配列で管理し、
+# 増える場合はそこに追記するだけでよい（このワークフローは触らない）。
+#
+# 仕組み:
+#  1. allowlist のユーザが triggerPhrases のいずれかをコメントしたら
+#  2. PR 作者が Bot(Copilot) = 記事系PR であることを確認し
+#  3. PAT(COPILOT_ASSIGN_TOKEN) で APPROVE レビューを代理送信 + auto-merge を有効化する
+#  4. branch protection の「1承認必須」が満たされ、CI 通過後に自動マージ→本番公開
+#
+# 注意:
+#  - GitHub Actions には絵文字リアクション（👍スタンプ）を直接トリガーにするイベントが無いため、
+#    トリガーはコメントのみ。スタンプ運用が必要なら別途ポーリングが要る。
+#  - 既定の GITHUB_TOKEN による APPROVE は branch protection の必須承認にカウントされないことが
+#    あるため、書き込み権を持つ実ユーザの fine-grained PAT (COPILOT_ASSIGN_TOKEN) を使う。
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    # PR へのコメントのみ対象（issue へのコメントは pull_request フィールドが無い）
+    if: ${{ github.event.issue.pull_request }}
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Checkout (approver list を読むため)
+        uses: actions/checkout@v4
+
+      - name: Approve & enable auto-merge if commented by an approver
+        uses: actions/github-script@v7
+        with:
+          # PAT 優先。承認レビューが branch protection にカウントされるよう、書き込み権を持つ
+          # 実ユーザの fine-grained PAT を使う。未設定なら GITHUB_TOKEN にフォールバックするが、
+          # その場合 APPROVE が必須承認にカウントされず自動マージされない可能性がある。
+          github-token: ${{ secrets.COPILOT_ASSIGN_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const { owner, repo } = context.repo;
+            const comment = context.payload.comment;
+            const prNumber = context.payload.issue.number;
+            const commenter = comment.user.login;
+
+            // 1) approver list / トリガー語を読み込む
+            const cfg = JSON.parse(fs.readFileSync('.github/article-approvers.json', 'utf8'));
+            const approvers = (cfg.approvers ?? []).map(s => s.toLowerCase());
+            const phrases = (cfg.triggerPhrases ?? []).map(s => s.toLowerCase());
+
+            // 2) コメントが承認トリガーか判定（コメント全体がトリガー語、または /approve 始まり）
+            //    末尾の記号・空白は無視して照合を緩める（「承認！」≈「承認」、「了解です。」≈「了解です」）。
+            //    絵文字単体（👍 等）もトリガーにしたいので、絵文字は落とさず句読点系のみ除去する。
+            const body = (comment.body ?? '').trim();
+            const norm = body.toLowerCase().replace(/[\s!！。.、，,；;：:～~…\-]+$/u, '');
+            const isTrigger = phrases.some(p => norm === p) || norm.startsWith('/approve');
+            if (!isTrigger) {
+              core.info('承認トリガーではないコメントのためスキップします。');
+              return;
+            }
+
+            // 以降は明確に承認操作なので、結果をコメントで通知する
+            const reply = (text) => github.rest.issues.createComment({
+              owner, repo, issue_number: prNumber, body: text,
+            });
+
+            // 3) コメント主が allowlist に居るか
+            if (!approvers.includes(commenter.toLowerCase())) {
+              core.warning(`${commenter} は承認権限リストにありません。`);
+              await reply(`@${commenter} さんは承認権限リストに登録されていません🙏 承認権限が必要な場合は管理者に連絡してください（権限は \`.github/article-approvers.json\` で管理しています）。`);
+              return;
+            }
+
+            // 4) PR を取得し、記事系PR（Bot=Copilot 作）か・draft でないかを確認
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
+            if (pr.user.type !== 'Bot') {
+              await reply('このPRはエンジニア（人間）によるPRのため、コメント承認の対象外です。通常のレビュー・マージ手順で進めてください。');
+              return;
+            }
+            if (pr.draft) {
+              await reply('まだ下書き（draft）のPRです。「Ready for review」にしてから承認してください。');
+              return;
+            }
+            if (pr.state !== 'open') {
+              core.info('PR は既にクローズ済みのためスキップします。');
+              return;
+            }
+
+            // 5) PAT で APPROVE レビューを代理送信
+            try {
+              await github.rest.pulls.createReview({
+                owner, repo, pull_number: prNumber,
+                event: 'APPROVE',
+                body: `@${commenter} さんのコメント「${body}」に基づき承認しました。`,
+              });
+              core.info(`PR #${prNumber} を承認しました（commenter: ${commenter}）。`);
+            } catch (e) {
+              core.warning(`承認レビューの送信に失敗しました: ${e.message}`);
+              await reply(`承認の記録に失敗しました😢（${e.message}）。secrets.COPILOT_ASSIGN_TOKEN が未設定/権限不足の可能性があります。`);
+              return;
+            }
+
+            // 6) auto-merge を有効化（auto-merge-copilot.yml で既に有効でも冪等に再試行）
+            try {
+              await github.graphql(`
+                mutation($id: ID!) {
+                  enablePullRequestAutoMerge(input: { pullRequestId: $id, mergeMethod: MERGE }) {
+                    pullRequest { number }
+                  }
+                }`, { id: pr.node_id });
+              core.info('auto-merge を有効化しました。');
+            } catch (e) {
+              core.warning(`auto-merge の有効化はスキップ/失敗: ${e.message}`);
+            }
+
+            await reply('✅ 承認を受け付けました！ CI（プレビューデプロイ等）の通過後に自動でマージ→本番公開されます🚀');
