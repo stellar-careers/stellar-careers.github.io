@@ -1,5 +1,11 @@
 name: Notify Slack on Pages Deploy
 
+# 本番（GitHub Pages）デプロイ完了時に Slack 通知する。
+# ただし通知するのは Copilot（Bot）が作成した記事系 PR のリリースのみ。
+# エンジニア（人間）のPRマージや main への直 push では通知しない。
+#
+# 判定: page_build のビルド対象コミットに紐づく PR を引き、その作者が Bot かで判断する
+# （issue ラベルは PR に自動伝播しないため、preview 通知と同じ「PR作者=Bot」信号を使う）。
 on:
   page_build:
 
@@ -7,32 +13,44 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     if: github.event.build.status == 'built'
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 20
-      - name: Get latest non-merge commit message
-        id: commit
-        run: echo "message=$(git log --no-merges --format=%s -1)" >> "$GITHUB_OUTPUT"
-      - name: Notify Slack
+      - name: Notify Slack for article release
         uses: actions/github-script@v7
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_TOKEN }}
-          # コミットメッセージ（準信頼入力）はペイロード文字列に直接展開せず、env 経由で
-          # JS 変数として安全に扱う（YAML 破壊・ペイロード注入の回避）。
-          COMMIT_MSG: ${{ steps.commit.outputs.message }}
         with:
           script: |
             const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            const msg = process.env.COMMIT_MSG || '';
+            const { owner, repo } = context.repo;
             const site = 'https://stellar-careers.com/';
 
-            const text = `🚀 ホームページを更新しました：${msg}`;
+            // 1) ビルド対象コミット（= main の最新コミット / 記事PRのマージコミット）に紐づくPRを引く
+            const sha = context.payload.build && context.payload.build.commit;
+            if (!sha) {
+              core.info('ビルドコミットが取得できないため通知をスキップ。');
+              return;
+            }
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner, repo, commit_sha: sha,
+            });
+
+            // 2) 記事系PR（Copilot=Bot 作）のみ通知。人間のPRや直push（PR無し）はスキップ。
+            const pr = prs.find(p => p.user && p.user.type === 'Bot');
+            if (!pr) {
+              core.info('記事(Copilot)PR のリリースではないため通知をスキップ（エンジニアPR / 直push）。');
+              return;
+            }
+
+            // 3) Slack 通知（Block Kit）
+            const text = `🚀 記事を公開しました：${pr.title}`;
             const blocks = [
-              { type: 'header', text: { type: 'plain_text', text: '🚀 本番サイトを更新しました', emoji: true } },
-              { type: 'section', text: { type: 'mrkdwn', text: `*直近の変更*\n${esc(msg)}` } },
+              { type: 'header', text: { type: 'plain_text', text: '🚀 記事を公開しました', emoji: true } },
+              { type: 'section', text: { type: 'mrkdwn', text: `*${esc(pr.title)}*` } },
               { type: 'context', elements: [
-                { type: 'mrkdwn', text: '✅ 公開が完了しました。ご対応ありがとうございました！ ;)' },
+                { type: 'mrkdwn', text: `✅ 本番サイトに反映されました。ご対応ありがとうございました！ ;)（<${pr.html_url}|PR #${pr.number}>）` },
               ]},
               { type: 'actions', elements: [
                 { type: 'button', text: { type: 'plain_text', text: '🌐 サイトを見る', emoji: true }, url: site, style: 'primary' },
