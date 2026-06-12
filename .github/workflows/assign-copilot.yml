@@ -61,7 +61,7 @@ jobs:
                 node(id: $id) {
                   ... on Issue {
                     assignedActors(first: 20) {
-                      nodes { login ... on User { id } ... on Bot { id } }
+                      nodes { ... on User { id login } ... on Bot { id login } }
                     }
                   }
                 }
