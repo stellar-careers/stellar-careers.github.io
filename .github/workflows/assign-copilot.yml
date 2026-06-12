@@ -14,14 +14,17 @@ name: Auto-assign Copilot to Article Issues
 # 未設定の場合は GITHUB_TOKEN にフォールバックするが、その場合アサインはスキップされる。
 on:
   issues:
-    types: [opened, labeled]
+    types: [labeled]
 
 jobs:
   assign:
     runs-on: ubuntu-latest
+    # notify-issue.yml と同じ理由で labeled のみをトリガーとする
+    # （テンプレ起票時の opened + labeled 二重発火防止、Issue #69 参照）。
+    # replaceActorsForAssignable は冪等だが、無駄な二重 run を抑えるため同一修正を適用。
     if: >-
-      contains(github.event.issue.labels.*.name, 'insight記事') ||
-      contains(github.event.issue.labels.*.name, 'blog')
+      github.event.label.name == 'insight記事' ||
+      github.event.label.name == 'blog'
     permissions:
       issues: write
     steps:
