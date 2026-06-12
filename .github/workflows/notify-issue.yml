@@ -4,17 +4,19 @@ name: Notify Slack on Article Issue
 # エンジニア向けの Issue は通知しない（ラベルで絞り込み）。
 on:
   issues:
-    types: [opened, labeled]
+    types: [labeled]
 
 jobs:
   notify:
     runs-on: ubuntu-latest
-    # 記事ラベルが付いている Issue のみ通知。
-    # labeled イベントでも発火するので、テンプレでラベルが付かず後から手動で
-    # 付けた場合もカバーできる。
+    # 今回追加されたラベルが記事ラベルの場合のみ通知する。
+    # issue.labels 全体ではなく event.label（今回追加されたラベル単体）を見ることで、
+    # テンプレート起票時に opened + labeled が同時発火しても通知が1回に抑えられる
+    # （opened を外した理由。二重通知の経緯は Issue #69 参照）。
+    # ラベル無しで起票し後から手動付与する経路も labeled で1回通知される。
     if: >-
-      contains(github.event.issue.labels.*.name, 'insight記事') ||
-      contains(github.event.issue.labels.*.name, 'blog')
+      github.event.label.name == 'insight記事' ||
+      github.event.label.name == 'blog'
     steps:
       # Issue タイトルなどの信頼できない入力を ${{ }} で展開すると YAML が壊れたり
       # ペイロード注入される恐れがあるため、context.payload から JS 変数として安全に扱う。
