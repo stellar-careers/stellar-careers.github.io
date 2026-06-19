@@ -99,9 +99,22 @@ jobs:
             const { data: checks } = await github.rest.checks.listForRef({ owner, repo, ref, per_page: 100 });
             const { data: combined } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref });
 
+            // 同一 SHA に同名のチェックランが複数ぶら下がることがある（preview.yml の
+            // concurrency: cancel-in-progress により、打ち切られた古いランが cancelled として
+            // 残るため）。古い残骸を失敗扱いしないよう、チェック名ごとに「最新の1件」だけを
+            // 評価対象にする。最新判定は started_at（実行中/queued のランも持つ）で行い、
+            // 同時刻は check run id（新しいほど大きい）でタイブレークする。
+            const recency = (r) => `${r.started_at ?? ''}#${String(r.id).padStart(20, '0')}`;
+            const latestByName = new Map();
+            for (const r of checks.check_runs) {
+              const cur = latestByName.get(r.name);
+              if (!cur || recency(r) > recency(cur)) latestByName.set(r.name, r);
+            }
+            const runs = [...latestByName.values()];
+
             const OK = ['success', 'neutral', 'skipped'];
-            const badRuns = checks.check_runs.filter(r => r.status === 'completed' && !OK.includes(r.conclusion));
-            const pendingRuns = checks.check_runs.filter(r => r.status !== 'completed');
+            const badRuns = runs.filter(r => r.status === 'completed' && !OK.includes(r.conclusion));
+            const pendingRuns = runs.filter(r => r.status !== 'completed');
             // コミットステータスは存在する場合のみ評価（Actions のみの構成では空になる）
             const badStatuses = combined.statuses.filter(s => s.state === 'failure' || s.state === 'error');
             const statusPending = combined.statuses.length > 0 && combined.state === 'pending';
