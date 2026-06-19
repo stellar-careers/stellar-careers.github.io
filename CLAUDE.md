@@ -169,7 +169,7 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 ### insight/{id}
 - 30+ article pages at depth 2
 - Article IDs can start with `-` (e.g., `-ilnF14x`)
-- `robots: noindex, nofollow` on article pages
+- `robots: all` on article pages (indexable in production; preview deploy injects `noindex, nofollow` via `.github/workflows/preview.yml`)
 - "Go back to Insight" link uses relative path `../../insight`
 
 ### insight-case, insight-interview, insight-work
