@@ -1,0 +1,126 @@
+name: Finalize Copilot article PR
+
+# Copilot coding agent が作る記事系PR（draft）を「完了」シグナルで最終化する。
+#
+# 背景: Copilot は
+#   1. Issue から作業を始めると、まず draft の WIP PR を作る。このとき本文に
+#      `Closes #<Issue>` を入れることが多く、Issue とのクローズリンクが張られる。
+#   2. 作業完了時に **本文を丸ごと書き換える**ため、`Closes #<Issue>` が消える
+#      （PR #79 で顕在化。マージしても Issue が自動クローズされず OPEN のまま残る）。
+#   3. 完了しても draft のまま残す（Ready for review にしない）ため、コメント承認
+#      フロー（approve-by-comment.yml）が「まだ draft」と判定してマージできない。
+#
+# このワークフローは Copilot の完了シグナル（review_requested）を捉えて:
+#   - 消えた `Closes #<Issue>` を本文1行目へ書き戻す（番号は WIP 時にマーカーへ退避）
+#   - draft を Ready for review に解除する
+# これにより「承認者が『承認』→ approve-by-comment がマージ→ Issue 自動クローズ」
+# まで一気通貫する。
+#
+# 注意:
+#  - `copilot_work_finished` は webhook トリガーに無いため、Copilot が完了時に出す
+#    `review_requested` を完了シグナルとして使う（人が後からレビュー依頼しても冪等）。
+#  - GitHub には「クローズリンクを直接張るAPI」が無く、本文 or コミットのクロージング
+#    キーワード経由でしか作れない。よって Copilot の最終書き換えの後に本文へ書き戻す。
+#  - PR 側には外向きのクロスリファレンスが機械リンクとして残らない（cross-reference は
+#    参照された Issue 側のタイムラインにしか出ない）。そのため対象 Issue番号は WIP 本文
+#    から拾って「非表示マーカーコメント」に退避し、完了時に回収する。
+#  - Ready 化は GITHUB_TOKEN で行う。GITHUB_TOKEN 起因のイベントは他ワークフローを
+#    再発火させない（=ループしない / preview.yml も再発火しない）が、preview は Copilot
+#    のコミット(synchronize)時に draft でもデプロイ済みのため CI は緑のまま＝実害なし。
+#  - 信頼できない入力（PR本文/タイトル）は ${{ }} 展開せず github-script 内の JS 変数
+#    として扱う（ペイロード注入回避。memory / 他ワークフローと同方針）。
+on:
+  pull_request:
+    types: [opened, review_requested, ready_for_review]
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    # 記事系PR（作者が Bot=Copilot）のみ対象。エンジニア(User)のPRは触らない。
+    # （記事PRとエンジニアPRの判別は作者の user.type が最も確実＝既存方針に整合）
+    if: ${{ github.event.pull_request.user.type == 'Bot' }}
+    permissions:
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Ensure Closes #N and mark ready for review
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const action = context.payload.action;
+            const pr = context.payload.pull_request;
+            const num = pr.number;
+            // 退避用マーカー（GitHub UI 上は空表示になる HTML コメント）
+            const MARK = '<!-- copilot-pr-finalize:';
+            // クロージングキーワード（close/closes/closed, fix/fixes/fixed, resolve/...）
+            const KW = /\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)/i;
+
+            // --- opened: WIP本文から Issue番号を取り出してマーカーへ退避 ---
+            // Copilot は完了時に本文を全置換するため、番号が消える前にここで保存する。
+            if (action === 'opened') {
+              const body = pr.body || '';
+              const m = body.match(KW) || body.match(/#(\d+)/);
+              if (!m) { core.info('WIP本文に Issue 参照が無いためマーカーは作らない。'); return; }
+              const { data: comments } = await github.rest.issues.listComments({
+                owner, repo, issue_number: num, per_page: 100,
+              });
+              if (comments.some(c => (c.body || '').includes(MARK))) {
+                core.info('マーカーは既に存在。'); return;
+              }
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: num, body: `${MARK} closes=#${m[1]} -->`,
+              });
+              core.info(`マーカー作成: closes #${m[1]}`);
+              return;
+            }
+
+            // --- review_requested / ready_for_review: 最終化 ---
+            // 1) 対象 Issue番号を決める（優先順位: 既存リンク > 現本文 > マーカー）
+            const q = await github.graphql(
+              `query($o:String!,$r:String!,$n:Int!){
+                 repository(owner:$o,name:$r){
+                   pullRequest(number:$n){ closingIssuesReferences(first:1){ nodes{ number } } }
+                 }
+               }`, { o: owner, r: repo, n: num });
+            const linked = q.repository.pullRequest.closingIssuesReferences.nodes[0]?.number ?? null;
+
+            const body = pr.body || '';
+            const bm = body.match(KW);
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: num, per_page: 100,
+            });
+            const marker = comments.find(c => (c.body || '').includes(MARK));
+            const markIssue = marker ? (marker.body.match(/closes=#(\d+)/) || [])[1] : null;
+
+            const issue = linked ?? (bm ? bm[1] : null) ?? markIssue ?? null;
+
+            // 2) 本文1行目に Closes #N を書き戻す（既にリンク済みなら触らない＝冪等）
+            if (issue && !linked) {
+              const stripped = body.replace(/^\s*(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#\d+\s*\r?\n?/i, '');
+              const newBody = `Closes #${issue}\n\n${stripped.replace(/^\s+/, '')}`;
+              await github.rest.pulls.update({ owner, repo, pull_number: num, body: newBody });
+              core.info(`本文1行目に Closes #${issue} を付与。`);
+            } else if (linked) {
+              core.info(`既に #${linked} とリンク済み。本文は編集しない。`);
+            } else {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: num,
+                body: '⚠️ 対象 Issue を特定できず `Closes #N` を自動付与できませんでした。お手数ですが本文1行目に手動で追記してください。',
+              });
+              core.warning('Issue番号を特定できなかった。');
+            }
+
+            // 3) draft なら Ready for review に解除
+            if (pr.draft) {
+              await github.graphql(
+                `mutation($id:ID!){ markPullRequestReadyForReview(input:{pullRequestId:$id}){ pullRequest{ number } } }`,
+                { id: pr.node_id });
+              core.info('Ready for review に変更。');
+            }
+
+            // 4) マーカーを掃除（残骸を残さない）
+            if (marker) {
+              await github.rest.issues.deleteComment({ owner, repo, comment_id: marker.id });
+            }
