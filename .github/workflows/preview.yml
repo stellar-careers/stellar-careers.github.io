@@ -14,11 +14,8 @@ concurrency:
 
 jobs:
   deploy-preview:
-    # Skip: closed PRs, and newly opened draft PRs (e.g. GitHub Copilot creates draft first)
-    # Deploy on: synchronize (new commits), reopened, ready_for_review, and non-draft opened
-    if: >-
-      github.event.action != 'closed' &&
-      !(github.event.action == 'opened' && github.event.pull_request.draft)
+    # Skip: closed PRs only. Deploy on all other events including draft PRs.
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
