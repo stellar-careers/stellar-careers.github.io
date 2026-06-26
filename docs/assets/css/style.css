@@ -1034,10 +1034,12 @@ a.text {
   justify-content: center;
   margin: 0 0 0 0;
   padding: 16px 0px;
-  position: relative;
+  position: sticky;
+  top: 0;
   width: 100%;
-  z-index: 2;
+  z-index: 100;
   max-width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .header-inner {
@@ -1164,12 +1166,12 @@ a.text {
 .header-cta-primary-btn {
   align-content: center;
   align-items: center;
-  background: #222222ff;
-  border-bottom: 1px solid #222222ff #e66262ff;
-  border-left: 1px solid #222222ff #e66262ff;
-  border-radius: 0;
-  border-right: 1px solid #222222ff #e66262ff;
-  border-top: 1px solid #222222ff #e66262ff;
+  background: #4400ff;
+  border-bottom: 1px solid #4400ff;
+  border-left: 1px solid #4400ff;
+  border-radius: 6px;
+  border-right: 1px solid #4400ff;
+  border-top: 1px solid #4400ff;
   flex: none;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -1181,6 +1183,7 @@ a.text {
   --gh-6: 10px;
   --gv-6: 0px;
   max-width: 100%;
+  transition: background 0.2s, opacity 0.2s;
 }
 
 .header-cta-primary-text {
@@ -1218,27 +1221,28 @@ a.text {
 .header-cta-secondary-btn {
   align-content: center;
   align-items: center;
-  background: #222222ff;
-  border-bottom: 1px solid #222222ff #e66262ff;
-  border-left: 1px solid #222222ff #e66262ff;
-  border-radius: 0;
-  border-right: 1px solid #222222ff #e66262ff;
-  border-top: 1px solid #222222ff #e66262ff;
+  background: #ffffff;
+  border-bottom: 2px solid #4400ff;
+  border-left: 2px solid #4400ff;
+  border-radius: 6px;
+  border-right: 2px solid #4400ff;
+  border-top: 2px solid #4400ff;
   flex: none;
   flex-direction: row;
   flex-wrap: nowrap;
   gap: 10px;
   height: auto;
   justify-content: center;
-  padding: 8px 14px;
+  padding: 6px 13px;
   width: auto;
   --gh-8: 10px;
   --gv-8: 0px;
   max-width: 100%;
+  transition: background 0.2s, color 0.2s;
 }
 
 .header-cta-secondary-text {
-  color: #ffffffff;
+  color: #4400ff;
   flex: none;
   font-family: var(--s-font-d380383b);
   font-feature-settings: 'palt' 1;
@@ -12763,15 +12767,21 @@ a.text {
 }
 
 .header-cta-primary-btn:hover {
-  opacity: 0.9;
+  background: #3300cc;
+  opacity: 1;
   --gh-6: 10px;
   --gv-6: 0px;
 }
 
 .header-cta-secondary-btn:hover {
-  opacity: 0.9;
+  background: #4400ff;
+  opacity: 1;
   --gh-8: 10px;
   --gv-8: 0px;
+}
+
+.header-cta-secondary-btn:hover .header-cta-secondary-text {
+  color: #ffffff;
 }
 
 .header-hamburger:hover {
