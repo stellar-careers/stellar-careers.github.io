@@ -1378,10 +1378,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 36px;
-  width: calc(33.33% - (var(--gh-12) * 0.6667));
+  width: calc(50% - (var(--gh-12) * 0.5));
   --gh-13: 0px;
   --gv-13: 11px;
-  max-width: calc(33.33% - (var(--gh-12) * 0.6667));
+  max-width: calc(50% - (var(--gh-12) * 0.5));
 }
 
 .team-card-info-1 {
@@ -1442,6 +1442,114 @@ a.text {
   justify-content: flex-start;
 }
 
+/* チームカード：2カラムレイアウト（左：写真+名前+役職+学歴、右：バイオ） */
+.team-card-1, .team-card-2, .team-card-3,
+.team-card-4, .team-card-5, .team-card-6 {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 24px !important;
+  padding: 28px !important;
+}
+
+.team-card-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: flex-start;
+  flex-shrink: 0;
+  width: 220px;
+  gap: 8px;
+  text-align: center;
+}
+
+.team-card-left [class*="team-card-photo"] {
+  border-radius: 50%;
+  height: 200px !important;
+  width: 200px !important;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* background-image型（card-1）の写真サイズ上書き */
+.team-card-left .team-card-photo-1 {
+  height: 200px !important;
+  width: 200px !important;
+  min-height: 200px;
+  min-width: 200px;
+}
+
+.team-card-left-name {
+  color: #222222;
+  font-family: var(--s-font-369aeb64);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.team-card-left-role {
+  color: #555555;
+  font-family: var(--s-font-369aeb64);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.team-card-left-edu {
+  color: #444444;
+  font-family: var(--s-font-369aeb64);
+  font-size: 12px;
+  line-height: 1.6;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.team-card-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* storiesカードの縦を詰める */
+.stories-card-1, .stories-card-2, .stories-card-3, .stories-card-4,
+.stories-card-5, .stories-card-6, .stories-card-7, .stories-card-8 {
+  gap: 20px;
+  padding: 16px;
+}
+
+.team-ceo-message-btn {
+  align-items: center;
+  align-self: center;
+  background: #1a3a5c;
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 10px 20px;
+  text-decoration: none;
+  width: auto;
+}
+
+.team-ceo-message-text {
+  color: #ffffff;
+  font-family: var(--s-font-d380383b);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.team-ceo-message-icon {
+  color: #ffffff;
+  font-size: 18px;
+}
+
 .team-card-photo-wrap-1 {
   align-content: center;
   align-items: center;
@@ -1477,10 +1585,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 36px;
-  width: calc(33.33% - (var(--gh-12) * 0.6667));
+  width: calc(50% - (var(--gh-12) * 0.5));
   --gh-16: 0px;
   --gv-16: 11px;
-  max-width: calc(33.33% - (var(--gh-12) * 0.6667));
+  max-width: calc(50% - (var(--gh-12) * 0.5));
 }
 
 .team-card-info-2 {
@@ -1577,10 +1685,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 36px;
-  width: calc(33.33% - (var(--gh-12) * 0.6667));
+  width: calc(50% - (var(--gh-12) * 0.5));
   --gh-19: 0px;
   --gv-19: 11px;
-  max-width: calc(33.33% - (var(--gh-12) * 0.6667));
+  max-width: calc(50% - (var(--gh-12) * 0.5));
 }
 
 .team-card-info-3 {
@@ -1677,10 +1785,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 36px;
-  width: calc(33.33% - (var(--gh-12) * 0.6667));
+  width: calc(50% - (var(--gh-12) * 0.5));
   --gh-22: 0px;
   --gv-22: 11px;
-  max-width: calc(33.33% - (var(--gh-12) * 0.6667));
+  max-width: calc(50% - (var(--gh-12) * 0.5));
 }
 
 .team-card-info-4 {
@@ -1777,10 +1885,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 36px;
-  width: calc(33.33% - (var(--gh-12) * 0.6667));
+  width: calc(50% - (var(--gh-12) * 0.5));
   --gh-25: 0px;
   --gv-25: 11px;
-  max-width: calc(33.33% - (var(--gh-12) * 0.6667));
+  max-width: calc(50% - (var(--gh-12) * 0.5));
 }
 
 .team-card-info-5 {
@@ -1877,10 +1985,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 36px;
-  width: calc(33.33% - (var(--gh-12) * 0.6667));
+  width: calc(50% - (var(--gh-12) * 0.5));
   --gh-28: 0px;
   --gv-28: 11px;
-  max-width: calc(33.33% - (var(--gh-12) * 0.6667));
+  max-width: calc(50% - (var(--gh-12) * 0.5));
 }
 
 .team-card-info-6 {
@@ -2854,10 +2962,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-49: 0px;
   --gv-49: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-1-top {
@@ -2999,10 +3107,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-53: 0px;
   --gv-53: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-2-top {
@@ -3144,10 +3252,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-57: 0px;
   --gv-57: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-3-top {
@@ -3289,10 +3397,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-61: 0px;
   --gv-61: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-4-top {
@@ -3434,10 +3542,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-65: 0px;
   --gv-65: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-5-top {
@@ -3579,10 +3687,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-69: 0px;
   --gv-69: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-6-top {
@@ -3724,10 +3832,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-73: 0px;
   --gv-73: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-7-top {
@@ -3869,10 +3977,10 @@ a.text {
   height: auto;
   justify-content: flex-start;
   padding: 20px;
-  width: calc(32% - (var(--gh-48) * 0.68));
+  width: calc(44% - (var(--gh-48) * 0.56));
   --gh-77: 0px;
   --gv-77: 40px;
-  max-width: calc(32% - (var(--gh-48) * 0.68));
+  max-width: calc(44% - (var(--gh-48) * 0.56));
 }
 
 .stories-card-8-top {
