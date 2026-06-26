@@ -1513,6 +1513,33 @@ a.text {
   min-width: 0;
 }
 
+/* チームカード：モバイルは縦並びに戻す */
+@media (max-width: 540px) {
+  .team-card-1, .team-card-2, .team-card-3,
+  .team-card-4, .team-card-5, .team-card-6 {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 20px !important;
+  }
+  .team-card-left {
+    width: 100%;
+    align-self: center;
+  }
+  .team-card-left [class*="team-card-photo"] {
+    height: 140px !important;
+    width: 140px !important;
+  }
+  .team-card-left .team-card-photo-1 {
+    height: 140px !important;
+    width: 140px !important;
+    min-height: 140px;
+    min-width: 140px;
+  }
+  .team-card-right {
+    width: 100%;
+  }
+}
+
 /* storiesカードの縦を詰める */
 .stories-card-1, .stories-card-2, .stories-card-3, .stories-card-4,
 .stories-card-5, .stories-card-6, .stories-card-7, .stories-card-8 {
@@ -20276,5 +20303,252 @@ a.text {
   .coach-logo-item,
   .coach-tab-btn {
     transition: none;
+  }
+}
+
+/* What we offer / キャリア支援のながれ */
+.career-flow-section {
+  width: 100%;
+  background: #f0f4f8;
+  padding: 56px 24px;
+}
+
+.career-flow-inner {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.career-flow-en-title {
+  font-family: 'Times New Roman';
+  font-size: 40px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  text-align: center;
+  font-feature-settings: 'palt' 1;
+}
+
+.career-flow-ja-title {
+  font-family: Lato, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.career-flow-lead {
+  font-size: 15px;
+  color: #444;
+  text-align: center;
+  line-height: 1.85;
+  margin-bottom: 16px;
+}
+
+.career-flow-table {
+  width: 100%;
+  gap: 0;
+  align-items: stretch;
+}
+
+.career-flow-header {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.career-flow-header-step {
+  width: 148px;
+  flex-shrink: 0;
+}
+
+.career-flow-header-stellar {
+  flex: 2;
+  font-family: 'Times New Roman';
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a3a5c;
+  text-align: center;
+  border-bottom: 2px solid #1a3a5c;
+  padding-bottom: 8px;
+}
+
+.career-flow-header-others {
+  flex: 1;
+  font-family: 'Times New Roman';
+  font-size: 17px;
+  font-weight: 700;
+  color: #888;
+  text-align: center;
+  border-bottom: 2px solid #bbb;
+  padding-bottom: 8px;
+}
+
+.career-flow-row {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+  align-items: stretch;
+  margin-bottom: 6px;
+}
+
+.career-flow-step {
+  width: 148px;
+  flex-shrink: 0;
+  background: #1a3a5c;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px 14px 12px;
+  min-height: 64px;
+}
+
+.career-flow-step-label {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.career-flow-stellar {
+  flex: 2;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.8;
+  border-radius: 6px;
+  background: #1a3a5c;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.career-flow-others {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.8;
+  border-radius: 6px;
+  background: #e4e8ed;
+  color: #666;
+}
+
+.career-flow-footnote {
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  width: 100%;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+@media (max-width: 840px) {
+  .career-flow-en-title {
+    font-size: 28px;
+  }
+  .career-flow-step {
+    width: 108px;
+  }
+  .career-flow-step-label {
+    font-size: 11px;
+  }
+  .career-flow-stellar,
+  .career-flow-others {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 540px) {
+  .career-flow-header {
+    display: none;
+  }
+  .career-flow-row {
+    flex-flow: column nowrap;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+  .career-flow-step {
+    width: 100%;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), 50% 100%, 0 calc(100% - 12px));
+    min-height: 44px;
+    padding: 12px 12px 22px;
+  }
+  .career-flow-stellar::before {
+    content: 'Stellar careers ';
+    font-weight: 700;
+    color: #5baee8;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .career-flow-others::before {
+    content: '他社 ';
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .career-flow-stellar,
+  .career-flow-others {
+    border-radius: 4px;
+  }
+}
+
+/* Insight グリッド (3×2) */
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.insight-grid-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.22s, transform 0.22s;
+}
+
+.insight-grid-card:hover {
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.insight-grid-img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.insight-grid-caption {
+  padding: 12px 14px 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #333;
+  flex: 1;
+}
+
+@media (max-width: 840px) {
+  .insight-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 540px) {
+  .insight-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 }
