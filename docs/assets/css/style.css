@@ -15602,8 +15602,17 @@ a.text {
 
   .hero-video {
     flex: none;
-    width: 250%;
-    max-width: 250%;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .hero-video-wrap {
+    aspect-ratio: 16 / 9;
+  }
+
+  .hero-video-text {
+    width: 90%;
+    padding: 20px 16px;
   }
 
   .hero-section {
