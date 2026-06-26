@@ -2526,6 +2526,216 @@ a.text {
   }
 }
 
+/* Our track record section */
+.track-record-section {
+  width: 100%;
+  background: #f8f8f8;
+  padding: 64px 24px;
+}
+
+.track-record-inner {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.track-record-en-title {
+  font-family: 'Times New Roman', serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.02em;
+}
+
+.track-record-ja-title {
+  font-family: Lato, sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.08em;
+  margin-bottom: 40px;
+}
+
+.track-record-body {
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: stretch;
+  justify-content: center;
+}
+
+/* A: トップファーム — value-prop-cardと同じ背景・配色 */
+.track-record-top {
+  flex: 1 1 480px;
+  background: #1a3a5c;
+  border-radius: 14px;
+  padding: 40px 36px;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.track-record-top::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #5baee8, #a8d8ff);
+}
+
+.track-record-lead {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.6;
+}
+
+.track-record-accent {
+  color: #fff;
+}
+
+.track-record-firms {
+  width: 100%;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.track-record-firm-item {
+  flex-direction: row;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  padding-bottom: 14px;
+  width: 100%;
+}
+
+.track-record-firm-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.track-record-firm-name {
+  font-size: 44px;
+  font-weight: 700;
+  color: #fff;
+  flex: 1 1 auto;
+  line-height: 1;
+}
+
+.track-record-firm-count {
+  font-size: 44px;
+  font-weight: 700;
+  color: #5baee8;
+  line-height: 1;
+}
+
+.track-record-firm-unit {
+  font-size: 20px;
+  font-weight: 700;
+  color: #5baee8;
+}
+
+.track-record-firm-subnote {
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  width: 100%;
+  flex: 0 0 100%;
+  margin-top: -4px;
+}
+
+/* B: その他企業 */
+.track-record-others {
+  flex: 1 1 380px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 40px 36px;
+  align-items: flex-start;
+  gap: 20px;
+  border: 1px solid #e8e8e8;
+}
+
+.track-record-others-lead {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  line-height: 1.7;
+  border-left: 3px solid #1a3a5c;
+  padding-left: 12px;
+}
+
+.track-record-others-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(9, auto);
+  grid-auto-flow: column;
+  gap: 10px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+.track-record-others-list li {
+  font-size: 17px;
+  color: #444;
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.track-record-others-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: #aaa;
+  font-weight: 700;
+}
+
+/* 両パネル下の共通注釈（パネル外） */
+.track-record-bottom-note {
+  font-size: 14px;
+  color: #222;
+  line-height: 1.6;
+  margin-top: 8px;
+  text-align: center;
+}
+
+@media (max-width: 840px) {
+  .track-record-en-title {
+    font-size: 28px;
+  }
+  .track-record-body {
+    flex-direction: column;
+  }
+  .track-record-top,
+  .track-record-others {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 540px) {
+  .track-record-section {
+    padding: 48px 16px;
+  }
+  .track-record-top,
+  .track-record-others {
+    padding: 28px 20px;
+  }
+  .track-record-firm-name {
+    font-size: 28px;
+  }
+  .track-record-firm-count {
+    font-size: 28px;
+  }
+}
+
 .stories-section {
   align-content: center;
   align-items: center;
