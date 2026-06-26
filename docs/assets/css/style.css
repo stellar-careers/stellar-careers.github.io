@@ -1446,7 +1446,7 @@ a.text {
 .team-card-1, .team-card-2, .team-card-3,
 .team-card-4, .team-card-5, .team-card-6 {
   flex-direction: row !important;
-  align-items: center !important;
+  align-items: flex-start !important;
   gap: 24px !important;
   padding: 28px !important;
 }
@@ -1520,6 +1520,8 @@ a.text {
     flex-direction: column !important;
     align-items: center !important;
     padding: 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
   .team-card-left {
     width: 100%;
@@ -1537,6 +1539,7 @@ a.text {
   }
   .team-card-right {
     width: 100%;
+    text-align: left;
   }
 }
 
@@ -2863,11 +2866,25 @@ a.text {
   .track-record-others {
     padding: 28px 20px;
   }
+  .track-record-lead {
+    font-size: 15px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
   .track-record-firm-name {
     font-size: 28px;
   }
   .track-record-firm-count {
     font-size: 28px;
+  }
+  .track-record-others-list {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
+  .track-record-others-list li {
+    white-space: normal;
+    overflow-wrap: break-word;
   }
 }
 
@@ -20292,6 +20309,15 @@ a.text {
   }
 }
 
+/* チームカード モバイル幅修正（840px メディアクエリの50%上書き） */
+@media (max-width: 540px) {
+  .team-card-2, .team-card-3,
+  .team-card-4, .team-card-5, .team-card-6 {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .coach-fade-up {
     opacity: 1;
@@ -20371,7 +20397,7 @@ a.text {
 .career-flow-header-stellar {
   flex: 2;
   font-family: 'Times New Roman';
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 700;
   color: #1a3a5c;
   text-align: center;
@@ -20382,7 +20408,7 @@ a.text {
 .career-flow-header-others {
   flex: 1;
   font-family: 'Times New Roman';
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
   color: #888;
   text-align: center;
@@ -20400,14 +20426,15 @@ a.text {
 
 .career-flow-step {
   width: 148px;
+  height: 72px;
   flex-shrink: 0;
+  align-self: flex-start;
   background: #1a3a5c;
-  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 50% 100%, 0 calc(100% - 16px));
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 24px 14px 12px;
-  min-height: 64px;
+  padding: 10px 12px 22px;
 }
 
 .career-flow-step-label {
@@ -20422,17 +20449,17 @@ a.text {
 .career-flow-stellar {
   flex: 2;
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
   border-radius: 6px;
   background: #1a3a5c;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .career-flow-others {
   flex: 1;
   padding: 12px 16px;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.8;
   border-radius: 6px;
   background: #e4e8ed;
@@ -20454,13 +20481,17 @@ a.text {
   }
   .career-flow-step {
     width: 108px;
+    height: 72px;
   }
   .career-flow-step-label {
     font-size: 11px;
   }
-  .career-flow-stellar,
+  .career-flow-stellar {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
   .career-flow-others {
-    font-size: 12px;
+    font-size: 11px;
     padding: 10px 12px;
   }
 }
@@ -20476,9 +20507,10 @@ a.text {
   }
   .career-flow-step {
     width: 100%;
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), 50% 100%, 0 calc(100% - 12px));
-    min-height: 44px;
-    padding: 12px 12px 22px;
+    height: 56px;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), 50% 100%, 0 calc(100% - 14px));
+    align-self: auto;
+    padding: 10px 12px 20px;
   }
   .career-flow-stellar::before {
     content: 'Stellar careers ';
@@ -20496,6 +20528,10 @@ a.text {
   .career-flow-stellar,
   .career-flow-others {
     border-radius: 4px;
+    font-size: 13px;
+  }
+  .career-flow-others {
+    font-size: 12px;
   }
 }
 
@@ -20551,4 +20587,42 @@ a.text {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+}
+
+.insight-grid-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.insight-grid-more-btn {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 8px;
+  background: #1a3a5c;
+  color: #fff;
+  text-decoration: none;
+  padding: 9px 24px;
+  border-radius: 40px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.insight-grid-more-btn:hover {
+  background: #2a5a8c;
+  transform: translateY(-2px);
+}
+
+.insight-grid-more-text {
+  line-height: 1;
+  color: #fff;
+}
+
+.insight-grid-more-icon {
+  font-size: 20px;
+  line-height: 1;
+  color: #fff;
 }
