@@ -2491,11 +2491,10 @@ a.text {
 }
 
 .value-prop-card-heading {
-  font-size: 17px;
+  font-size: 28px;
   font-weight: 700;
   color: #fff;
   line-height: 1.5;
-  white-space: nowrap;
 }
 
 .value-prop-card-body {
@@ -2514,6 +2513,16 @@ a.text {
   .value-prop-card {
     flex: none;
     width: 100%;
+  }
+}
+
+@media (max-width: 540px) {
+  .value-prop-card-heading {
+    font-size: 17px;
+    white-space: nowrap;
+  }
+  .vp-break {
+    display: none;
   }
 }
 
@@ -15734,6 +15743,17 @@ a.text {
   .hero-video-text {
     width: 90%;
     padding: 20px 16px;
+  }
+
+  .hero-video-heading,
+  .hero-video-heading strong,
+  .hero-video-heading * {
+    font-size: 14px;
+  }
+
+  .hero-video-sub {
+    font-size: clamp(10px, 2.8vw, 12px);
+    white-space: nowrap;
   }
 
   .hero-section {
