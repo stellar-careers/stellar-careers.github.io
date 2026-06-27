@@ -143,21 +143,23 @@ function initFixedBanner() {
 
   const collapseBtn = banner.querySelector('.banner-collapse-btn');
 
+  let bannerExpanded = false;
+
   function collapse(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
     bannerExpanded = false;
     banner.classList.remove('is-expanded');
   }
 
+  // ×ボタンで閉じる（タッチ・マウス共通）
   if (collapseBtn) {
     collapseBtn.addEventListener('click', collapse);
   }
 
-  // タッチデバイス: タップで展開、閉じるボタンまたはスワイプ右で折りたたむ
+  // タッチデバイスのみ: タップで展開、スワイプ右/下で折りたたむ
   const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
   if (!isTouch) return;
 
-  let bannerExpanded = false;
   let touchStartX = 0;
   let touchStartY = 0;
 
@@ -178,7 +180,6 @@ function initFixedBanner() {
   banner.addEventListener('touchend', (e) => {
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
-    // スワイプ右（dx > 50）またはスワイプ下（dy > 50）で折りたたむ
     if (bannerExpanded && (dx > 50 || dy > 50)) {
       collapse(null);
     }
