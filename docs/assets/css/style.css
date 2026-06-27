@@ -20874,11 +20874,11 @@ a.text {
 .banner-fixed {
   position: fixed !important;
   right: 0 !important;
-  top: 80px !important;
+  top: 64px !important;
   bottom: 0 !important;
   left: auto !important;
   width: 280px !important;
-  height: calc(100vh - 80px) !important;
+  height: calc(100vh - 64px) !important;
   border-radius: 0 !important;
   background: linear-gradient(180deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%) !important;
   border-left: 3px solid #e8650a !important;
