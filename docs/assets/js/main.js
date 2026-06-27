@@ -141,35 +141,32 @@ function initFixedBanner() {
   const banner = document.querySelector('.banner-fixed');
   if (!banner) return;
 
-  const collapseBtn = banner.querySelector('.banner-collapse-btn');
-
-  let bannerExpanded = false;
-
-  function collapse(e) {
-    if (e) { e.preventDefault(); e.stopPropagation(); }
-    bannerExpanded = false;
-    banner.classList.remove('is-expanded');
-  }
-
-  // ×ボタンで閉じる（タッチ・マウス共通）
-  if (collapseBtn) {
-    collapseBtn.addEventListener('click', collapse);
-  }
-
-  // タッチデバイスのみ: タップで展開、スワイプ右/下で折りたたむ
   const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
   if (!isTouch) return;
 
+  let bannerExpanded = false;
   let touchStartX = 0;
   let touchStartY = 0;
 
+  // すべてのクリックをここで処理（×ボタン含む）
   banner.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (e.target.closest('.banner-collapse-btn')) {
+      // ×ボタン: 折りたたむ
+      bannerExpanded = false;
+      banner.classList.remove('is-expanded');
+      return;
+    }
+
     if (!bannerExpanded) {
-      e.preventDefault();
+      // タブタップ: 展開
       bannerExpanded = true;
       banner.classList.add('is-expanded');
+    } else {
+      // 展開中のコンテンツタップ: ページ遷移
+      window.open(banner.getAttribute('href'), '_blank');
     }
-    // 展開済みのタップはデフォルト（href遷移）
   });
 
   banner.addEventListener('touchstart', (e) => {
@@ -181,7 +178,8 @@ function initFixedBanner() {
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
     if (bannerExpanded && (dx > 50 || dy > 50)) {
-      collapse(null);
+      bannerExpanded = false;
+      banner.classList.remove('is-expanded');
     }
   });
 }
