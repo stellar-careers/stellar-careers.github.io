@@ -21128,7 +21128,7 @@ a.text {
 }
 
 /* ===== 横向きモバイル: ヒーローサブテキスト1行化・注釈フォント縮小 ===== */
-@media (orientation: landscape) and (max-width: 900px) {
+@media (orientation: landscape) and (max-width: 960px) {
   .hero-video-sub {
     white-space: nowrap;
     font-size: 11px !important;
@@ -21142,7 +21142,7 @@ a.text {
 }
 
 /* ===== 横向きモバイル: チームカードを1列に修正 ===== */
-@media (orientation: landscape) and (max-width: 900px) {
+@media (orientation: landscape) and (max-width: 960px) {
   .team-card-1, .team-card-2, .team-card-3,
   .team-card-4, .team-card-5, .team-card-6 {
     width: 100% !important;
@@ -21164,7 +21164,7 @@ a.text {
 }
 
 /* ===== 横向きモバイル: What we offer 右端見切れ対策 ===== */
-@media (orientation: landscape) and (max-width: 900px) {
+@media (orientation: landscape) and (max-width: 960px) {
   .career-flow-section {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
