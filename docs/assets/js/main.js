@@ -148,33 +148,9 @@ function initFixedBanner() {
   let touchStartX = 0;
   let touchStartY = 0;
 
-  // ×ボタンにtouchend/clickを直接バインド
-  // touchend後にclickがバナーへ伝播すると再展開するためstopPropagationが必須
-  const collapseBtn = banner.querySelector('.banner-collapse-btn');
-  if (collapseBtn) {
-    collapseBtn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      bannerExpanded = false;
-      banner.classList.remove('is-expanded');
-    });
-    collapseBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      bannerExpanded = false;
-      banner.classList.remove('is-expanded');
-    });
-  }
-
-  // すべてのクリックをここで処理（×ボタン含む）
+  // すべてのクリックをここで処理
   banner.addEventListener('click', (e) => {
     e.preventDefault();
-
-    if (e.target.closest('.banner-collapse-btn')) {
-      // ×ボタン: 折りたたむ
-      bannerExpanded = false;
-      banner.classList.remove('is-expanded');
-      return;
-    }
 
     if (!bannerExpanded) {
       // タブタップ: 展開
