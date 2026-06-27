@@ -2731,6 +2731,7 @@ a.text {
 }
 
 .track-record-lead {
+  display: block;
   font-size: 18px;
   font-weight: 700;
   color: #fff;
@@ -16120,8 +16121,9 @@ a.text {
   }
 
   .hero-video-sub {
-    font-size: clamp(10px, 2.8vw, 12px);
-    white-space: nowrap;
+    font-size: clamp(12px, 3.2vw, 14px);
+    white-space: normal;
+    text-align: center;
   }
 
   .hero-section {
@@ -20503,55 +20505,45 @@ a.text {
 }
 
 @media (max-width: 540px) {
-  /* What we offer: 縦積みをやめて横スクロールに変更 */
-  .career-flow-section {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 40px 0;
-  }
-  .career-flow-inner {
-    min-width: 620px;
-    padding: 0 24px;
-    align-items: flex-start;
-  }
-  .career-flow-en-title,
-  .career-flow-ja-title,
-  .career-flow-lead,
-  .career-flow-footnote {
-    width: 100%;
-    text-align: center;
-  }
-  .career-flow-table {
-    width: 100%;
-  }
+  /* What we offer: ステラ上・他社下の縦積みレイアウト */
   .career-flow-header {
-    display: flex;
-    min-width: 100%;
+    display: none;
   }
   .career-flow-row {
-    flex-flow: row nowrap;
-    gap: 8px;
-    margin-bottom: 6px;
+    flex-flow: column nowrap;
+    gap: 4px;
+    margin-bottom: 12px;
   }
   .career-flow-step {
-    width: 108px;
-    height: 72px;
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 50% 100%, 0 calc(100% - 16px));
-    align-self: flex-start;
-    padding: 10px 8px 22px;
+    width: 100%;
+    height: 56px;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), 50% 100%, 0 calc(100% - 14px));
+    align-self: auto;
+    padding: 10px 12px 20px;
   }
-  .career-flow-stellar::before,
+  .career-flow-stellar::before {
+    content: 'Stellar careers';
+    font-weight: 700;
+    color: #5baee8;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
   .career-flow-others::before {
-    display: none;
+    content: '他社';
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+    font-size: 11px;
   }
   .career-flow-stellar,
   .career-flow-others {
-    border-radius: 6px;
-    font-size: 12px;
-    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 13px;
   }
   .career-flow-others {
-    font-size: 11px;
+    font-size: 12px;
   }
 }
 
@@ -21011,7 +21003,7 @@ a.text {
   }
 }
 
-/* ===== モバイル用 画面下部固定オレンジCTAバー ===== */
+/* ===== モバイル用 画面下部固定CTAバー（ボトムシート） ===== */
 .mobile-cta-bar {
   display: none;
   position: fixed;
@@ -21019,15 +21011,76 @@ a.text {
   left: 0;
   right: 0;
   z-index: 200;
+  flex-direction: column;
+  transform: translateY(calc(100% - 52px));
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+}
+.mobile-cta-bar.is-expanded {
+  transform: translateY(0);
+}
+.mobile-cta-expand {
+  background: linear-gradient(180deg, #0f172a 0%, #1e3a5f 60%, #0f172a 100%);
+  border-top: 3px solid #e8650a;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mobile-cta-expand-title {
+  color: #f59e0b;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+.mobile-cta-expand-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mobile-cta-expand-list li {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding-left: 14px;
+  position: relative;
+}
+.mobile-cta-expand-list li::before {
+  content: '・';
+  position: absolute;
+  left: 0;
+  color: #f59e0b;
+}
+.mobile-cta-expand-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: linear-gradient(90deg, #e8650a 0%, #f59e0b 100%);
   color: #fff;
   text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 2px;
+}
+.mobile-cta-tab {
+  height: 52px;
+  background: linear-gradient(90deg, #e8650a 0%, #f59e0b 100%);
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 52px;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
 }
-.mobile-cta-bar-text {
+.mobile-cta-tab-text {
   font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -21037,10 +21090,14 @@ a.text {
   .mobile-cta-bar {
     display: flex;
   }
-  /* バー分のpadding-bottomをページに確保 */
   .page-home {
     padding-bottom: 52px;
   }
+}
+
+/* ===== banner-fixed: タッチ展開クラス ===== */
+.banner-fixed.is-expanded {
+  transform: translateX(0) !important;
 }
 
 /* ===== 横向きモバイル: チームカードを1列に修正 ===== */

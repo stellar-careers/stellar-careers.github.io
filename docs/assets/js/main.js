@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   initCarousels();
   initFixedBanner();
+  initMobileCtaBar();
   initHamburgerMenu();
   initSuccessStoriesScroll();
   initTrackRecordScroll();
@@ -146,6 +147,68 @@ function initFixedBanner() {
       banner.style.display = 'none';
     });
   }
+
+  // タッチデバイス: タップで展開、もう一度タップでページ遷移、スワイプダウンで閉じる
+  if (!banner) return;
+  const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  if (!isTouch) return;
+
+  let bannerExpanded = false;
+  let touchStartY = 0;
+
+  banner.addEventListener('click', (e) => {
+    if (!bannerExpanded) {
+      e.preventDefault();
+      bannerExpanded = true;
+      banner.classList.add('is-expanded');
+    }
+    // 展開済みのタップはデフォルト（href遷移）
+  });
+
+  banner.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  banner.addEventListener('touchend', (e) => {
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (dy > 50 && bannerExpanded) {
+      bannerExpanded = false;
+      banner.classList.remove('is-expanded');
+    }
+  });
+}
+
+/* ========================================
+   Mobile Bottom CTA Bar
+   ======================================== */
+function initMobileCtaBar() {
+  const bar = document.querySelector('.mobile-cta-bar');
+  if (!bar) return;
+
+  const tab = bar.querySelector('.mobile-cta-tab');
+  if (!tab) return;
+
+  let expanded = false;
+  let touchStartY = 0;
+
+  // タブをタップで展開
+  tab.addEventListener('click', () => {
+    expanded = true;
+    bar.classList.add('is-expanded');
+  });
+
+  // スワイプダウンで閉じる
+  bar.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  bar.addEventListener('touchend', (e) => {
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (dy > 50 && expanded) {
+      expanded = false;
+      bar.classList.remove('is-expanded');
+    }
+  });
 }
 
 /* ========================================
