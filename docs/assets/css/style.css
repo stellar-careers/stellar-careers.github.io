@@ -21029,6 +21029,15 @@ a.text {
     display: inline;
   }
 }
+/* ===== 横向きスマホのみ表示するBR ===== */
+.sp-landscape-only {
+  display: none;
+}
+@media (orientation: landscape) and (max-width: 960px) {
+  .sp-landscape-only {
+    display: inline;
+  }
+}
 
 /* ===== モバイル用 画面下部固定CTAバー（ボトムシート） ===== */
 .mobile-cta-bar {
