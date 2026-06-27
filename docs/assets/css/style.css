@@ -20952,17 +20952,17 @@ a.text {
   position: relative;
 }
 
-/* 閉じるボタン（タッチデバイス向け） */
+/* 閉じるボタン */
 .banner-collapse-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: rgba(255,255,255,0.15);
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: 2px solid rgba(255,255,255,0.5);
+  background: rgba(0,0,0,0.4);
   color: #fff;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1;
   border-radius: 50%;
   cursor: pointer;
@@ -20970,6 +20970,7 @@ a.text {
   align-items: center;
   justify-content: center;
   padding: 0;
+  z-index: 10;
 }
 
 .banner-expand-title {
@@ -21133,8 +21134,10 @@ a.text {
     font-size: clamp(11px, 1.6vw, 13px);
   }
   .track-record-bottom-note {
-    font-size: 11px;
-    white-space: nowrap;
+    font-size: 10px;
+  }
+  .career-flow-lead {
+    font-size: 12px !important;
   }
 }
 
