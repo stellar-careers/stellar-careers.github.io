@@ -139,21 +139,26 @@ function initCarousel(config) {
    ======================================== */
 function initFixedBanner() {
   const banner = document.querySelector('.banner-fixed');
-  const closeBtn = document.querySelector('.banner-close-btn');
+  if (!banner) return;
 
-  if (banner && closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      banner.style.display = 'none';
-    });
+  const collapseBtn = banner.querySelector('.banner-collapse-btn');
+
+  function collapse(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    bannerExpanded = false;
+    banner.classList.remove('is-expanded');
   }
 
-  // タッチデバイス: タップで展開、もう一度タップでページ遷移、スワイプダウンで閉じる
-  if (!banner) return;
+  if (collapseBtn) {
+    collapseBtn.addEventListener('click', collapse);
+  }
+
+  // タッチデバイス: タップで展開、閉じるボタンまたはスワイプ右で折りたたむ
   const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
   if (!isTouch) return;
 
   let bannerExpanded = false;
+  let touchStartX = 0;
   let touchStartY = 0;
 
   banner.addEventListener('click', (e) => {
@@ -166,14 +171,16 @@ function initFixedBanner() {
   });
 
   banner.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
   }, { passive: true });
 
   banner.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
-    if (dy > 50 && bannerExpanded) {
-      bannerExpanded = false;
-      banner.classList.remove('is-expanded');
+    // スワイプ右（dx > 50）またはスワイプ下（dy > 50）で折りたたむ
+    if (bannerExpanded && (dx > 50 || dy > 50)) {
+      collapse(null);
     }
   });
 }
