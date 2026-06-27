@@ -6,6 +6,15 @@ name: Notify Slack on Pages Deploy
 #
 # 判定: page_build のビルド対象コミットに紐づく PR を引き、その作者が Bot かで判断する
 # （issue ラベルは PR に自動伝播しないため、preview 通知と同じ「PR作者=Bot」信号を使う）。
+#
+# 重複通知防止（2層）:
+#   層1: pr.merge_commit_sha === sha
+#        listPullRequestsAssociatedWithCommit は「そのコミットを含む全PR」を返すため、
+#        後続のエンジニアPRマージのビルドで古い記事PRが引っかかることがある。
+#        merge_commit_sha が一致する = そのビルドがこのPRのマージで直接発生した、と確認できる。
+#   層2: PRへの通知済みマーカーコメント
+#        GitHub Pages が同一コミット sha で page_build を複数回発火する既知の動作に対応。
+#        通知後にマーカーコメントを PR に残し、次回は存在確認でスキップする。
 on:
   page_build:
 
@@ -16,6 +25,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+      issues: write
     steps:
       - name: Notify Slack for article release
         uses: actions/github-script@v7
@@ -33,14 +43,33 @@ jobs:
               core.info('ビルドコミットが取得できないため通知をスキップ。');
               return;
             }
+            core.info(`ビルドコミット: ${sha}`);
             const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
               owner, repo, commit_sha: sha,
             });
+            core.info(`関連PR: ${prs.map(p => `#${p.number}(${p.user.type})`).join(', ') || 'なし'}`);
 
             // 2) 記事系PR（Copilot=Bot 作）のみ通知。人間のPRや直push（PR無し）はスキップ。
             const pr = prs.find(p => p.user && p.user.type === 'Bot');
             if (!pr) {
               core.info('記事(Copilot)PR のリリースではないため通知をスキップ（エンジニアPR / 直push）。');
+              return;
+            }
+
+            // 【重複防止・層1】PRのマージコミットがビルドコミットと一致するか確認。
+            // 一致しない = 後続の別PRマージのビルドで古い記事PRが検索に引っかかっているケース。
+            if (pr.merge_commit_sha !== sha) {
+              core.info(`PR #${pr.number} のマージコミット(${pr.merge_commit_sha})がビルドコミット(${sha})と不一致。重複通知をスキップ。`);
+              return;
+            }
+
+            // 【重複防止・層2】通知済みマーカーの確認（同一sha で page_build が複数回発火する場合の保護）。
+            const DEPLOY_MARK = '<!-- notify-deploy:deployed -->';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner, repo, issue_number: pr.number, per_page: 100,
+            });
+            if (comments.some(c => (c.body || '').includes(DEPLOY_MARK))) {
+              core.info(`PR #${pr.number} は既にデプロイ通知済みのためスキップ。`);
               return;
             }
 
@@ -74,4 +103,11 @@ jobs:
             const data = await res.json();
             if (!data.ok) {
               core.setFailed(`Slack API error: ${data.error}`);
+              return;
             }
+
+            // 【重複防止・層2】通知済みマーカーをPRに記録（次回の重複発火でスキップされる）
+            await github.rest.issues.createComment({
+              owner, repo, issue_number: pr.number, body: DEPLOY_MARK,
+            });
+            core.info(`PR #${pr.number} にデプロイ通知済みマーカーを記録。`);

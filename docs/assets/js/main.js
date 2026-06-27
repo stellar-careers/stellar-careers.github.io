@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   initCarousels();
   initFixedBanner();
+  initMobileCtaBar();
   initHamburgerMenu();
   initSuccessStoriesScroll();
   initTrackRecordScroll();
@@ -138,14 +139,75 @@ function initCarousel(config) {
    ======================================== */
 function initFixedBanner() {
   const banner = document.querySelector('.banner-fixed');
-  const closeBtn = document.querySelector('.banner-close-btn');
+  if (!banner) return;
 
-  if (banner && closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      banner.style.display = 'none';
-    });
-  }
+  const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  if (!isTouch) return;
+
+  let bannerExpanded = false;
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  // すべてのクリックをここで処理
+  banner.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    if (!bannerExpanded) {
+      // タブタップ: 展開
+      bannerExpanded = true;
+      banner.classList.add('is-expanded');
+    } else {
+      // 展開中のコンテンツタップ: ページ遷移
+      window.open(banner.getAttribute('href'), '_blank');
+    }
+  });
+
+  banner.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  banner.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (bannerExpanded && (dx > 50 || dy > 50)) {
+      bannerExpanded = false;
+      banner.classList.remove('is-expanded');
+    }
+  });
+}
+
+/* ========================================
+   Mobile Bottom CTA Bar
+   ======================================== */
+function initMobileCtaBar() {
+  const bar = document.querySelector('.mobile-cta-bar');
+  if (!bar) return;
+
+  const tab = bar.querySelector('.mobile-cta-tab');
+  if (!tab) return;
+
+  let expanded = false;
+  let touchStartY = 0;
+
+  // タブをタップで展開
+  tab.addEventListener('click', () => {
+    expanded = true;
+    bar.classList.add('is-expanded');
+  });
+
+  // スワイプダウンで閉じる
+  bar.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  bar.addEventListener('touchend', (e) => {
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (dy > 50 && expanded) {
+      expanded = false;
+      bar.classList.remove('is-expanded');
+    }
+  });
 }
 
 /* ========================================
