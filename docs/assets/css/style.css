@@ -20377,6 +20377,7 @@ a.text {
 }
 
 .career-flow-lead {
+  display: block !important;
   font-size: 15px;
   color: #444;
   text-align: center;
@@ -20506,6 +20507,9 @@ a.text {
 
 @media (max-width: 540px) {
   /* What we offer: ステラ上・他社下の縦積みレイアウト */
+  .career-flow-footnote {
+    text-align: center;
+  }
   .career-flow-header {
     display: none;
   }
@@ -20853,6 +20857,7 @@ a.text {
   line-height: 1.3;
 }
 .cta-banner-description {
+  display: block !important;
   font-size: 16px;
   color: rgba(255,255,255,0.88);
   line-height: 1.9;
