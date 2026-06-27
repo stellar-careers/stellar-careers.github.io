@@ -21131,7 +21131,7 @@ a.text {
 @media (orientation: landscape) and (max-width: 900px) {
   .hero-video-sub {
     white-space: nowrap;
-    font-size: clamp(11px, 1.6vw, 13px);
+    font-size: 11px !important;
   }
   .track-record-bottom-note {
     font-size: 10px;
