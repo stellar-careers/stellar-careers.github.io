@@ -148,6 +148,17 @@ function initFixedBanner() {
   let touchStartX = 0;
   let touchStartY = 0;
 
+  // ×ボタンにtouchendを直接バインド（iOS Safariで<a>内の<button>clickが不安定なため）
+  const collapseBtn = banner.querySelector('.banner-collapse-btn');
+  if (collapseBtn) {
+    collapseBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      bannerExpanded = false;
+      banner.classList.remove('is-expanded');
+    });
+  }
+
   // すべてのクリックをここで処理（×ボタン含む）
   banner.addEventListener('click', (e) => {
     e.preventDefault();
