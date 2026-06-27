@@ -2731,7 +2731,7 @@ a.text {
 }
 
 .track-record-lead {
-  display: block;
+  display: block !important;
   font-size: 18px;
   font-weight: 700;
   color: #fff;
