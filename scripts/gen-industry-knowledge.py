@@ -91,10 +91,19 @@ parts.append(
     '6つのカテゴリに分けて掲載しています。各社の詳細情報は順次公開予定です。</p>\n'
     '  </div>')
 
+# 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
+DETAIL_LINKS = {
+    'ビジョン・コンサルティング': 'vision-consulting',
+}
+
 def render_list(names):
     parts.append('    <ul class="ik-company-list">')
     for name in names:
-        parts.append(f'      <li class="ik-company">{esc(name)}</li>')
+        url = DETAIL_LINKS.get(name)
+        if url:
+            parts.append(f'      <li class="ik-company ik-company--link"><a href="{url}">{esc(name)}</a></li>')
+        else:
+            parts.append(f'      <li class="ik-company">{esc(name)}</li>')
     parts.append('    </ul>')
 
 for key, anchor, label in CATS:
