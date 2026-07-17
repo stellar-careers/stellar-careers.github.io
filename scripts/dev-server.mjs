@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DOCS_DIR = join(__dirname, '..', 'docs');
+// 配信ディレクトリ。第1引数 or 環境変数 SERVE_DIR で差し替え可能（例: mock）。既定は docs。
+const DOCS_DIR = join(__dirname, '..', process.argv[2] || process.env.SERVE_DIR || 'docs');
 const PORT = process.env.PORT || 3000;
 
 const MIME_TYPES = {
