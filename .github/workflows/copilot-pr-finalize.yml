@@ -7,14 +7,17 @@ name: Finalize Copilot article PR
 #      `Closes #<Issue>` を入れることが多く、Issue とのクローズリンクが張られる。
 #   2. 作業完了時に **本文を丸ごと書き換える**ため、`Closes #<Issue>` が消える
 #      （PR #79 で顕在化。マージしても Issue が自動クローズされず OPEN のまま残る）。
-#   3. 完了しても draft のまま残す（Ready for review にしない）ため、コメント承認
-#      フロー（approve-by-comment.yml）が「まだ draft」と判定してマージできない。
+#   3. 完了しても draft のまま残す（Ready for review にしない）ため、draft のままでは
+#      レビュー・マージの導線に乗らない。
 #
 # このワークフローは Copilot の完了シグナル（review_requested）を捉えて:
 #   - 消えた `Closes #<Issue>` を本文1行目へ書き戻す（番号は WIP 時にマーカーへ退避）
 #   - draft を Ready for review に解除する
-# これにより「承認者が『承認』→ approve-by-comment がマージ→ Issue 自動クローズ」
-# まで一気通貫する。
+# これにより「担当者がプレビューで確認 → 自分で Merge pull request を押す →
+# Issue 自動クローズ」という人手のマージ導線に乗る。
+#
+# 本番公開は必ず人間が Merge pull request を押して行う。自動マージは行わない
+# （コメント承認による自動マージ approve-by-comment.yml は廃止済み）。
 #
 # 注意:
 #  - `copilot_work_finished` は webhook トリガーに無いため、Copilot が完了時に出す
