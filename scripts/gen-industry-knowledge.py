@@ -19,6 +19,7 @@ CATS = [
     ('4. ブティック',      'boutique',   'ブティックファーム'),
     ('5. AIファーム',      'ai',         'AIファーム'),
     ('6. 事業会社',        'startup',    'スタートアップ'),
+    ('9. その他',          'other',      'その他'),  # Excel に該当行なし（手動振り分け専用）
 ]
 
 # --- Excel 読み込み ---
@@ -53,9 +54,26 @@ for _nm in ['イグニッションポイント', 'イグニッションポイン
             'ライズ・コンサルティング・グループ', 'ノースサンド', 'Dirbato',
             'リッジラインズ', 'クオンツコンサルティング', 'ビジョン・コンサルティング']:
     _move(_nm, '2. 総合')
+
+# --- Excel 未収録の企業を追加（ファーム紹介資料_展開用 より） ---
+ADDITIONS = [
+    ('pragmateches',              '1. 戦略'),        # 新興系戦略ファーム（代表は元BCG）
+    ('ULSコンサルティング',       '2. 総合'),        # 旧ウルシステムズ・技術系ITファーム
+    ('ベルコア・コンサルティング', '4. ブティック'),  # 2026年創業・AI駆動開発の小規模ファーム
+    ('iFIND',                     '9. その他'),      # アイリスオーヤマのインハウス戦略×AI組織
+]
+for _nm, _key in ADDITIONS:
+    if not any(_nm in _v for _v in groups.values()):
+        groups[_key].append(_nm)
+
 # 総合/IT の最後尾に置く（ブティックから移動）
 for _nm in ['Stellar Digital Consulting']:
     _move(_nm, '2. 総合')
+
+# NTTデータはスタートアップではないため「その他」へ（先頭に配置）
+if 'NTTデータ' in groups['6. 事業会社']:
+    groups['6. 事業会社'].remove('NTTデータ')
+    groups['9. その他'].insert(0, 'NTTデータ')
 
 # 表示名のリネーム（移動後に適用）
 RENAME = {
@@ -70,7 +88,7 @@ STRATEGY_SUBGROUPS = [
     ('外資戦略ファーム', ['ボストン・コンサルティング・グループ', 'ベイン・アンド・カンパニー',
                           'A.T.カーニー', 'アーサー・ディ・リトル・ジャパン', 'ローランド・ベルガー', 'Slalom', 'YCP']),
     ('内資戦略ファーム', ['経営共創基盤', 'ドリームインキュベータ―', 'FIELD MANAGEMENT STRATEGY',
-                          'P&Eディレクションズ', 'グロービング']),
+                          'P&Eディレクションズ', 'グロービング', 'pragmateches']),
     ('ステラグループ', None),  # None = Stellar* を自動収集（Excel順）
 ]
 
@@ -88,7 +106,7 @@ parts = ['<section class="ik-wrap">']
 parts.append(
     '  <div class="ik-intro">\n'
     '    <p class="ik-intro-lead">ステラキャリアズがご紹介できるコンサルファーム・企業の一覧です。'
-    '6つのカテゴリに分けて掲載しています。各社の詳細情報は順次公開予定です。</p>\n'
+    '7つのカテゴリに分けて掲載しています。各社の詳細情報は順次公開予定です。</p>\n'
     '  </div>')
 
 # 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
@@ -159,7 +177,7 @@ shell = SHELL.read_text(encoding='utf-8')
 
 # メタ・タイトル系
 title = 'Industry knowledge - コンサルファーム企業一覧 | Stellar Careers'
-desc  = 'ステラキャリアズがご紹介できる戦略・総合/IT・総研・ブティック・AI・スタートアップの各コンサルファーム／企業一覧。'
+desc  = 'ステラキャリアズがご紹介できる戦略・総合/IT・総研・ブティック・AI・スタートアップ・その他の各コンサルファーム／企業一覧。'
 shell = shell.replace('転職体験記 - コンサル転職の実体験 | Stellar Careers', title)
 shell = re.sub(r'(<meta name="description" content=")[^"]*(">)', r'\g<1>'+desc+r'\g<2>', shell)
 shell = re.sub(r'(<meta property="og:description" content=")[^"]*(">)', r'\g<1>'+desc+r'\g<2>', shell)
