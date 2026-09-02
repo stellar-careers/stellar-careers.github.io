@@ -66,7 +66,7 @@
             <p class="text sd appear contact-cand-form-subheading r8">Contact</p>
           </div>
         </div>
-        <form name="求職者お問い合わせ" action="https://formspree.io/f/xkovvzjd" method="POST" class="sd contact-cand-form"><input type="hidden" name="_subject" value="求職者お問い合わせ"><label class="sd appear contact-cand-name-label">
+        <form name="求職者お問い合わせ" action="https://formspree.io/f/xkovvzjd" method="POST" class="sd contact-cand-form"><input type="hidden" name="_subject" value="求職者お問い合わせ"><input type="hidden" name="_next" value="https://stellar-careers.com/contact-candidate/thanks/"><input type="hidden" name="EntryID" value=""><label class="sd appear contact-cand-name-label">
             <div class="sd appear contact-cand-name-header">
               <p class="text sd appear contact-cand-name-text r9">お名前</p>
               <div class="sd appear contact-cand-name-badge-wrap">
@@ -154,6 +154,94 @@
     }
   </style>
   <script src="../assets/js/main.js"></script>
+  <!-- お問い合わせ送信（JSON送信 → 成果番号付きでサンクスページへ遷移） ここから -->
+  <style>
+    .contact-cand-submit-btn[disabled] {
+      opacity: 0.6;
+      cursor: default;
+    }
+  </style>
+  <script type="text/javascript">
+  (function(){
+  var form = document.querySelector('.contact-cand-form');
+  if ( !form || !window.fetch || !window.FormData ) { return; }
+  var THANKS_URL = 'https://stellar-careers.com/contact-candidate/thanks/';
+  var sending = false;
+
+  form.addEventListener('submit', function(event){
+  if ( sending ) {
+  event.preventDefault();
+  return;
+  }
+  // 通常のPOSTを止めて、送信完了後の遷移を自前で制御する
+  event.preventDefault();
+  sending = true;
+
+  var button = form.querySelector('.contact-cand-submit-btn');
+  if ( button ) { button.disabled = true; }
+
+  // 成果番号。例: SC-20260901-1a2b3c4d（Formspreeの通知メールにも同じ番号が入る）
+  var now = new Date();
+  var ymd = now.getFullYear() +
+  ('0' + (now.getMonth() + 1)).slice(-2) +
+  ('0' + now.getDate()).slice(-2);
+  var entryId = 'SC-' + ymd + '-' + Math.random().toString(36).slice(2, 10);
+  var hidden = form.querySelector('input[name="EntryID"]');
+  if ( hidden ) { hidden.value = entryId; }
+  // サンクスページ側の保険（同一タブでのみ有効）
+  try { window.sessionStorage.setItem('sc_rt_entry_id', entryId); } catch (e) {}
+
+  var data = new FormData(form);
+  // JSON送信ではリダイレクトを自前で行うため不要
+  data.delete('_next');
+
+  // 送信に失敗した場合は通常のPOSTに切り替え、お問い合わせを取りこぼさない
+  function fallback(){
+  if ( button ) { button.disabled = false; }
+  form.submit();
+  }
+
+  fetch(form.action, {
+  method: 'POST',
+  body: data,
+  headers: { 'Accept': 'application/json' }
+  }).then(function(response){
+  if ( response.ok ) {
+  window.location.href = THANKS_URL + '?rt=' + encodeURIComponent(entryId);
+  } else {
+  sending = false;
+  fallback();
+  }
+  }).catch(function(){
+  sending = false;
+  fallback();
+  });
+  });
+  }());
+  </script>
+  <!-- お問い合わせ送信（JSON送信 → 成果番号付きでサンクスページへ遷移） ここまで -->
+  <!-- レントラックス ITP対応 トラッキングタグ（LP用） ここから -->
+  <script type="text/javascript">
+  (function(callback){
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = "https://www.rentracks.jp/js/itp/rt.track.js?t=" + (new Date()).getTime();
+  if ( script.readyState ) {
+  script.onreadystatechange = function() {
+  if ( script.readyState === "loaded" || script.readyState === "complete" ) {
+  script.onreadystatechange = null;
+  callback();
+  }
+  };
+  } else {
+  script.onload = function() {
+  callback();
+  };
+  }
+  document.getElementsByTagName("head")[0].appendChild(script);
+  }(function(){}));
+  </script>
+  <!-- レントラックス ITP対応 トラッキングタグ（LP用） ここまで -->
 </body>
 
 </html>
