@@ -244,7 +244,8 @@ function initHamburgerMenu() {
         navList.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
         navList.style.gap = '16px';
       }
-      if (ctaButtons) {
+      // CTAがバー内に表示されている幅では、パネルへ移動させない
+      if (ctaButtons && getComputedStyle(ctaButtons).display === 'none') {
         ctaButtons.style.display = 'flex';
         ctaButtons.style.flexDirection = 'column';
         ctaButtons.style.position = 'absolute';
@@ -258,8 +259,8 @@ function initHamburgerMenu() {
       }
     } else {
       iconEl.textContent = 'menu';
-      if (navList) navList.style.display = '';
-      if (ctaButtons) ctaButtons.style.display = '';
+      if (navList) navList.removeAttribute('style');
+      if (ctaButtons) ctaButtons.removeAttribute('style');
     }
   });
 }

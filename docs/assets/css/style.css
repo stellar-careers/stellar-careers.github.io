@@ -21426,3 +21426,57 @@ a.text {
 .banner-fixed.is-expanded {
   transform: translateX(0) !important;
 }
+
+/* ========================================
+   ヘッダーの見切れ対策
+   ロゴ＋ナビ＋CTA2つで最低1281px必要なため、1360px未満のビューポートでは
+   「その他お問い合わせ」が画面右端で見切れていた。
+   1241〜1359px は各要素の余白を詰めて1行に収め、
+   1240px以下はナビをハンバーガーメニューへ格納する（CTAはバーに残す）。
+   ======================================== */
+@media (min-width: 1241px) and (max-width: 1359px) {
+  .header-inner {
+    gap: 24px;
+    --gh-2: 24px;
+  }
+
+  .header-actions {
+    gap: 14px;
+    --gh-3: 14px;
+  }
+
+  .header-nav {
+    gap: 14px;
+    --gh-4: 14px;
+  }
+
+  .header-nav-link,
+  .header-nav-link-alt {
+    font-size: 14px;
+  }
+
+  .header-logo-img {
+    height: 28px;
+  }
+
+  .header-cta-primary-btn,
+  .header-cta-secondary-btn {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+
+  .header-cta-primary-text,
+  .header-cta-secondary-text {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1240px) {
+  .header-nav {
+    display: none;
+  }
+
+  .header-hamburger {
+    display: flex;
+  }
+}
