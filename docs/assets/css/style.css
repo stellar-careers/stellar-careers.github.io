@@ -2614,19 +2614,18 @@ a.text {
   cursor: pointer;
 }
 
+/* アイコンはインラインSVG。font-size がSVGの寸法、color が塗り色を決める */
 .value-prop-card-icon {
   font-size: 28px;
   line-height: 1;
   color: #5baee8;
-  font-family: 'Material Symbols Outlined';
-  font-weight: 400;
-  font-style: normal;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  word-wrap: normal;
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
+}
+
+.value-prop-card-icon svg {
+  display: block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
 }
 
 .value-prop-card--link .value-prop-card-icon {
