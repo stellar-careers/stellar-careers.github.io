@@ -21505,6 +21505,7 @@ a.text {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+
   /* 写真の白背景がページに溶け込むよう、四方をぼかす */
   -webkit-mask-image: radial-gradient(ellipse 54% 56% at 52% 46%, #000 52%, rgba(0, 0, 0, 0) 100%);
   mask-image: radial-gradient(ellipse 54% 56% at 52% 46%, #000 52%, rgba(0, 0, 0, 0) 100%);
@@ -21516,17 +21517,17 @@ a.text {
   width: 1280px;
   max-width: calc(100% - 80px);
   margin: 0 auto;
-  padding: 84px 0 80px;
+  padding: 52px 0 48px;
 }
 
 .ceo-msg-text {
   width: 100%;
-  max-width: 680px;
+  max-width: 830px;
 }
 
 .ceo-msg-label {
   font-family: var(--s-font-e4bb6038);
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.02em;
@@ -21536,11 +21537,11 @@ a.text {
 
 .ceo-msg-heading {
   font-family: var(--s-font-369aeb64);
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: #555555;
-  margin: 10px 0 0;
+  margin: 8px 0 0;
 }
 
 .ceo-msg-heading::after {
@@ -21548,19 +21549,27 @@ a.text {
   display: block;
   width: 48px;
   height: 3px;
-  margin: 20px 0 0;
+  margin: 14px 0 0;
   background: #e8650a;
   border-radius: 2px;
 }
 
 .ceo-msg-body {
+  margin: 24px 0 0;
+}
+
+.ceo-msg-body p {
   font-family: var(--s-font-369aeb64);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 400;
-  line-height: 2;
+  line-height: 1.8;
   color: #333333;
-  margin: 36px 0 0;
+  margin: 0 0 16px;
   text-align: left;
+}
+
+.ceo-msg-body p:last-child {
+  margin-bottom: 0;
 }
 
 .ceo-msg-sign {
@@ -21568,7 +21577,7 @@ a.text {
   align-items: center;
   justify-content: flex-end;
   gap: 16px;
-  margin: 44px 0 0;
+  margin: 28px 0 0;
 }
 
 /* 大きい写真を出している幅では、署名横の丸写真は不要 */
@@ -21611,7 +21620,7 @@ a.text {
   }
 
   .ceo-msg-text {
-    max-width: 560px;
+    max-width: 620px;
   }
 }
 
@@ -21648,9 +21657,9 @@ a.text {
     font-size: 15px;
   }
 
-  .ceo-msg-body {
+  .ceo-msg-body p {
     font-size: 15px;
-    line-height: 1.95;
+    line-height: 1.9;
   }
 
   .ceo-msg-avatar {
@@ -21660,5 +21669,23 @@ a.text {
 
   .ceo-msg-sign-name {
     font-size: 19px;
+  }
+}
+
+/* ========================================
+   無料相談バナー（左レール48px）の領域を確保する
+   固定表示のため、確保しないとページ内容の左端に重なってしまう。
+   バナーを表示する 541px 以上で適用する（540px以下はスマホ用の
+   下部バーに切り替わるため不要）。
+   ======================================== */
+@media (min-width: 541px) {
+  body > .sd {
+    padding-left: 48px;
+  }
+
+  /* ヘッダーもレール分ずれるため、レールを画面上端から表示する */
+  .banner-fixed {
+    top: 0 !important;
+    height: 100vh !important;
   }
 }
