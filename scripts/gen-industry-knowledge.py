@@ -112,6 +112,15 @@ parts.append(
 # 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
 DETAIL_LINKS = {
     'ビジョン・コンサルティング': 'vision-consulting',
+    'クオンツコンサルティング': 'quants',
+    'ベルコア・コンサルティング': 'velcore',
+    'イントループ': 'intloop',
+    'ブライシスコンサルティング': 'brisis',
+    'リグリットパートナーズ': 'regrit-partners',
+    'リブコンサルティング': 'lib-consulting',
+    'リヴァンプ': 'revamp',
+    'アクティヴァーチ・コンサルティング': 'activarch',
+    'Dirbato': 'dirbato',
 }
 
 def render_list(names):
