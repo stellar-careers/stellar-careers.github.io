@@ -111,6 +111,22 @@ parts.append(
 
 # 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
 DETAIL_LINKS = {
+    'ボストン・コンサルティング・グループ': 'bcg',
+    'ベイン・アンド・カンパニー': 'bain',
+    'A.T.カーニー': 'at-kearney',
+    'アーサー・ディ・リトル・ジャパン': 'adl',
+    'ローランド・ベルガー': 'roland-berger',
+    'YCP': 'ycp',
+    '経営共創基盤': 'igpi',
+    'FIELD MANAGEMENT STRATEGY': 'fms',
+    'P&Eディレクションズ': 'pe-directions',
+    'グロービング': 'globing',
+    'GienTech': 'gientech',
+    'LTS': 'lts',
+    'METATEAM': 'metateam',
+    'NeoVista': 'neovista',
+    'Unite Partners': 'unite-partners',
+    'クロスピアコンサルティング': 'xspear',
     'ビジョン・コンサルティング': 'vision-consulting',
     'クオンツコンサルティング': 'quants',
     'ベルコア・コンサルティング': 'velcore',
@@ -121,6 +137,14 @@ DETAIL_LINKS = {
     'リヴァンプ': 'revamp',
     'アクティヴァーチ・コンサルティング': 'activarch',
     'Dirbato': 'dirbato',
+    'ULSコンサルティング': 'uls',
+    'Stellar Digital Consulting': 'stellar-digital',
+    'ノースサンド': 'northsand',
+    'イグニション・ポイント': 'ignition-point',
+    'イグニション・ポイントフォース': 'ignition-point-force',
+    'ライズ・コンサルティング・グループ': 'rise-cg',
+    'リッジラインズ': 'ridgelinez',
+    '山田コンサルティング': 'yamada-cg',
 }
 
 def render_list(names):
