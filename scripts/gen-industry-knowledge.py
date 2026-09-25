@@ -111,6 +111,20 @@ parts.append(
 
 # 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
 DETAIL_LINKS = {
+    'ドリームインキュベータ―': 'dream-incubator',
+    'pragmateches': 'pragmateches',
+    'Deloitte': 'deloitte',
+    'PwC': 'pwc',
+    'EY': 'ey',
+    'KPMG': 'kpmg',
+    'Accenture': 'accenture',
+    'アビームコンサルティング': 'abeam',
+    'ベイカレント': 'baycurrent',
+    'フォーティエンスコンサルティング(旧クニエ)': 'fortience',
+    'PKSHA Technology': 'pksha',
+    'ABEJA': 'abeja',
+    'エクサウィザーズ': 'exawizards',
+    'FLUX': 'flux',
     'ボストン・コンサルティング・グループ': 'bcg',
     'ベイン・アンド・カンパニー': 'bain',
     'A.T.カーニー': 'at-kearney',
