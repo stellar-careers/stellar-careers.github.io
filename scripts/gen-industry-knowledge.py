@@ -79,6 +79,7 @@ if 'NTTデータ' in groups['6. 事業会社']:
 RENAME = {
     'イグニッションポイント': 'イグニション・ポイント',
     'イグニッションポイントフォース': 'イグニション・ポイントフォース',
+    'ドリームインキュベータ―': 'ドリームインキュベータ',  # Excel の末尾が U+2015（横棒）。正式社名に直す
 }
 for _k in groups:
     groups[_k] = [RENAME.get(_n, _n) for _n in groups[_k]]
@@ -87,7 +88,7 @@ for _k in groups:
 STRATEGY_SUBGROUPS = [
     ('外資戦略ファーム', ['ボストン・コンサルティング・グループ', 'ベイン・アンド・カンパニー',
                           'A.T.カーニー', 'アーサー・ディ・リトル・ジャパン', 'ローランド・ベルガー', 'Slalom', 'YCP']),
-    ('内資戦略ファーム', ['経営共創基盤', 'ドリームインキュベータ―', 'FIELD MANAGEMENT STRATEGY',
+    ('内資戦略ファーム', ['経営共創基盤', 'ドリームインキュベータ', 'FIELD MANAGEMENT STRATEGY',
                           'P&Eディレクションズ', 'グロービング', 'pragmateches']),
     ('ステラグループ', None),  # None = Stellar* を自動収集（Excel順）
 ]
@@ -111,7 +112,7 @@ parts.append(
 
 # 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
 DETAIL_LINKS = {
-    'ドリームインキュベータ―': 'dream-incubator',
+    'ドリームインキュベータ': 'dream-incubator',
     'pragmateches': 'pragmateches',
     'Deloitte': 'deloitte',
     'PwC': 'pwc',
