@@ -11,7 +11,7 @@ Issue のフォームから以下を取得する:
 
 | フィールド | 用途 |
 |-----------|------|
-| 記事タイトル | `<h2>` 見出し、一覧カードのタイトル、HP カードの `<h3>` |
+| 記事タイトル | 本文の `<h1>` 見出し、一覧カードのタイトル、HP カードの `<h3>` |
 | 公開日 | 記事の日付表示 (`YYYY/MM/DD`) |
 | カバー画像 (1200x675) | 記事ページのカバー画像・一覧ページのカード画像 |
 | カード画像 (600x337) | ホームページ Blog セクションのカード画像 |
@@ -34,7 +34,7 @@ Issue のフォームから以下を取得する:
    - `{{ARTICLE_ID}}` → 生成した記事 ID
 4. `<body>` 内で変更する箇所:
    - `<p class="text sd blog-post-date r8">` → 公開日
-   - `<h2 class="text sd blog-post-heading r9">` → 記事タイトル
+   - `<h1 class="text sd blog-post-heading r9">` → 記事タイトル（カテゴリ名「Blog」は `<p>`）
    - `<img class="sd blog-post-featured-img">` の `src` → `../../assets/images/blog_{id}_middle.webp`
    - `<div class="richText sd blog-post-richtext">` の中身 → 本文 HTML（既存記事の中身は全て削除して、Issue 本文を変換した HTML を挿入）
    - 本文に Studio.Design 残骸属性 (`data-uid`, `data-time`, `data-has-link`) があれば全て除去

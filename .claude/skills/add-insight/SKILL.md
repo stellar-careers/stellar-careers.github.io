@@ -12,8 +12,8 @@ Issue のフォームから以下を取得する:
 | フィールド | 用途 |
 |-----------|------|
 | 記事カテゴリ (dropdown) | どのカテゴリページに追加するか決定 |
-| 記事タイトル | `<h2>` 見出し、一覧カードの `<h3>` |
-| カバー画像 (1200x630) | 記事ページ・一覧カード・ホームカルーセル共通 |
+| 記事タイトル | 本文の `<h1>` 見出し、一覧カードの `<h3>` |
+| カバー画像 (1200x630) | 記事ページ・一覧カード・SNS用画像（og:image）共通 |
 | 記事本文 (Markdown) | 記事本文（HTML に変換） |
 | OGP 説明文 | `<meta>` description（任意） |
 
@@ -54,12 +54,7 @@ Issue のフォームから以下を取得する:
 
 `docs/{slug}/index.html`（該当カテゴリページ）の `<ul class="sd appear insight-cat-grid">` 直後にカードを追加する（最新記事は先頭）。
 
-全記事一覧 `docs/insight/index.html` は**手で編集しない**。カテゴリページを更新したあとに次で作り直す
-（4つのカテゴリページから集めて、追加日の新しい順に並べる。2026-10 SEO施策2で自動化）:
-
-```bash
-python scripts/gen-insight-index.py
-```
+全記事一覧（`docs/insight/index.html`）は 2026-07 のリニューアルで廃止した。`/insight/` は Career tips（`docs/insight-interview/`）への転送ページなので、カードは追加しない。
 
 カード HTML の構造:
 ```html
@@ -70,13 +65,11 @@ python scripts/gen-insight-index.py
 </a>
 ```
 
-### 5. ホームページのカルーセルを更新
+### 5. トップの Career tips を更新（必要なとき）
 
-```bash
-bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh
-```
-
-このスクリプトが `docs/insight/index.html` の先頭 6 記事を取得し、`docs/index.html` のカルーセルを自動再構築する。
+トップのカルーセルは 2026-06-27 に Career tips のグリッドへ置き換わった。`update-carousel.sh` は使えない
+（実行するとエラーで止まる）。トップに新しい記事を出したいときは、`docs/index.html` の Career tips の
+グリッドを直接編集する。
 
 ### 6. SEO の仕上げ（2026-10 SEO施策4）
 
@@ -96,10 +89,8 @@ python scripts/seo.py check      # NG 0件になるまで直す
 
 - [ ] `docs/insight/{id}/index.html` が正しく表示される
 - [ ] `docs/{slug}/index.html` のカード一覧に新記事が追加されている
-- [ ] `python scripts/gen-insight-index.py` で `docs/insight/index.html` の先頭に新記事が入った
 - [ ] `python scripts/seo.py check` が NG 0件
 - [ ] `python scripts/gen-sitemap.py --check` で不足・余分が0件
-- [ ] `bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh` が正常に完了した
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
 
 ### 8. PR の作成

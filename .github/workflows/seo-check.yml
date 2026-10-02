@@ -1,11 +1,12 @@
 name: SEO check
 
-# PR ごとに、ページの SEO 検査とサイトマップの漏れを確かめる（2026-10 SEO施策4）。
-# NG が出たら、ローカルで次を実行して直す:
-#   python scripts/gen-insight-index.py   # Insight 記事を足したとき
-#   python scripts/seo.py apply           # 構造化データ・canonical をそろえる
+# PR と main への push のたびに、ページの SEO 検査とサイトマップの漏れを確かめる（2026-10 SEO施策4）。
+# NG が出たら、ローカルで次を実行して直す（手順の詳細は CLAUDE.md の「SEO の仕組み」）:
+#   python scripts/seo.py apply           # 構造化データ・メタ情報をそろえる
 #   python scripts/gen-sitemap.py         # サイトマップを作り直す
 #   python scripts/seo.py check           # 検査（NG 0件になるまで）
+# 記事 PR のコメント承認は、この検査が通らないとマージできない。NG が出たら、承認者ではなく
+# PR の作成者（Copilot の場合は依頼した人）が上の手順で直す。
 
 on:
   pull_request:
@@ -13,8 +14,13 @@ on:
       - "docs/**"
       - "scripts/seo.py"
       - "scripts/gen-sitemap.py"
-      - "scripts/gen-insight-index.py"
       - ".github/workflows/seo-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/seo.py"
+      - "scripts/gen-sitemap.py"
 
 jobs:
   seo-check:
@@ -22,10 +28,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Checkout PR code
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0   # 構造化データの日付に git の履歴を使うため
 
       - name: Setup Python
         uses: actions/setup-python@v5
