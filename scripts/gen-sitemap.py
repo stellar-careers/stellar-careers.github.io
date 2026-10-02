@@ -24,10 +24,9 @@ DOCS = os.path.join(ROOT, "docs")
 SITE = "https://stellar-careers.com"
 OUT = os.path.join(DOCS, "sitemap.xml")
 
-# 掲載を確認できていないページ。確認がとれたら外す
-EXCLUDE = {
-    "insight/Hx7mK3pQ",  # 2026-03-27 追加。一覧ページにもサイトマップにも未掲載のまま（運用者に確認中）
-}
+# noindex ではないが載せないページ（今は無し）。
+# 以前ここにあった insight/Hx7mK3pQ は insight/OWsiXgjE の重複だったため転送ページにした（noindex で自動的に外れる）
+EXCLUDE = set()
 
 
 def git(*args):

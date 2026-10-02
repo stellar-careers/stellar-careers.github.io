@@ -82,15 +82,30 @@ bash .claude/skills/update-homepage-blog/scripts/update-blog-cards.sh
 
 このスクリプトが `docs/blog/index.html` の先頭 2 件を取得し、`docs/index.html` の Blog セクションを自動再構築する。
 
-### 7. 確認事項
+### 7. SEO の仕上げ（2026-10 SEO施策4）
+
+構造化データ（記事・パンくず）とサイトマップを入れ、検査を通す。PR では同じ検査が自動で走る（`.github/workflows/seo-check.yml`）。
+
+```bash
+python scripts/seo.py apply      # 構造化データ・canonical をそろえる
+python scripts/gen-sitemap.py    # サイトマップに新しい記事を載せる
+python scripts/seo.py check      # NG 0件になるまで直す
+```
+
+- 記事の題名は本文の `<h1 class="text sd blog-post-heading ...">` に入れる（カテゴリ名「Blog」は `<p>`）
+- タイトル末尾の社名・表記は CLAUDE.md の「社名・ブランドの表記」に従う
+
+### 8. 確認事項
 
 - [ ] `docs/blog/{id}/index.html` が正しく表示される
 - [ ] `docs/blog/index.html` のカード一覧に新記事が先頭に追加されている
 - [ ] `bash .claude/skills/update-homepage-blog/scripts/update-blog-cards.sh` が正常に完了した
 - [ ] `docs/index.html` の Blog セクションが更新されている
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
+- [ ] `python scripts/seo.py check` が NG 0件
+- [ ] `python scripts/gen-sitemap.py --check` で不足・余分が0件
 
-### 8. PR の作成
+### 9. PR の作成
 
 PR のタイトルと説明を以下の形式で日本語で作成する。
 

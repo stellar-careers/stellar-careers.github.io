@@ -1,0 +1,39 @@
+name: SEO check
+
+# PR ごとに、ページの SEO 検査とサイトマップの漏れを確かめる（2026-10 SEO施策4）。
+# NG が出たら、ローカルで次を実行して直す:
+#   python scripts/gen-insight-index.py   # Insight 記事を足したとき
+#   python scripts/seo.py apply           # 構造化データ・canonical をそろえる
+#   python scripts/gen-sitemap.py         # サイトマップを作り直す
+#   python scripts/seo.py check           # 検査（NG 0件になるまで）
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "scripts/seo.py"
+      - "scripts/gen-sitemap.py"
+      - "scripts/gen-insight-index.py"
+      - ".github/workflows/seo-check.yml"
+
+jobs:
+  seo-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 構造化データの日付に git の履歴を使うため
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: ページの検査（title・description・h1・canonical・構造化データ・リンク切れ）
+        run: python scripts/seo.py check
+
+      - name: サイトマップの検査（載るべきページの不足・余分）
+        run: python scripts/gen-sitemap.py --check

@@ -52,10 +52,14 @@ Issue のフォームから以下を取得する:
 
 ### 4. 一覧ページにカードを追加
 
-以下の 2 ファイルの `<ul class="sd appear insight-cat-grid">` 直後にカードを追加（最新記事は先頭）:
+`docs/{slug}/index.html`（該当カテゴリページ）の `<ul class="sd appear insight-cat-grid">` 直後にカードを追加する（最新記事は先頭）。
 
-- `docs/insight/index.html`（全記事一覧）
-- `docs/{slug}/index.html`（該当カテゴリページ）
+全記事一覧 `docs/insight/index.html` は**手で編集しない**。カテゴリページを更新したあとに次で作り直す
+（4つのカテゴリページから集めて、追加日の新しい順に並べる。2026-10 SEO施策2で自動化）:
+
+```bash
+python scripts/gen-insight-index.py
+```
 
 カード HTML の構造:
 ```html
@@ -74,15 +78,31 @@ bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh
 
 このスクリプトが `docs/insight/index.html` の先頭 6 記事を取得し、`docs/index.html` のカルーセルを自動再構築する。
 
-### 6. 確認事項
+### 6. SEO の仕上げ（2026-10 SEO施策4）
+
+構造化データ（記事・パンくず）とサイトマップを入れ、検査を通す。PR では同じ検査が自動で走る（`.github/workflows/seo-check.yml`）。
+
+```bash
+python scripts/seo.py apply      # 構造化データ・canonical をそろえる
+python scripts/gen-sitemap.py    # サイトマップに新しい記事を載せる
+python scripts/seo.py check      # NG 0件になるまで直す
+```
+
+- 記事の題名は本文の `<h1 class="text sd appear insight-article-heading ...">` に入れる（カテゴリ名「Insight」は `<p>`）。
+  雛形の `docs/insight/wbcTHhtv/index.html` はこの形になっている
+- タイトル末尾の社名・表記は CLAUDE.md の「社名・ブランドの表記」に従う
+
+### 7. 確認事項
 
 - [ ] `docs/insight/{id}/index.html` が正しく表示される
 - [ ] `docs/{slug}/index.html` のカード一覧に新記事が追加されている
-- [ ] `docs/insight/index.html` のカード一覧に新記事が追加されている
+- [ ] `python scripts/gen-insight-index.py` で `docs/insight/index.html` の先頭に新記事が入った
+- [ ] `python scripts/seo.py check` が NG 0件
+- [ ] `python scripts/gen-sitemap.py --check` で不足・余分が0件
 - [ ] `bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh` が正常に完了した
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
 
-### 7. PR の作成
+### 8. PR の作成
 
 PR のタイトルと説明を以下の形式で日本語で作成する。
 

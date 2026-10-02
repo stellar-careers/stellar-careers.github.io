@@ -27,6 +27,23 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
   別名（alternateName）に「ステラキャリアズ」「Stellar careers」「Stellar Careers」を並べている
 - 名前の似た別会社「株式会社ステラキャリア」（stellarcareer.jp）がある。混同されないよう、法人番号と所在地を会社概要に載せている
 
+## SEO の仕組み（2026-10 SEO施策2〜4）
+
+ページを足したり直したりしたら、次の順に実行する。PR では `.github/workflows/seo-check.yml` が同じ検査を自動で走らせる。
+
+    python scripts/gen-insight-index.py   # Insight の全記事一覧（docs/insight/index.html）を作り直す。手で編集しない
+    python scripts/seo.py apply           # 構造化データ（組織・記事・パンくず）と canonical の形をそろえる
+    python scripts/gen-sitemap.py         # サイトマップを作り直す。手で編集しない
+    python scripts/seo.py check           # 検査。NG 0件にする
+
+- canonical / og:url は末尾スラッシュ付きの自分のURL（GitHub Pages がスラッシュ付きへ転送するため）
+- h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
+- 検索に出さないページ（noindex）は `scripts/seo.py` の `NOINDEX_OK` に登録する。サイトマップからは自動で外れる
+- 移動したURLは、待ち時間0の meta refresh の転送ページ（noindex）を置く（GitHub Pages はサーバー側の301転送ができない）。
+  例: `docs/our-people/`、`docs/insight/Hx7mK3pQ/`（OWsiXgjE の重複だったもの）
+- ファーム記事（Industry knowledge）は `firm-article-writer/scripts/build_firm_pages.py` が作り、
+  最後に `seo.py apply` と `gen-sitemap.py` を自動で呼ぶ。関連リンク（あわせて読みたいファーム）も同時に入る
+
 ## Quick Start
 
     npm run dev        # http://localhost:3000/
@@ -193,7 +210,7 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 - 30+ article pages at depth 2
 - Article IDs can start with `-` (e.g., `-ilnF14x`)
 - `robots: all` on article pages (indexable in production; preview deploy injects `noindex, nofollow` via `.github/workflows/preview.yml`)
-- "Go back to Insight" link uses relative path `../../insight`
+- "Go back to Insight" link uses relative path `../../insight`（`docs/insight/index.html` は `scripts/gen-insight-index.py` が作る全記事一覧）
 
 ### insight-case, insight-interview, insight-work
 - Category filter pages with tab navigation
