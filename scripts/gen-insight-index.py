@@ -80,7 +80,7 @@ def build(cards):
         n[key] = c
 
     e = lambda s: H.escape(s, quote=True)
-    sub(r"<title>[^<]*</title>", lambda m: "<title>%s | Stellar Careers</title>" % e(TITLE), "title")
+    sub(r"<title>[^<]*</title>", lambda m: "<title>%s | ステラキャリアズ</title>" % e(TITLE), "title")
     sub(r'(<meta property="og:title" content=")[^"]*(")', lambda m: m.group(1) + e(TITLE) + m.group(2), "og:title")
     sub(r'(<meta property="og:description" content=")[^"]*(")', lambda m: m.group(1) + e(DESC) + m.group(2), "og:desc")
     sub(r'(<meta name="description" content=")[^"]*(")', lambda m: m.group(1) + e(DESC) + m.group(2), "desc")

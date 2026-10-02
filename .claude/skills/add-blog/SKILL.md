@@ -28,7 +28,7 @@ Issue のフォームから以下を取得する:
    - 既存記事 `docs/blog/lHJC6vQA/index.html` を複製して `<body>` の構造を流用する
    - depth 2 なので asset パスは `../../assets/`、他ページへのリンクは `../../{page}`
 3. **`<head>` ブロックは `.claude/skills/add-blog/templates/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
-   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| Stellar Careers` サフィックスが付く）
+   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| ステラキャリアズ` サフィックスが付く）
    - `{{OG_DESCRIPTION}}` → OGP 説明文（未入力時は抜粋文）
    - `{{COVER_IMAGE_BASENAME}}` → `blog_{id}_middle.webp`
    - `{{ARTICLE_ID}}` → 生成した記事 ID

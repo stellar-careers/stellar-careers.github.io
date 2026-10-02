@@ -9,6 +9,24 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
 - コード中のコメントも日本語
 - 変数名・クラス名・ファイル名は英語のまま
 
+## 社名・ブランドの表記（2026-10 SEO施策3）
+
+検索エンジンとAIが会社を正しく見分けられるよう、表記を1つにそろえる。
+
+| 場面 | 表記 |
+|------|------|
+| 正式社名（会社概要・規約・構造化データの name） | ステラキャリアズ株式会社（法人番号 9010701046365。国税庁の法人番号公表サイトで確認） |
+| 本文で会社を指すとき（新しく書く文章） | ステラキャリアズ（既存の宣伝文の英字表記は、意図がある可能性があるため変えていない） |
+| 英字（ロゴ・フッターの ©） | Stellar careers（ロゴに合わせる） |
+| `<title>` の末尾 | `記事名 \| ステラキャリアズ` |
+| トップの `<title>` | `ステラキャリアズ（Stellar careers）\| コンサル特化の転職エージェント` |
+| `og:site_name` | ステラキャリアズ（Stellar careers） |
+| `apple-mobile-web-app-title` | ステラキャリアズ |
+
+- 組織の構造化データ（`<script type="application/ld+json" id="ld-organization">`）はトップと会社情報に置く。
+  別名（alternateName）に「ステラキャリアズ」「Stellar careers」「Stellar Careers」を並べている
+- 名前の似た別会社「株式会社ステラキャリア」（stellarcareer.jp）がある。混同されないよう、法人番号と所在地を会社概要に載せている
+
 ## Quick Start
 
     npm run dev        # http://localhost:3000/
