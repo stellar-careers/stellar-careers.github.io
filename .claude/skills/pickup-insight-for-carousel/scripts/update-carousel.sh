@@ -15,6 +15,15 @@ INSIGHT_INDEX="$ROOT/docs/insight/index.html"
 HOME_INDEX="$ROOT/docs/index.html"
 SLIDE_COUNT=6
 
+# トップのカルーセルは 2026-06-27（3ef7433）で Career tips のグリッドに置き換わり、
+# Insight の全記事一覧（docs/insight/index.html）も 2026-07 のリニューアルで廃止した。
+# 置換が黙って0件になり「成功」と表示されていたので、対象が無ければ止める（2026-10 レビュー指摘）
+if ! grep -q 'data-type="carousel" class="sd appear[^"]*insight-carousel"' "$HOME_INDEX"; then
+  echo "Error: docs/index.html にカルーセルがありません（2026-06-27 に Career tips のグリッドへ置き換え済み）。" >&2
+  echo "       このスクリプトは使えません。トップの Career tips の更新は docs/index.html を直接編集してください。" >&2
+  exit 1
+fi
+
 if [[ ! -f "$INSIGHT_INDEX" ]]; then
   echo "Error: $INSIGHT_INDEX not found" >&2
   exit 1

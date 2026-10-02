@@ -9,6 +9,48 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
 - コード中のコメントも日本語
 - 変数名・クラス名・ファイル名は英語のまま
 
+## 社名・ブランドの表記（2026-10 SEO施策3）
+
+検索エンジンとAIが会社を正しく見分けられるよう、表記を1つにそろえる。
+
+| 場面 | 表記 |
+|------|------|
+| 正式社名（会社概要・規約・構造化データの name） | ステラキャリアズ株式会社（法人番号 9010701046365。国税庁の法人番号公表サイトで確認） |
+| 本文で会社を指すとき（新しく書く文章） | ステラキャリアズ（既存の宣伝文の英字表記は、意図がある可能性があるため変えていない） |
+| 英字（ロゴ・フッターの ©） | Stellar careers（ロゴに合わせる） |
+| `<title>` の末尾 | `記事名 \| ステラキャリアズ` |
+| トップの `<title>` | `ステラキャリアズ（Stellar careers）\| コンサル特化の転職エージェント` |
+| `og:site_name` | ステラキャリアズ（構造化データの WebSite の name と同じにする） |
+| `apple-mobile-web-app-title` | ステラキャリアズ |
+
+- 組織の構造化データ（`<script type="application/ld+json" id="ld-organization">`）はトップと会社情報に置く。
+  別名（alternateName）に「ステラキャリアズ」「Stellar careers」「Stellar Careers」を並べている
+- 名前の似た別会社「株式会社ステラキャリア」（stellarcareer.jp）がある。混同されないよう、法人番号と所在地を会社概要に載せている
+
+## SEO の仕組み（2026-10 SEO施策2〜4。同月の独立レビューを受けて改訂）
+
+ページを足したり直したりしたら、次の順に実行する。PR と main への push では `.github/workflows/seo-check.yml` が同じ検査を自動で走らせる。
+
+    python scripts/seo.py apply      # 構造化データ（組織・記事・パンくず）とメタ情報（canonical・og:*）をそろえる
+    python scripts/gen-sitemap.py    # サイトマップを作り直す。手で編集しない（履歴の浅い clone では止まる）
+    python scripts/seo.py check      # 検査。NG 0件にする
+
+- canonical / og:url は末尾スラッシュ付きの自分のURL（GitHub Pages がスラッシュ付きへ転送するため）
+- h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
+- 構造化データの日付は、確かなものだけ入れる。ブログは画面の日付を datePublished にする。
+  Insight とファーム記事は画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので入れない（git のコミット日は公開日ではない）
+- 検索に出さないページ（noindex）は `scripts/seo.py` の `NOINDEX_OK` に登録する。サイトマップからは自動で外れる
+- 移動・廃止したURLには、待ち時間0の meta refresh と転送先への canonical を持つ転送ページを置く（GitHub Pages はサーバー側の301転送ができない）。
+  転送ページは seo.py が自動で見分け、サイトマップと検査の対象から外す。今ある転送ページ:
+  `docs/insight/`（→ Career tips）、`docs/our-people/`（→ トップの所属エージェント）、`docs/ceo-message/`（→ 会社情報の代表メッセージ）、
+  `docs/insight/Hx7mK3pQ/`（→ 本文が同一の insight/OWsiXgjE）
+- Insight の全記事一覧（/insight/）と Our people は 2026-07 のリニューアル（3c5a7db）で廃止した。復活させない。
+  同じリニューアルで「マッキンゼー」の表記を「外資系コンサルファーム」に置き換えている。
+  表紙画像にその文字が残る記事は、SNS用の画像（og:image）をサイト共通の画像にしてある
+- ファーム記事（Industry knowledge）は `firm-article-writer/scripts/build_firm_pages.py` が作り、
+  最後に `seo.py apply` と `gen-sitemap.py` を自動で呼ぶ。関連リンク（同じカテゴリのほかの企業）も同時に入る。
+  社を指定して作るときは、同じカテゴリの社も自動で作り直す（相互リンクを揃えるため）
+
 ## Quick Start
 
     npm run dev        # http://localhost:3000/
@@ -175,7 +217,7 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 - 30+ article pages at depth 2
 - Article IDs can start with `-` (e.g., `-ilnF14x`)
 - `robots: all` on article pages (indexable in production; preview deploy injects `noindex, nofollow` via `.github/workflows/preview.yml`)
-- "Go back to Insight" link uses relative path `../../insight`
+- 記事の戻るボタンは「Back to top」で `../../`（トップ）へ戻る。`/insight/` の一覧は 2026-07 に廃止し、今は Career tips への転送ページ
 
 ### insight-case, insight-interview, insight-work
 - Category filter pages with tab navigation

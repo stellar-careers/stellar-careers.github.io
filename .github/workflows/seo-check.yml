@@ -1,0 +1,43 @@
+name: SEO check
+
+# PR と main への push のたびに、ページの SEO 検査とサイトマップの漏れを確かめる（2026-10 SEO施策4）。
+# NG が出たら、ローカルで次を実行して直す（手順の詳細は CLAUDE.md の「SEO の仕組み」）:
+#   python scripts/seo.py apply           # 構造化データ・メタ情報をそろえる
+#   python scripts/gen-sitemap.py         # サイトマップを作り直す
+#   python scripts/seo.py check           # 検査（NG 0件になるまで）
+# 記事 PR のコメント承認は、この検査が通らないとマージできない。NG が出たら、承認者ではなく
+# PR の作成者（Copilot の場合は依頼した人）が上の手順で直す。
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "scripts/seo.py"
+      - "scripts/gen-sitemap.py"
+      - ".github/workflows/seo-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/seo.py"
+      - "scripts/gen-sitemap.py"
+
+jobs:
+  seo-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: ページの検査（title・description・h1・canonical・構造化データ・リンク切れ）
+        run: python scripts/seo.py check
+
+      - name: サイトマップの検査（載るべきページの不足・余分）
+        run: python scripts/gen-sitemap.py --check

@@ -3,3 +3,7 @@ node_modules/
 .screenshots/
 .ssh/
 .claude/settings.local.json
+
+# Python のキャッシュ（scripts/gen-sitemap.py が scripts/seo.py を読み込むとできる）
+__pycache__/
+*.pyc

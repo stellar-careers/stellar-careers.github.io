@@ -79,6 +79,7 @@ if 'NTTデータ' in groups['6. 事業会社']:
 RENAME = {
     'イグニッションポイント': 'イグニション・ポイント',
     'イグニッションポイントフォース': 'イグニション・ポイントフォース',
+    'ドリームインキュベータ―': 'ドリームインキュベータ',  # Excel の末尾が U+2015（横棒）。正式社名に直す
 }
 for _k in groups:
     groups[_k] = [RENAME.get(_n, _n) for _n in groups[_k]]
@@ -87,7 +88,7 @@ for _k in groups:
 STRATEGY_SUBGROUPS = [
     ('外資戦略ファーム', ['ボストン・コンサルティング・グループ', 'ベイン・アンド・カンパニー',
                           'A.T.カーニー', 'アーサー・ディ・リトル・ジャパン', 'ローランド・ベルガー', 'Slalom', 'YCP']),
-    ('内資戦略ファーム', ['経営共創基盤', 'ドリームインキュベータ―', 'FIELD MANAGEMENT STRATEGY',
+    ('内資戦略ファーム', ['経営共創基盤', 'ドリームインキュベータ', 'FIELD MANAGEMENT STRATEGY',
                           'P&Eディレクションズ', 'グロービング', 'pragmateches']),
     ('ステラグループ', None),  # None = Stellar* を自動収集（Excel順）
 ]
@@ -111,7 +112,7 @@ parts.append(
 
 # 詳細ページを持つ企業（企業名 -> industry-knowledge からの相対URL）
 DETAIL_LINKS = {
-    'ドリームインキュベータ―': 'dream-incubator',
+    'ドリームインキュベータ': 'dream-incubator',
     'pragmateches': 'pragmateches',
     'Deloitte': 'deloitte',
     'PwC': 'pwc',
@@ -159,6 +160,27 @@ DETAIL_LINKS = {
     'ライズ・コンサルティング・グループ': 'rise-cg',
     'リッジラインズ': 'ridgelinez',
     '山田コンサルティング': 'yamada-cg',
+    '野村総合研究所': 'nri',
+    '三菱総合研究所': 'mri',
+    '三菱UFJリサーチ＆コンサルティング': 'murc',
+    '船井総合研究所': 'funai',
+    'インテリジェントフォース': 'intelligentforce',
+    '松尾研究所': 'matsuo-institute',
+    'PeopleX': 'peoplex',
+    'Low Code': 'lowcode',
+    'ブリングアウト': 'bringout',
+    'UPSIDER': 'upsider',
+    'SmartHR': 'smarthr',
+    'プログリット': 'progrit',
+    'Mico': 'mico',
+    'ログラス': 'loglass',
+    'タイミー': 'timee',
+    'Arches': 'arches',
+    'キャディ': 'caddi',
+    'アスエネ': 'asuene',
+    'ジーニー': 'geniee',
+    'カミナシ': 'kaminashi',
+    'Hacobu': 'hacobu',
 }
 
 def render_list(names):
@@ -223,17 +245,30 @@ content = '\n      '.join(parts)
 shell = SHELL.read_text(encoding='utf-8')
 
 # メタ・タイトル系
-title = 'Industry knowledge - コンサルファーム企業一覧 | Stellar Careers'
+# 2026-10 SEO施策で、雛形の title 末尾が「| ステラキャリアズ」に、見出しが h1 に変わった。
+# 文字列の完全一致だと置換が黙って0件になり、題名が「転職体験記」のまま残るので、
+# 正規表現で置き換え、0件なら止める（2026-10 レビュー指摘）
+title = 'Industry knowledge - コンサルファーム企業一覧'
 desc  = 'ステラキャリアズがご紹介できる戦略・総合/IT・総研・ブティック・AI・スタートアップ・その他の各コンサルファーム／企業一覧。'
-shell = shell.replace('転職体験記 - コンサル転職の実体験 | Stellar Careers', title)
-shell = re.sub(r'(<meta name="description" content=")[^"]*(">)', r'\g<1>'+desc+r'\g<2>', shell)
-shell = re.sub(r'(<meta property="og:description" content=")[^"]*(">)', r'\g<1>'+desc+r'\g<2>', shell)
+_n = {}
+def _sub(pat, rep, key, flags=0):
+    global shell
+    shell, c = re.subn(pat, rep, shell, count=1, flags=flags)
+    _n[key] = c
+_sub(r'<title>[^<]*</title>', lambda m: '<title>%s | ステラキャリアズ</title>' % title, 'title')
+_sub(r'(<meta property="og:title" content=")[^"]*(">)', lambda m: m.group(1) + title + m.group(2), 'og:title')
+_sub(r'(<meta name="description" content=")[^"]*(">)', lambda m: m.group(1) + desc + m.group(2), 'description')
+_sub(r'(<meta property="og:description" content=")[^"]*(">)', lambda m: m.group(1) + desc + m.group(2), 'og:description')
 shell = shell.replace('https://stellar-careers.com/insight-case', 'https://stellar-careers.com/industry-knowledge')
 
-# ヒーロータイトル
-shell = shell.replace(
-    '<p class="text sd appear insight-cat-hero-title r8">転職体験記</p>',
-    '<p class="text sd appear insight-cat-hero-title r8">Industry knowledge</p>')
+# ヒーロータイトル（h1。以前の雛形の p にも対応）
+_sub(r'<(p|h1) (class="text sd appear insight-cat-hero-title[^"]*")>転職体験記</\1>',
+     lambda m: '<h1 %s>Industry knowledge</h1>' % m.group(2), 'hero')
+# 雛形（転職体験記）のパンくずの構造化データは持ち込まない。docs に置いたあと scripts/seo.py apply で入れ直す
+shell = re.sub(r'\s*<script type="application/ld\+json" id="ld-page">.*?</script>', '', shell, flags=re.S)
+_zero = [k for k, v in _n.items() if v == 0]
+if _zero:
+    raise SystemExit('雛形の置換が0件: %s（insight-case の構造が変わっていないか確認）' % ', '.join(_zero))
 
 # メインセクション(<section id="feature-1"...>...</section>)を丸ごと置換
 shell = re.sub(r'<section id="feature-1".*?</section>', content, shell, count=1, flags=re.S)
