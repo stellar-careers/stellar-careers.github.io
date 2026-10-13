@@ -49,7 +49,7 @@ LOGO = SITE + "/assets/images/favicon.png"          # 正方形（1080×1080）
 GENERIC_OG = SITE + "/assets/images/og-image.png"     # サイト共通の画像（記事の代表画像としては使わない）
 
 # 検索に出さないページ（noindex を付けてよいページ）。転送ページはこの一覧に入れなくてよい
-NOINDEX_OK = {"contact-candidate/thanks"}
+NOINDEX_OK = {"contact-candidate/thanks", "contact-others/thanks"}
 # サイト内のどこからもリンクされていなくてよいページ（2026-07 のリニューアルで一覧から外した記事など）
 ORPHAN_OK_PREFIX = ("insight/",)
 INSIGHT_CATS = [("insight-case", "転職体験記"), ("insight-interview", "面接対策"),
