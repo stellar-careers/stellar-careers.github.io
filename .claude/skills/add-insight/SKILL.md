@@ -58,7 +58,7 @@ Issue のフォームから以下を取得する:
 
 カード HTML の構造:
 ```html
-<a href="../insight/{id}" class="link sd appear insight-cat-card">
+<a href="../insight/{id}/" class="link sd appear insight-cat-card">
   <div class="sd appear insight-cat-card-body">
     <h3 class="text sd appear insight-cat-card-title">{タイトル}</h3>
   </div><img class="sd insight-cat-card-img" alt="" src="../assets/images/{cover_image_middle.webp}">

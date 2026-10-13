@@ -63,7 +63,7 @@ Issue のフォームから以下を取得する:
 `docs/blog/index.html` の `<div class="sd appear blog-list-grid">` 直後にカードを追加（最新記事は先頭）:
 
 ```html
-<a href="../blog/{id}" class="link sd appear blog-list-card"><img class="sd blog-list-card-img" alt="" src="../assets/images/blog_{id}_middle.webp">
+<a href="../blog/{id}/" class="link sd appear blog-list-card"><img class="sd blog-list-card-img" alt="" src="../assets/images/blog_{id}_middle.webp">
             <div class="sd appear blog-list-card-body">
               <p class="text sd appear blog-list-card-date r9">{公開日}</p>
               <p class="text sd appear blog-list-card-title r10">{タイトル}</p>

@@ -36,6 +36,9 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
     python scripts/seo.py check      # 検査。NG 0件にする
 
 - canonical / og:url は末尾スラッシュ付きの自分のURL（GitHub Pages がスラッシュ付きへ転送するため）
+- サイト内リンクも、ページ（ディレクトリ）を指すものは末尾スラッシュ付き（`../company/`、`../industry-knowledge/#consulting`）。
+  スラッシュが無いとクリックのたびに301転送を挟む。`seo.py apply` が自動で付け、`check` は付いていないとNGにする。
+  `docs/404.html` はどの階層のURLでも配信されるので、リンクを `/company/` のように `/` 始まりにする（apply が直す）
 - h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
 - 構造化データの日付は、確かなものだけ入れる。ブログは画面の日付を datePublished にする。
   Insight とファーム記事は画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので入れない（git のコミット日は公開日ではない）
@@ -99,11 +102,12 @@ Pages reference assets and other pages using relative paths based on depth:
 
 | Depth | Example Page | Asset Path | Page Link | Home Link |
 |-------|-------------|------------|-----------|-----------|
-| 0 | `docs/index.html` | `assets/css/style.css` | `about-us` | `.` |
-| 1 | `docs/about-us/index.html` | `../assets/css/style.css` | `../about-us` | `..` |
-| 2 | `docs/insight/xxx/index.html` | `../../assets/css/style.css` | `../../about-us` | `../..` |
+| 0 | `docs/index.html` | `assets/css/style.css` | `about-us/` | `.` |
+| 1 | `docs/about-us/index.html` | `../assets/css/style.css` | `../about-us/` | `..` |
+| 2 | `docs/insight/xxx/index.html` | `../../assets/css/style.css` | `../../about-us/` | `../..` |
 
 This makes the site work on ANY hosting path without a build step.
+Page links end with `/` (see the SEO section above). Exception: `docs/404.html` uses root-absolute paths (`/company/`, `/assets/...`).
 
 ### Meta tags
 

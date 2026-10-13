@@ -188,7 +188,8 @@ def render_list(names):
     for name in names:
         url = DETAIL_LINKS.get(name)
         if url:
-            parts.append(f'      <li class="ik-company ik-company--link"><a href="{url}">{esc(name)}</a></li>')
+            # 末尾スラッシュ付き（GitHub Pages の301転送を挟まないように。2026-10）
+            parts.append(f'      <li class="ik-company ik-company--link"><a href="{url}/">{esc(name)}</a></li>')
         else:
             parts.append(f'      <li class="ik-company">{esc(name)}</li>')
     parts.append('    </ul>')

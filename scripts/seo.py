@@ -14,6 +14,9 @@ apply がそろえるもの:
     - 組織とサイトの構造化データ（トップと会社情報。id="ld-organization"）
     - ページの構造化データ（id="ld-page"）。どのページにも組織（名前・URL・ロゴ）を入れ、
       記事には Article / BlogPosting、全ページにパンくずを入れる
+    - サイト内リンク（<a href>）のうち、ページのディレクトリを指すものに末尾スラッシュを付ける。
+      GitHub Pages は /about-us を /about-us/ へ301で転送するので、スラッシュが無いとクリックのたびに転送を挟む。
+      404.html はどの階層の URL でも配信されるので、相対パスを / 始まりにする（2026-10。PR #116 の続き）
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -24,7 +27,8 @@ check が見るもの（NG）:
     title・description の欠落と重複、タイトル末尾の社名、og:title と og:site_name、h1 が無い、lang が ja でない、
     canonical が1つだけで自分の URL か、og:url との一致、構造化データが読めない・必須項目が無い・
     パンくずの最後が自分の URL でない・組織の名前がページ内に無い、ブログの日付が画面と違う、
-    サイト内リンク切れ・画像の参照切れ（大文字小文字を区別）、想定外の noindex、転送先が無い
+    サイト内リンク切れ・画像の参照切れ（大文字小文字を区別）、想定外の noindex、転送先が無い、
+    サイト内リンクの末尾スラッシュ（404.html は / 始まりか）
 （注意）: h1 が2つ以上、alt 属性の無い画像、タイトルが長い、サイト内のどこからもリンクされていないページ
 """
 import glob, html as H, io, json, os, re, sys
@@ -38,6 +42,7 @@ SITE = "https://stellar-careers.com"
 BRAND = "ステラキャリアズ"
 LEGAL = "ステラキャリアズ株式会社"
 TOP_TITLE = "ステラキャリアズ（Stellar careers）| コンサル特化の転職エージェント"
+PAGE_404 = os.path.join(DOCS, "404.html")
 ORG_ID = SITE + "/#organization"
 WEBSITE_ID = SITE + "/#website"
 LOGO = SITE + "/assets/images/favicon.png"          # 正方形（1080×1080）
@@ -221,6 +226,39 @@ def fix_urls(h, url):
     return re.sub(r'(<meta property="og:url" content=")[^"]*(")', lambda m: m.group(1) + url + m.group(2), h, count=1)
 
 
+def slash_fix(href, page_url, root_abs=False):
+    """サイト内のページ（ディレクトリ）を指すのに末尾スラッシュが無いリンクを、直した値にして返す。
+    直す必要が無ければ None。?query と #fragment は残す。
+    root_abs=True（404.html 用）のときは、相対パスを / 始まりにする"""
+    raw = href.strip()
+    if not raw or raw.startswith(("#", "mailto:", "tel:", "javascript:", "data:")):
+        return None
+    path, suffix = re.match(r"([^?#]*)(.*)$", raw, re.S).groups()
+    u = urlparse(urljoin(page_url, H.unescape(path)))
+    if u.scheme not in ("http", "https") or u.netloc not in ("stellar-careers.com", "www.stellar-careers.com"):
+        return None
+    target = unquote(u.path).strip("/")
+    if target.startswith("homepage-preview"):
+        return None
+    if root_abs and not re.match(r"[a-z][a-z0-9+.-]*:|/", path, re.I):
+        new = "/" + target + ("/" if not target or is_dir_page(target) else "")
+        return None if new + suffix == raw else new + suffix
+    # 「.」「..」「../..」はブラウザがスラッシュ付きのディレクトリとして解決するので触らない
+    if path.endswith("/") or re.search(r"(^|/)\.\.?$", path) or not is_dir_page(target):
+        return None
+    return path + "/" + suffix
+
+
+A_TAG = re.compile(r"<a\b[^>]*>", re.I)
+A_HREF = re.compile(r'(\bhref=")([^"]*)(")')
+
+
+def fix_links(h, page_url, root_abs=False):
+    def tag(m):
+        return A_HREF.sub(lambda a: a.group(1) + (slash_fix(a.group(2), page_url, root_abs) or a.group(2)) + a.group(3), m.group(0))
+    return A_TAG.sub(tag, h)
+
+
 def bigger_image(img):
     """og:image が _small.webp で、_middle.webp が実在すればそちら"""
     if img and img.endswith("_small.webp"):
@@ -285,12 +323,22 @@ def apply(paths):
     cats = insight_category_map()
     changed = 0
     for p in paths:
-        pg = parse(p)
-        if is_redirect(pg):
+        h0 = h = read(p)
+        if p == PAGE_404:
+            h = fix_links(h, SITE + "/", root_abs=True)
+            if h != h0:
+                write(p, h)
+                changed += 1
             continue
+        pg = parse(p)
         rel = rel_of(p)
         url = url_of(rel)
-        h0 = h = read(p)
+        h = fix_links(h, url)
+        if is_redirect(pg):
+            if h != h0:
+                write(p, h)
+                changed += 1
+            continue
         h = fix_urls(h, url)
         h = set_meta(h, "property", "og:site_name", BRAND)
         h = set_meta(h, "property", "og:title", TOP_TITLE if not rel else bare_title(pg.title))
@@ -332,6 +380,12 @@ def exists_exact(rel_path):
     return os.path.isfile(cur) or os.path.isfile(os.path.join(cur, "index.html"))
 
 
+def is_dir_page(rel_path):
+    """docs 内の rel_path が、index.html を持つディレクトリか（大文字小文字を区別）"""
+    parts = [x for x in rel_path.split("/") if x]
+    return bool(parts) and exists_exact(rel_path) and os.path.isfile(os.path.join(DOCS, *parts, "index.html"))
+
+
 def resolve(page_url, href):
     """サイト内リンクの行き先が docs にあるか。対象外（外部・アンカーだけ等）は None"""
     href = H.unescape(href.strip())
@@ -361,6 +415,10 @@ def check():
             r = urlparse(urljoin(url, H.unescape(href)))
             if r.netloc == "stellar-careers.com":
                 linked.add(unquote(r.path).strip("/"))
+        no_slash = [h for h in pg.links if slash_fix(h, url)]
+        if no_slash:
+            err.append((where, "サイト内リンクの末尾にスラッシュが無い %d件（例: %s）。python scripts/seo.py apply で直る"
+                        % (len(no_slash), ", ".join(no_slash[:3]))))
         if is_redirect(pg):
             target = urljoin(url, pg.refresh)
             if resolve(url, pg.refresh) is False:
@@ -438,6 +496,11 @@ def check():
                 warn.append((where, "alt 属性の無い画像"))
             if img.get("src") and resolve(url, img["src"]) is False:
                 err.append((where, "画像の参照切れ: %s" % img["src"]))
+    if os.path.isfile(PAGE_404):
+        bad = [h for h in parse(PAGE_404).links if slash_fix(h, SITE + "/", root_abs=True)]
+        if bad:
+            err.append(("404.html", "相対パスか末尾スラッシュ無しのリンク %d件（例: %s）。404 はどの階層の URL でも出るので / 始まりにする。"
+                        "python scripts/seo.py apply で直る" % (len(bad), ", ".join(bad[:3]))))
     for p, pg in parsed.items():
         rel = rel_of(p)
         if rel and indexable(pg) and rel not in linked and not rel.startswith(ORPHAN_OK_PREFIX):
@@ -463,7 +526,7 @@ if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "check"
     if cmd == "apply":
         only = sys.argv[sys.argv.index("--only") + 1:] if "--only" in sys.argv else None
-        apply([os.path.abspath(p) for p in only] if only else all_pages())
+        apply([os.path.abspath(p) for p in only] if only else all_pages() + [PAGE_404])
     elif cmd == "check":
         sys.exit(check())
     else:
