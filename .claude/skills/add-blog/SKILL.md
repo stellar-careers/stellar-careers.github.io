@@ -11,7 +11,7 @@ Issue のフォームから以下を取得する:
 
 | フィールド | 用途 |
 |-----------|------|
-| 記事タイトル | `<h2>` 見出し、一覧カードのタイトル、HP カードの `<h3>` |
+| 記事タイトル | 本文の `<h1>` 見出し、一覧カードのタイトル、HP カードの `<h3>` |
 | 公開日 | 記事の日付表示 (`YYYY/MM/DD`) |
 | カバー画像 (1200x675) | 記事ページのカバー画像・一覧ページのカード画像 |
 | カード画像 (600x337) | ホームページ Blog セクションのカード画像 |
@@ -28,13 +28,13 @@ Issue のフォームから以下を取得する:
    - 既存記事 `docs/blog/lHJC6vQA/index.html` を複製して `<body>` の構造を流用する
    - depth 2 なので asset パスは `../../assets/`、他ページへのリンクは `../../{page}`
 3. **`<head>` ブロックは `.claude/skills/add-blog/templates/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
-   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| Stellar Careers` サフィックスが付く）
+   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| ステラキャリアズ` サフィックスが付く）
    - `{{OG_DESCRIPTION}}` → OGP 説明文（未入力時は抜粋文）
    - `{{COVER_IMAGE_BASENAME}}` → `blog_{id}_middle.webp`
    - `{{ARTICLE_ID}}` → 生成した記事 ID
 4. `<body>` 内で変更する箇所:
    - `<p class="text sd blog-post-date r8">` → 公開日
-   - `<h2 class="text sd blog-post-heading r9">` → 記事タイトル
+   - `<h1 class="text sd blog-post-heading r9">` → 記事タイトル（カテゴリ名「Blog」は `<p>`）
    - `<img class="sd blog-post-featured-img">` の `src` → `../../assets/images/blog_{id}_middle.webp`
    - `<div class="richText sd blog-post-richtext">` の中身 → 本文 HTML（既存記事の中身は全て削除して、Issue 本文を変換した HTML を挿入）
    - 本文に Studio.Design 残骸属性 (`data-uid`, `data-time`, `data-has-link`) があれば全て除去
@@ -82,15 +82,30 @@ bash .claude/skills/update-homepage-blog/scripts/update-blog-cards.sh
 
 このスクリプトが `docs/blog/index.html` の先頭 2 件を取得し、`docs/index.html` の Blog セクションを自動再構築する。
 
-### 7. 確認事項
+### 7. SEO の仕上げ（2026-10 SEO施策4）
+
+構造化データ（記事・パンくず）とサイトマップを入れ、検査を通す。PR では同じ検査が自動で走る（`.github/workflows/seo-check.yml`）。
+
+```bash
+python scripts/seo.py apply      # 構造化データ・canonical をそろえる
+python scripts/gen-sitemap.py    # サイトマップに新しい記事を載せる
+python scripts/seo.py check      # NG 0件になるまで直す
+```
+
+- 記事の題名は本文の `<h1 class="text sd blog-post-heading ...">` に入れる（カテゴリ名「Blog」は `<p>`）
+- タイトル末尾の社名・表記は CLAUDE.md の「社名・ブランドの表記」に従う
+
+### 8. 確認事項
 
 - [ ] `docs/blog/{id}/index.html` が正しく表示される
 - [ ] `docs/blog/index.html` のカード一覧に新記事が先頭に追加されている
 - [ ] `bash .claude/skills/update-homepage-blog/scripts/update-blog-cards.sh` が正常に完了した
 - [ ] `docs/index.html` の Blog セクションが更新されている
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
+- [ ] `python scripts/seo.py check` が NG 0件
+- [ ] `python scripts/gen-sitemap.py --check` で不足・余分が0件
 
-### 8. PR の作成
+### 9. PR の作成
 
 PR のタイトルと説明を以下の形式で日本語で作成する。
 

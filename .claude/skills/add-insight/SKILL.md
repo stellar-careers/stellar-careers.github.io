@@ -12,8 +12,8 @@ Issue のフォームから以下を取得する:
 | フィールド | 用途 |
 |-----------|------|
 | 記事カテゴリ (dropdown) | どのカテゴリページに追加するか決定 |
-| 記事タイトル | `<h2>` 見出し、一覧カードの `<h3>` |
-| カバー画像 (1200x630) | 記事ページ・一覧カード・ホームカルーセル共通 |
+| 記事タイトル | 本文の `<h1>` 見出し、一覧カードの `<h3>` |
+| カバー画像 (1200x630) | 記事ページ・一覧カード・SNS用画像（og:image）共通 |
 | 記事本文 (Markdown) | 記事本文（HTML に変換） |
 | OGP 説明文 | `<meta>` description（任意） |
 
@@ -37,7 +37,7 @@ Issue のフォームから以下を取得する:
    - 既存記事 `docs/insight/wbcTHhtv/index.html` を複製して `<body>` の構造を流用する
    - depth 2 なので asset パスは `../../assets/` 、他ページへのリンクは `../../{page}`
 3. **`<head>` ブロックは `.claude/skills/add-insight/templates/head.html.template` で丸ごと置き換える**（`<!DOCTYPE html>` から `</head>` まで全体）。プレースホルダを以下で置換:
-   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| Stellar Careers` サフィックスが付く）
+   - `{{TITLE}}` → 記事タイトル（テンプレ側で `| ステラキャリアズ` サフィックスが付く）
    - `{{OG_DESCRIPTION}}` → OGP 説明文（未入力時は本文冒頭から抜粋）
    - `{{COVER_IMAGE_BASENAME}}` → カバー画像のファイル名（例: `insight_bcg_200interviews_middle.webp`）
    - `{{ARTICLE_ID}}` → 生成した記事 ID
@@ -52,10 +52,9 @@ Issue のフォームから以下を取得する:
 
 ### 4. 一覧ページにカードを追加
 
-以下の 2 ファイルの `<ul class="sd appear insight-cat-grid">` 直後にカードを追加（最新記事は先頭）:
+`docs/{slug}/index.html`（該当カテゴリページ）の `<ul class="sd appear insight-cat-grid">` 直後にカードを追加する（最新記事は先頭）。
 
-- `docs/insight/index.html`（全記事一覧）
-- `docs/{slug}/index.html`（該当カテゴリページ）
+全記事一覧（`docs/insight/index.html`）は 2026-07 のリニューアルで廃止した。`/insight/` は Career tips（`docs/insight-interview/`）への転送ページなので、カードは追加しない。
 
 カード HTML の構造:
 ```html
@@ -66,23 +65,35 @@ Issue のフォームから以下を取得する:
 </a>
 ```
 
-### 5. ホームページのカルーセルを更新
+### 5. トップの Career tips を更新（必要なとき）
+
+トップのカルーセルは 2026-06-27 に Career tips のグリッドへ置き換わった。`update-carousel.sh` は使えない
+（実行するとエラーで止まる）。トップに新しい記事を出したいときは、`docs/index.html` の Career tips の
+グリッドを直接編集する。
+
+### 6. SEO の仕上げ（2026-10 SEO施策4）
+
+構造化データ（記事・パンくず）とサイトマップを入れ、検査を通す。PR では同じ検査が自動で走る（`.github/workflows/seo-check.yml`）。
 
 ```bash
-bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh
+python scripts/seo.py apply      # 構造化データ・canonical をそろえる
+python scripts/gen-sitemap.py    # サイトマップに新しい記事を載せる
+python scripts/seo.py check      # NG 0件になるまで直す
 ```
 
-このスクリプトが `docs/insight/index.html` の先頭 6 記事を取得し、`docs/index.html` のカルーセルを自動再構築する。
+- 記事の題名は本文の `<h1 class="text sd appear insight-article-heading ...">` に入れる（カテゴリ名「Insight」は `<p>`）。
+  雛形の `docs/insight/wbcTHhtv/index.html` はこの形になっている
+- タイトル末尾の社名・表記は CLAUDE.md の「社名・ブランドの表記」に従う
 
-### 6. 確認事項
+### 7. 確認事項
 
 - [ ] `docs/insight/{id}/index.html` が正しく表示される
 - [ ] `docs/{slug}/index.html` のカード一覧に新記事が追加されている
-- [ ] `docs/insight/index.html` のカード一覧に新記事が追加されている
-- [ ] `bash .claude/skills/pickup-insight-for-carousel/scripts/update-carousel.sh` が正常に完了した
+- [ ] `python scripts/seo.py check` が NG 0件
+- [ ] `python scripts/gen-sitemap.py --check` で不足・余分が0件
 - [ ] 画像ファイルが `docs/assets/images/` に存在する
 
-### 7. PR の作成
+### 8. PR の作成
 
 PR のタイトルと説明を以下の形式で日本語で作成する。
 
