@@ -49,7 +49,9 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
   `docs/insight/Hx7mK3pQ/`（→ 本文が同一の insight/OWsiXgjE）
 - Insight の全記事一覧（/insight/）と Our people は 2026-07 のリニューアル（3c5a7db）で廃止した。復活させない。
   同じリニューアルで「マッキンゼー」の表記を「外資系コンサルファーム」に置き換えている。
-  表紙画像にその文字が残る記事は、SNS用の画像（og:image）をサイト共通の画像にしてある
+  表紙画像にその文字が残る記事は、SNS用の画像（og:image）をサイト共通の画像にしてある。
+  ただし 2026-07-28 に、エージェントの経歴・合格実績・CEOメッセージ・福元さんの記事（insight/Qh5kT2mN）は
+  事実の記述としてマッキンゼー表記に戻した。経歴や実績の事実として社名を出すのは意図したもので、置き換え直さない
 - ファーム記事（Industry knowledge）は `firm-article-writer/scripts/build_firm_pages.py` が作り、
   最後に `seo.py apply` と `gen-sitemap.py` を自動で呼ぶ。関連リンク（同じカテゴリのほかの企業）も同時に入る。
   社を指定して作るときは、同じカテゴリの社も自動で作り直す（相互リンクを揃えるため）
