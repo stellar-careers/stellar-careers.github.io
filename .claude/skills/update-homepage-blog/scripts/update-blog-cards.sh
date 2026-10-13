@@ -24,12 +24,12 @@ if [[ ! -f "$HOME_INDEX" ]]; then
   exit 1
 fi
 
-# Extract hrefs (e.g. "../blog/lHJC6vQA")
+# Extract hrefs (e.g. "../blog/lHJC6vQA/"). The trailing slash is dropped here and added back below
 hrefs=()
 while IFS= read -r line; do
   hrefs+=("$line")
 done < <(grep -o 'href="\.\./blog/[^"]*" class="link sd appear blog-list-card"' "$BLOG_INDEX" \
-  | sed 's/href="\.\.\/blog\///;s/" class=.*//' \
+  | sed 's/href="\.\.\/blog\///;s/\/*" class=.*//' \
   | head -n "$CARD_COUNT")
 
 # Extract titles
@@ -72,7 +72,7 @@ cards=""
 for ((i = 0; i < count; i++)); do
   id="${hrefs[$i]}"
   echo "  $((i + 1)). [$id] ${titles[$i]}"
-  cards+="<a href=\"blog/$id\" target=\"_blank\" class=\"link sd appear blog-card\">
+  cards+="<a href=\"blog/$id/\" target=\"_blank\" class=\"link sd appear blog-card\">
             <div class=\"sd appear blog-card-content\">
               <h3 class=\"text sd appear blog-card-title r116\">${titles[$i]}</h3>
               <p class=\"text sd appear blog-card-excerpt r117\">${excerpts[$i]}</p>
