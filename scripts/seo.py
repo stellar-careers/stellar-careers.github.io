@@ -31,6 +31,8 @@ apply がそろえるもの:
       <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
     - Google Fonts の <link> を1本にまとめる（書体・太さはそのまま）（2026-10。P-06）
     - ファーム記事に「よくある質問」があれば、構造化データ（FAQPage）を入れる（2026-10。SEO施策5）
+    - Insight 記事の本文に企業記事のある社名が出てきたら、記事ごとに最初の1か所を企業記事へリンクする
+      （class="ia-firm-link"。呼び方の一覧は FIRM_ALIASES）（2026-10）
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -529,6 +531,136 @@ def fix_body_h1(h):
     return RT_REGION.sub(rep, h, count=1)
 
 
+# ---------- Insight 記事の本文から企業記事へのリンク（2026-10） ----------
+# 本文に企業記事のある社名が出てきたら、記事ごとに最初の1か所だけ企業記事（industry-knowledge）へリンクする。
+# 呼び方は取り違えの無いものだけを並べる（「クオンツ」だけ・「MRI」・「LTS」・「ADL」・「キャディ」などは
+# 別の意味にも読めるので入れない）。企業記事が無い社（マッキンゼー・Slalom など）はリンクしない。
+# 見出しの中と、すでにリンクになっている文字はリンクしない。企業記事を足したら、ここに呼び方を足す
+FIRM_ALIASES = {
+    "bcg": ["ボストン・コンサルティング・グループ", "ボストンコンサルティンググループ", "BCG"],
+    "bain": ["ベイン・アンド・カンパニー", "ベイン"],
+    "at-kearney": ["A.T.カーニー", "A.T. カーニー", "ATカーニー", "Kearney"],
+    "adl": ["アーサー・ディ・リトル"],
+    "roland-berger": ["ローランド・ベルガー", "ローランドベルガー"],
+    "ycp": ["YCP"],
+    "igpi": ["経営共創基盤", "IGPI"],
+    "dream-incubator": ["ドリームインキュベータ"],
+    "fms": ["FIELD MANAGEMENT STRATEGY"],
+    "pe-directions": ["P&Eディレクションズ"],
+    "globing": ["グロービング"],
+    "pragmateches": ["pragmateches"],
+    "deloitte": ["デロイト トーマツ コンサルティング", "デロイト トーマツ", "デロイト", "Deloitte"],
+    "pwc": ["PwCコンサルティング", "PwC"],
+    "ey": ["EYストラテジー・アンド・コンサルティング", "EY"],
+    "kpmg": ["KPMGコンサルティング", "KPMG"],
+    "accenture": ["アクセンチュア", "Accenture"],
+    "abeam": ["アビームコンサルティング", "アビーム"],
+    "baycurrent": ["ベイカレント・コンサルティング", "ベイカレント"],
+    "fortience": ["フォーティエンスコンサルティング", "フォーティエンス", "クニエ"],
+    "yamada-cg": ["山田コンサルティンググループ", "山田コンサルティング"],
+    "ignition-point-force": ["イグニション・ポイント フォース", "イグニション・ポイントフォース"],
+    "ignition-point": ["イグニション・ポイント", "イグニッション・ポイント", "イグニッションポイント", "イグニションポイント"],
+    "rise-cg": ["ライズ・コンサルティング・グループ", "ライズ・コンサルティング"],
+    "northsand": ["ノースサンド"],
+    "dirbato": ["Dirbato", "ディルバート"],
+    "ridgelinez": ["Ridgelinez", "リッジラインズ"],
+    "quants": ["クオンツ・コンサルティング", "クオンツコンサルティング"],
+    "vision-consulting": ["ビジョン・コンサルティング"],
+    "uls": ["ULSコンサルティング", "ウルシステムズ"],
+    "stellar-digital": ["ステラデジタルコンサルティング", "Stellar Digital Consulting"],
+    "nri": ["野村総合研究所", "野村総研", "NRI"],
+    "mri": ["三菱総合研究所", "三菱総研"],
+    "murc": ["三菱UFJリサーチ&コンサルティング", "三菱UFJリサーチ＆コンサルティング", "MURC"],
+    "funai": ["船井総合研究所", "船井総研"],
+    "gientech": ["GienTech"],
+    "lts": ["エル・ティー・エス"],
+    "metateam": ["METATEAM", "メタチーム"],
+    "neovista": ["ネオビスタ", "NeoVista"],
+    "unite-partners": ["Unite Partners", "ユナイトパートナーズ"],
+    "intelligentforce": ["インテリジェントフォース"],
+    "intloop": ["INTLOOP", "イントループ"],
+    "xspear": ["Xspear", "クロスピア"],
+    "brisis": ["ブライシス"],
+    "regrit-partners": ["リグリットパートナーズ", "Re-grit Partners"],
+    "lib-consulting": ["リブ・コンサルティング"],
+    "revamp": ["リヴァンプ"],
+    "activarch": ["アクティヴァーチ"],
+    "velcore": ["ベルコア"],
+    "pksha": ["PKSHA"],
+    "abeja": ["ABEJA"],
+    "exawizards": ["エクサウィザーズ"],
+    "matsuo-institute": ["松尾研究所"],
+    "peoplex": ["PeopleX"],
+    "bringout": ["ブリングアウト"],
+    "upsider": ["UPSIDER"],
+    "smarthr": ["SmartHR"],
+    "progrit": ["プログリット"],
+    "loglass": ["ログラス"],
+    "timee": ["タイミー"],
+    "arches": ["アーチーズ"],
+    "caddi": ["CADDi"],
+    "asuene": ["アスエネ"],
+    "kaminashi": ["カミナシ"],
+    "hacobu": ["Hacobu"],
+}
+# 文脈から企業記事へ送るのがふさわしくない組み合わせ（記事ID, 社）。
+# h7Nq2LpD は「本当はドリームインキュベータではなくBCGに行きたかった」人の話で、ドリームインキュベータの紹介ではない。
+# wlaxgLwX の「元デロイト」は、記事末尾の当社の紹介（無料相談への案内）の中で、ほかの記事へ送る場所ではない
+FIRM_LINK_SKIP = {("h7Nq2LpD", "dream-incubator"), ("wlaxgLwX", "deloitte")}
+FIRM_LINK = re.compile(r'<a class="ia-firm-link" href="[^"]*">(.*?)</a>', re.S)
+NO_LINK_TAGS = ("a", "h1", "h2", "h3", "h4", "h5", "h6", "script", "style")
+
+
+def firm_pattern():
+    """社名の正規表現と {本文での表記: 社}。長い呼び方を先に試す。英字の社名は英字の続きの中では拾わない（KEY の EY など）"""
+    slug_of, alts = {}, []
+    for slug, names in FIRM_ALIASES.items():
+        if not is_dir_page("industry-knowledge/" + slug):
+            continue
+        for n in names:
+            e = H.escape(n, quote=False)
+            slug_of[e] = slug
+            p = re.escape(e)
+            if re.match(r"[A-Za-z0-9]", n[0]):
+                p = r"(?<![A-Za-z0-9])" + p
+            if re.match(r"[A-Za-z0-9]", n[-1]):
+                p += r"(?![A-Za-z0-9])"
+            if n == "ベイン":
+                p += "(?!キャピタル)"    # ベインキャピタル（投資ファンド）は別の会社
+            alts.append((len(e), p))
+    alts.sort(key=lambda x: -x[0])
+    return re.compile("|".join(p for _, p in alts)), slug_of
+
+
+def link_firms(h, aid):
+    pat, slug_of = firm_pattern()
+
+    def rep(m):
+        body = FIRM_LINK.sub(r"\1", m.group(2))
+        done = {s for a, s in FIRM_LINK_SKIP if a == aid}
+        out, inside = [], []
+
+        def link(mm):
+            s = slug_of[mm.group(0)]
+            if s in done:
+                return mm.group(0)
+            done.add(s)
+            return '<a class="ia-firm-link" href="../../industry-knowledge/%s/">%s</a>' % (s, mm.group(0))
+        for part in re.split(r"(<[^>]+>)", body):
+            t = re.match(r"<(/?)([A-Za-z0-9]+)", part)
+            if t:
+                if t.group(2).lower() in NO_LINK_TAGS:
+                    if t.group(1):
+                        inside = inside[:-1]
+                    elif not part.endswith("/>"):
+                        inside.append(t.group(2).lower())
+                out.append(part)
+            else:
+                out.append(part if inside or part.startswith("<") else pat.sub(link, part))
+        return m.group(1) + "".join(out) + m.group(3)
+    return RT_REGION.sub(rep, h, count=1)
+
+
 # ---------- Google Fonts の読み込みを1本にまとめる（2026-10。診断 P-06） ----------
 # 1書体・1太さごとに別の <link> で読み込んでいた（多いページで8本）。同じ書体と太さを1本の URL で取る
 FONT_LINK = re.compile(r'[ \t]*<link href="https://fonts\.googleapis\.com/css\?([^"]*)" rel="stylesheet">\r?\n?')
@@ -651,6 +783,7 @@ def apply(paths):
         if kind(rel) == "insight" and indexable(pg):
             h = fix_article_end(h, rel.split("/")[1], cats, cards)
             h = fix_body_h1(h)
+            h = link_firms(h, rel.split("/")[1])
         h = lazy_images(h)
         h = size_images(h, p)
         h = prioritize(h)
