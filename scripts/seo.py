@@ -27,6 +27,7 @@ apply がそろえるもの:
     - アクセシビリティ: ロゴの代替テキストを「ステラキャリアズ」にし、別タブで開くリンクに rel="noopener" を付け、
       Insight 記事の本文の h1 を h2（class="rt-h1"。見た目は h1 と同じ）にする（2026-10。A-02・A-06・S-04）。
       <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
+    - Google Fonts の <link> を1本にまとめる（書体・太さはそのまま）（2026-10。P-06）
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -417,6 +418,38 @@ def fix_body_h1(h):
     return RT_REGION.sub(rep, h, count=1)
 
 
+# ---------- Google Fonts の読み込みを1本にまとめる（2026-10。診断 P-06） ----------
+# 1書体・1太さごとに別の <link> で読み込んでいた（多いページで8本）。同じ書体と太さを1本の URL で取る
+FONT_LINK = re.compile(r'[ \t]*<link href="https://fonts\.googleapis\.com/css\?([^"]*)" rel="stylesheet">\r?\n?')
+
+
+def merge_fonts(h):
+    links = list(FONT_LINK.finditer(h))
+    if len(links) < 2:
+        return h
+    fams = {}
+    for m in links:
+        q = H.unescape(m.group(1))
+        for part in re.search(r"family=([^&]*)", q).group(1).split("|"):
+            name, _, weights = unquote(part).partition(":")
+            for w in (weights.split(",") if weights else ["400"]):
+                fams.setdefault(name, [])
+                if w not in fams[name]:
+                    fams[name].append(w)
+    fam = "%7C".join("%s%%3A%s" % (n.replace(" ", "+"), ",".join(sorted(ws, key=int) if all(w.isdigit() for w in ws) else ws))
+                     for n, ws in fams.items())
+    indent = re.match(r"[ \t]*", links[0].group(0)).group(0)
+    merged = '%s<link href="https://fonts.googleapis.com/css?display=swap&amp;family=%s" rel="stylesheet">\n' % (indent, fam)
+    out, pos = [], 0
+    for i, m in enumerate(links):
+        out.append(h[pos:m.start()])
+        if i == 0:
+            out.append(merged)
+        pos = m.end()
+    out.append(h[pos:])
+    return "".join(out)
+
+
 def crumbs(items):
     return {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(items)]}
@@ -467,7 +500,7 @@ def apply(paths):
     for p in paths:
         h0 = h = read(p)
         if p == PAGE_404:
-            h = fix_noopener(fix_logo_alt(fix_links(h, SITE + "/", root_abs=True)))
+            h = merge_fonts(fix_noopener(fix_logo_alt(fix_links(h, SITE + "/", root_abs=True))))
             if h != h0:
                 write(p, h)
                 changed += 1
@@ -492,6 +525,7 @@ def apply(paths):
         h = lazy_images(h)
         h = fix_logo_alt(h)
         h = fix_noopener(h)
+        h = merge_fonts(h)
         img = pg.meta("og:image")
         if img and bigger_image(img) != img:
             h = set_meta(h, "property", "og:image", bigger_image(img))
@@ -604,6 +638,8 @@ def check():
         if (pg.meta("og:title") or "") != want_ogt:
             err.append((where, "og:title がタイトルと合っていない: %s" % (pg.meta("og:title") or "（無し）")[:30]))
         raw_all = read(p)
+        if len(FONT_LINK.findall(raw_all)) > 1:
+            err.append((where, "Google Fonts を %d 本に分けて読み込んでいる。python scripts/seo.py apply で1本にまとまる" % len(FONT_LINK.findall(raw_all))))
         if "<main" not in raw_all:
             err.append((where, "本文の範囲を示す <main> が無い（読み上げソフトが本文へ飛べない）"))
         if LOGO_IMG.search(raw_all):
