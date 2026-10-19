@@ -19,6 +19,9 @@ apply がそろえるもの:
       404.html はどの階層の URL でも配信されるので、相対パスを / 始まりにする（2026-10。PR #116 の続き）
     - サイト内リンク（<a href>）の自社の絶対URL（https://stellar-careers.com/…）を相対パスにする。
       絶対URLのままだとプレビューで本番に飛ぶ（2026-10。O-01）。canonical・og:*・構造化データ・フォームの値は絶対URLのまま
+    - Insight 記事の末尾に、無料相談ボタンと同じカテゴリのほかの記事（最大3本）を入れ、戻るボタンをカテゴリ一覧へ向ける。
+      カテゴリはカテゴリ一覧ページ（insight-case など）のカードから決める。どのカテゴリにも無い記事は相談ボタンだけで、
+      戻り先は Career tips。旧サイト（Studio）の空の埋め込みは消す（2026-10。C-03・C-04）
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -310,6 +313,57 @@ def insight_category_map():
     return m
 
 
+def insight_cards():
+    """カテゴリ一覧ページのカード（掲載順）。{カテゴリのslug: [(記事ID, 題名), ...]}"""
+    out = {}
+    for slug, _ in INSIGHT_CATS:
+        h = read(os.path.join(DOCS, slug, "index.html"))
+        out[slug] = [(aid, H.unescape(re.sub(r"<[^>]+>", "", t)).strip()) for aid, t in re.findall(
+            r'<a href="\.\./insight/([^"/]+)/?"[^>]*class="[^"]*insight-cat-card"[^>]*>.*?<h3[^>]*>(.*?)</h3>', h, re.S)]
+    return out
+
+
+# ---------- Insight 記事の末尾（2026-10。診断 C-03・C-04） ----------
+# 記事を読み終えた場所に、無料相談ボタンと同じカテゴリのほかの記事を置き、戻るボタンをカテゴリ一覧へ向ける。
+# 旧サイト（Studio）の埋め込みは、中身を送る仕組みが無く空白（高さ197px）になっていたので消す
+CTA_TEXT = "無料でキャリア相談する"
+STUDIO_EMBED = re.compile(r'\s*<div data-type="embed_code"[^>]*>\s*<iframe src="https://[A-Za-z0-9]+\.studioiframesandbox\.com"[^>]*>\s*</iframe>\s*</div>')
+IA_END = re.compile(r'\s*<aside class="ia-end".*?</aside>', re.S)
+BACK_BTN = re.compile(r'(</div>)(\s*<a href=")[^"]*(" class="link sd insight-article-back-btn">.*?'
+                      r'<p class="text sd appear insight-article-back-text[^"]*">)[^<]*(</p>)', re.S)
+
+
+def nearby(items, key, limit=3):
+    """掲載順で近いものから最大 limit 件。前後に交互に広げて選ぶ（ファーム記事の関連リンクと同じ選び方）"""
+    keys = [k for k, _ in items]
+    if key not in keys:
+        return []
+    i, picked = keys.index(key), []
+    for d in range(1, len(items)):
+        for j in (i + d, i - d):
+            if 0 <= j < len(items) and len(picked) < limit and items[j][0] != key and items[j] not in picked:
+                picked.append(items[j])
+    return picked
+
+
+def fix_article_end(h, aid, cats, cards):
+    h = STUDIO_EMBED.sub("", h)
+    h = IA_END.sub("", h)
+    cat = cats.get(aid)
+    back_slug, back_label = cat if cat else ("insight-interview", "Career tips")
+    block = ('<div class="ia-cta"><p class="ia-cta-lead">転職の進め方や選考対策について、無料でご相談いただけます。</p>'
+             '<a class="ia-cta-btn" href="../../contact-candidate/">%s</a></div>' % CTA_TEXT)
+    picked = nearby(cards.get(cat[0], []), aid) if cat else []
+    if picked:
+        lis = "".join('<li><a href="../%s/">%s</a></li>' % (a, H.escape(t, quote=False)) for a, t in picked)
+        block += ('<nav class="ia-related" aria-label="%sのほかの記事"><p class="ia-related-title">%sのほかの記事</p>'
+                  '<ul class="ia-related-list">%s</ul><a class="ia-related-all" href="../../%s/">%sの一覧を見る</a></nav>'
+                  % (back_label, back_label, lis, back_slug, back_label))
+    block = '\n                  <aside class="ia-end">%s</aside>' % block
+    return BACK_BTN.sub(lambda m: m.group(1) + block + m.group(2) + "../../%s/" % back_slug + m.group(3)
+                        + "%sの一覧へ" % back_label + m.group(4), h, count=1)
+
+
 def crumbs(items):
     return {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(items)]}
@@ -355,6 +409,7 @@ def page_ld(rel, pg, cats):
 
 def apply(paths):
     cats = insight_category_map()
+    cards = insight_cards()
     changed = 0
     for p in paths:
         h0 = h = read(p)
@@ -378,6 +433,8 @@ def apply(paths):
         h = set_meta(h, "property", "og:title", TOP_TITLE if not rel else bare_title(pg.title))
         if kind(rel):
             h = set_meta(h, "property", "og:type", "article")
+        if kind(rel) == "insight" and indexable(pg):
+            h = fix_article_end(h, rel.split("/")[1], cats, cards)
         img = pg.meta("og:image")
         if img and bigger_image(img) != img:
             h = set_meta(h, "property", "og:image", bigger_image(img))
@@ -489,6 +546,12 @@ def check():
         want_ogt = TOP_TITLE if not rel else bare_title(t)
         if (pg.meta("og:title") or "") != want_ogt:
             err.append((where, "og:title がタイトルと合っていない: %s" % (pg.meta("og:title") or "（無し）")[:30]))
+        if kind(rel) == "insight":
+            raw = read(p)
+            if 'class="ia-end"' not in raw:
+                err.append((where, "記事末尾の無料相談ボタン・関連記事が無い。python scripts/seo.py apply で入る"))
+            if "studioiframesandbox.com" in raw:
+                err.append((where, "旧サイト（Studio）の埋め込みが残っている（中身が表示されず空白になる）。python scripts/seo.py apply で消える"))
         if pg.h1 == 0:
             err.append((where, "h1 が無い"))
         elif pg.h1 > 1:

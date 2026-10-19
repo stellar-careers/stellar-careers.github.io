@@ -226,7 +226,11 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 - 30+ article pages at depth 2
 - Article IDs can start with `-` (e.g., `-ilnF14x`)
 - `robots: all` on article pages (indexable in production; preview deploy injects `noindex, nofollow` via `.github/workflows/preview.yml`)
-- 記事の戻るボタンは「Back to top」で `../../`（トップ）へ戻る。`/insight/` の一覧は 2026-07 に廃止し、今は Career tips への転送ページ
+- 記事の末尾（本文と戻るボタンのあいだ）に、無料相談ボタン「無料でキャリア相談する」と、同じカテゴリのほかの記事（最大3本）を置く。
+  `scripts/seo.py apply` がカテゴリ一覧ページのカードから作るので、手で書かない（`<aside class="ia-end">`）。2026-10 から
+- 記事の戻るボタンは、その記事のカテゴリ一覧（例: 「転職体験記の一覧へ」→ `../../insight-case/`）へ戻る。
+  どのカテゴリにも載っていない記事は Career tips（`../../insight-interview/`）へ。これも apply が直す。
+  `/insight/` の一覧は 2026-07 に廃止し、今は Career tips への転送ページ
 
 ### insight-case, insight-interview, insight-work
 - Category filter pages with tab navigation

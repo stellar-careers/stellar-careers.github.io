@@ -81,6 +81,8 @@ python scripts/gen-sitemap.py    # サイトマップに新しい記事を載せ
 python scripts/seo.py check      # NG 0件になるまで直す
 ```
 
+- 記事末尾の無料相談ボタン・同じカテゴリのほかの記事・戻るボタンの行き先は `seo.py apply` が入れる（2026-10）。
+  手順4でカテゴリ一覧にカードを足してから apply すると、新しい記事にも、同じカテゴリのほかの記事にも反映される
 - 記事の題名は本文の `<h1 class="text sd appear insight-article-heading ...">` に入れる（カテゴリ名「Insight」は `<p>`）。
   雛形の `docs/insight/wbcTHhtv/index.html` はこの形になっている
 - タイトル末尾の社名・表記は CLAUDE.md の「社名・ブランドの表記」に従う
