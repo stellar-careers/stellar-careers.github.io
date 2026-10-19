@@ -22,6 +22,8 @@ apply がそろえるもの:
     - Insight 記事の末尾に、無料相談ボタンと同じカテゴリのほかの記事（最大3本）を入れ、戻るボタンをカテゴリ一覧へ向ける。
       カテゴリはカテゴリ一覧ページ（insight-case など）のカードから決める。どのカテゴリにも無い記事は相談ボタンだけで、
       戻り先は Career tips。旧サイト（Studio）の空の埋め込みは消す（2026-10。C-03・C-04）
+    - 画像に遅延読み込み（loading="lazy" decoding="async"）を付ける。ロゴ・記事の表紙・ブログの表紙は
+      開いてすぐ見えるので付けない（EAGER_IMG）（2026-10。P-03）
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -364,6 +366,21 @@ def fix_article_end(h, aid, cats, cards):
                         + "%sの一覧へ" % back_label + m.group(4), h, count=1)
 
 
+# ---------- 画像の遅延読み込み（2026-10。診断 P-03） ----------
+# 画面を開いてすぐ見える画像（ロゴ・記事の表紙・ブログの表紙）以外は、スクロールして近づいたときに読み込む
+EAGER_IMG = ("header-logo-img", "insight-article-cover", "blog-post-featured-img")
+IMG_TAG = re.compile(r"<img\b[^>]*>", re.I)
+
+
+def needs_lazy(tag):
+    return not re.search(r"\bloading=", tag, re.I) and not any(c in tag for c in EAGER_IMG)
+
+
+def lazy_images(h):
+    return IMG_TAG.sub(lambda m: m.group(0)[:4] + ' loading="lazy" decoding="async"' + m.group(0)[4:]
+                       if needs_lazy(m.group(0)) else m.group(0), h)
+
+
 def crumbs(items):
     return {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(items)]}
@@ -435,6 +452,7 @@ def apply(paths):
             h = set_meta(h, "property", "og:type", "article")
         if kind(rel) == "insight" and indexable(pg):
             h = fix_article_end(h, rel.split("/")[1], cats, cards)
+        h = lazy_images(h)
         img = pg.meta("og:image")
         if img and bigger_image(img) != img:
             h = set_meta(h, "property", "og:image", bigger_image(img))
@@ -546,6 +564,9 @@ def check():
         want_ogt = TOP_TITLE if not rel else bare_title(t)
         if (pg.meta("og:title") or "") != want_ogt:
             err.append((where, "og:title がタイトルと合っていない: %s" % (pg.meta("og:title") or "（無し）")[:30]))
+        not_lazy = [t for t in IMG_TAG.findall(read(p)) if needs_lazy(t)]
+        if not_lazy:
+            err.append((where, "遅延読み込み（loading=\"lazy\"）の無い画像 %d枚。python scripts/seo.py apply で付く" % len(not_lazy)))
         if kind(rel) == "insight":
             raw = read(p)
             if 'class="ia-end"' not in raw:
