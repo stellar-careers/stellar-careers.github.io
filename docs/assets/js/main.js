@@ -221,11 +221,20 @@ function initHamburgerMenu() {
   const navList = document.querySelector('.header-nav');
   const ctaButtons = document.querySelector('.header-cta-primary');
 
+  // 読み上げソフトに、ボタンの名前とメニューの開閉状態を伝える（2026-10。診断 A-03）
+  menuBtn.setAttribute('aria-label', 'メニュー');
+  menuBtn.setAttribute('aria-expanded', 'false');
+  if (navList) {
+    if (!navList.id) navList.id = 'site-nav';
+    menuBtn.setAttribute('aria-controls', navList.id);
+  }
+
   let isOpen = false;
 
   menuBtn.addEventListener('click', (e) => {
     e.preventDefault();
     isOpen = !isOpen;
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
 
     const iconEl = menuBtn.querySelector('.material-symbols-outlined') || menuBtn;
 

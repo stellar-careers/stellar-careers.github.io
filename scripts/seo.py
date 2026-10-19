@@ -24,6 +24,9 @@ apply がそろえるもの:
       戻り先は Career tips。旧サイト（Studio）の空の埋め込みは消す（2026-10。C-03・C-04）
     - 画像に遅延読み込み（loading="lazy" decoding="async"）を付ける。ロゴ・記事の表紙・ブログの表紙は
       開いてすぐ見えるので付けない（EAGER_IMG）（2026-10。P-03）
+    - アクセシビリティ: ロゴの代替テキストを「ステラキャリアズ」にし、別タブで開くリンクに rel="noopener" を付け、
+      Insight 記事の本文の h1 を h2（class="rt-h1"。見た目は h1 と同じ）にする（2026-10。A-02・A-06・S-04）。
+      <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -381,6 +384,39 @@ def lazy_images(h):
                        if needs_lazy(m.group(0)) else m.group(0), h)
 
 
+# ---------- アクセシビリティ（2026-10。診断 A-02・A-04・A-06・S-04） ----------
+# ロゴはトップへのリンクで、ほかに文字が無いので、代替テキストが空だと読み上げでリンク先が分からない
+LOGO_IMG = re.compile(r'(<img\b[^>]*class="[^"]*\b(?:header-logo-img|insight-cat-footer-logo)\b[^"]*"[^>]*\balt=")\s*(")')
+A_BLANK = re.compile(r'<a\b[^>]*\btarget="_blank"[^>]*>', re.I)
+RT_REGION = re.compile(r'(<div class="richText sd insight-article-richtext[^"]*">)(.*?)(<aside class="ia-end"|</div><a href="[^"]*" class="link sd insight-article-back-btn")', re.S)
+
+
+def fix_logo_alt(h):
+    return LOGO_IMG.sub(lambda m: m.group(1) + BRAND + m.group(2), h)
+
+
+def fix_noopener(h):
+    """別タブで開くリンクに rel="noopener" を付ける（開いた先のページから元のページを操作させない）"""
+    def rep(m):
+        t = m.group(0)
+        if re.search(r'\brel="[^"]*\bnoopener\b', t):
+            return t
+        if re.search(r'\brel="', t):
+            return re.sub(r'\brel="', 'rel="noopener ', t, count=1)
+        return t[:-1] + ' rel="noopener">'
+    return A_BLANK.sub(rep, h)
+
+
+def fix_body_h1(h):
+    """Insight 記事の本文にある h1 を h2 にする（h1 は題名の1つだけにする）。
+    見た目は class="rt-h1" で h1 のときと同じにしてある（style.css）"""
+    def rep(m):
+        body = re.sub(r"<h1\b([^>]*)>", lambda x: "<h2 class=\"rt-h1\"%s>" % x.group(1) if "class=" not in x.group(1)
+                      else "<h2%s>" % re.sub(r'class="', 'class="rt-h1 ', x.group(1), count=1), m.group(2))
+        return m.group(1) + body.replace("</h1>", "</h2>") + m.group(3)
+    return RT_REGION.sub(rep, h, count=1)
+
+
 def crumbs(items):
     return {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(items)]}
@@ -431,7 +467,7 @@ def apply(paths):
     for p in paths:
         h0 = h = read(p)
         if p == PAGE_404:
-            h = fix_links(h, SITE + "/", root_abs=True)
+            h = fix_noopener(fix_logo_alt(fix_links(h, SITE + "/", root_abs=True)))
             if h != h0:
                 write(p, h)
                 changed += 1
@@ -452,7 +488,10 @@ def apply(paths):
             h = set_meta(h, "property", "og:type", "article")
         if kind(rel) == "insight" and indexable(pg):
             h = fix_article_end(h, rel.split("/")[1], cats, cards)
+            h = fix_body_h1(h)
         h = lazy_images(h)
+        h = fix_logo_alt(h)
+        h = fix_noopener(h)
         img = pg.meta("og:image")
         if img and bigger_image(img) != img:
             h = set_meta(h, "property", "og:image", bigger_image(img))
@@ -564,6 +603,14 @@ def check():
         want_ogt = TOP_TITLE if not rel else bare_title(t)
         if (pg.meta("og:title") or "") != want_ogt:
             err.append((where, "og:title がタイトルと合っていない: %s" % (pg.meta("og:title") or "（無し）")[:30]))
+        raw_all = read(p)
+        if "<main" not in raw_all:
+            err.append((where, "本文の範囲を示す <main> が無い（読み上げソフトが本文へ飛べない）"))
+        if LOGO_IMG.search(raw_all):
+            err.append((where, "ロゴの代替テキスト（alt）が空。python scripts/seo.py apply で入る"))
+        no_opener = [t for t in A_BLANK.findall(raw_all) if not re.search(r'\brel="[^"]*\bnoopener\b', t)]
+        if no_opener:
+            err.append((where, "別タブで開くリンクに rel=\"noopener\" が無い %d件。python scripts/seo.py apply で付く" % len(no_opener)))
         not_lazy = [t for t in IMG_TAG.findall(read(p)) if needs_lazy(t)]
         if not_lazy:
             err.append((where, "遅延読み込み（loading=\"lazy\"）の無い画像 %d枚。python scripts/seo.py apply で付く" % len(not_lazy)))

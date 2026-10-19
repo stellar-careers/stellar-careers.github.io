@@ -21770,3 +21770,23 @@ a.text {
     padding: 18px 16px;
   }
 }
+/* 本文の範囲を示す <main>（2026-10。診断 A-04）。箱を作らないので、レイアウトは今のまま */
+.page-main {
+  display: contents;
+}
+
+/* Insight 記事の本文の小見出し（もとは h1）。h1 は題名の1つだけにするため h2 にし、見た目は h1 のときと同じにする（2026-10。S-04） */
+.insight-article-richtext>h2.rt-h1 {
+  display: block;
+  font-family: var(--s-font-d380383b);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+  margin: 0px 0px 24px 0px;
+}
+@media screen and (max-width: 320px) {
+  .insight-article-richtext>h2.rt-h1 {
+    font-size: 24px;
+  }
+}
