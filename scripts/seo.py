@@ -28,6 +28,7 @@ apply がそろえるもの:
       Insight 記事の本文の h1 を h2（class="rt-h1"。見た目は h1 と同じ）にする（2026-10。A-02・A-06・S-04）。
       <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
     - Google Fonts の <link> を1本にまとめる（書体・太さはそのまま）（2026-10。P-06）
+    - ファーム記事に「よくある質問」があれば、構造化データ（FAQPage）を入れる（2026-10。SEO施策5）
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -461,7 +462,20 @@ def blog_date(pg):
     return "%s-%02d-%02d" % (m.group(1), int(m.group(2)), int(m.group(3))) if m else None
 
 
-def page_ld(rel, pg, cats):
+FAQ_SECTION = re.compile(r'<h3 id="index_faq">.*?</h3>(.*?)(?=<h3 |<p class="vc-note"|</div>)', re.S)
+FAQ_PAIR = re.compile(r'<h4 class="vc-faq-q">(.*?)</h4>\s*<p>(.*?)</p>', re.S)
+
+
+def extract_faq(raw):
+    """ファーム記事の「よくある質問」（h3#index_faq の後ろの h4 と直後の段落）を (問い, 答え) の並びで返す"""
+    m = FAQ_SECTION.search(raw or "")
+    if not m:
+        return []
+    text = lambda s: H.unescape(re.sub(r"<[^>]+>", "", s)).strip()
+    return [(text(q), text(a)) for q, a in FAQ_PAIR.findall(m.group(1))]
+
+
+def page_ld(rel, pg, cats, raw=""):
     url = url_of(rel)
     name = short_name(pg.title)
     top = ("トップ", SITE + "/")
@@ -488,6 +502,11 @@ def page_ld(rel, pg, cats):
         if img and img != GENERIC_OG:
             a["image"] = img
         graph.append(a)
+    faq = extract_faq(raw) if k == "industry-knowledge" else []
+    if faq:
+        # よくある質問（2026-10 SEO施策5）。画面の問いと答えをそのまま使う
+        graph.append({"@type": "FAQPage", "@id": url + "#faq", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]})
     if rel:
         graph.append(crumbs(trail))
     return {"@context": "https://schema.org", "@graph": graph}
@@ -533,7 +552,7 @@ def apply(paths):
         if rel in ("", "company"):
             h = put_ld(h, "ld-organization", ORG)
         if indexable(pg):
-            h = put_ld(h, "ld-page", page_ld(rel, parse_str(h), cats))
+            h = put_ld(h, "ld-page", page_ld(rel, parse_str(h), cats, h))
         if h != h0:
             write(p, h)
             changed += 1
@@ -638,6 +657,8 @@ def check():
         if (pg.meta("og:title") or "") != want_ogt:
             err.append((where, "og:title がタイトルと合っていない: %s" % (pg.meta("og:title") or "（無し）")[:30]))
         raw_all = read(p)
+        if extract_faq(raw_all) and '"FAQPage"' not in raw_all:
+            err.append((where, "よくある質問があるのに構造化データ（FAQPage）が無い。python scripts/seo.py apply で入る"))
         if len(FONT_LINK.findall(raw_all)) > 1:
             err.append((where, "Google Fonts を %d 本に分けて読み込んでいる。python scripts/seo.py apply で1本にまとまる" % len(FONT_LINK.findall(raw_all))))
         if "<main" not in raw_all:
