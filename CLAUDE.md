@@ -39,6 +39,9 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
 - サイト内リンクも、ページ（ディレクトリ）を指すものは末尾スラッシュ付き（`../company/`、`../industry-knowledge/#consulting`）。
   スラッシュが無いとクリックのたびに301転送を挟む。`seo.py apply` が自動で付け、`check` は付いていないとNGにする。
   `docs/404.html` はどの階層のURLでも配信されるので、リンクを `/company/` のように `/` 始まりにする（apply が直す）
+- サイト内リンク（`<a href>`）に自社の絶対URL（`https://stellar-careers.com/…`）を書かない。絶対URLだとプレビューで押したときに本番へ飛ぶ。
+  `seo.py apply` が相対パスに直し、`check` はNGにする。canonical・og:*・構造化データ・フォームの `_next` は絶対URLのまま
+- メニューとフッターの「About us」は about-us ページへ（2026-10 まではトップを指していて、about-us はサイト内から辿れなかった）
 - h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
 - 構造化データの日付は、確かなものだけ入れる。ブログは画面の日付を datePublished にする。
   Insight とファーム記事は画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので入れない（git のコミット日は公開日ではない）

@@ -17,6 +17,8 @@ apply がそろえるもの:
     - サイト内リンク（<a href>）のうち、ページのディレクトリを指すものに末尾スラッシュを付ける。
       GitHub Pages は /about-us を /about-us/ へ301で転送するので、スラッシュが無いとクリックのたびに転送を挟む。
       404.html はどの階層の URL でも配信されるので、相対パスを / 始まりにする（2026-10。PR #116 の続き）
+    - サイト内リンク（<a href>）の自社の絶対URL（https://stellar-careers.com/…）を相対パスにする。
+      絶対URLのままだとプレビューで本番に飛ぶ（2026-10。O-01）。canonical・og:*・構造化データ・フォームの値は絶対URLのまま
 日付の方針（確かなものだけ入れる）:
     - ブログ … 画面に出ている日付（blog-post-date）を datePublished にする
     - Insight・ファーム記事 … 画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので、
@@ -28,10 +30,10 @@ check が見るもの（NG）:
     canonical が1つだけで自分の URL か、og:url との一致、構造化データが読めない・必須項目が無い・
     パンくずの最後が自分の URL でない・組織の名前がページ内に無い、ブログの日付が画面と違う、
     サイト内リンク切れ・画像の参照切れ（大文字小文字を区別）、想定外の noindex、転送先が無い、
-    サイト内リンクの末尾スラッシュ（404.html は / 始まりか）
+    サイト内リンクの末尾スラッシュと絶対URL（404.html は / 始まりか）
 （注意）: h1 が2つ以上、alt 属性の無い画像、タイトルが長い、サイト内のどこからもリンクされていないページ
 """
-import glob, html as H, io, json, os, re, sys
+import glob, html as H, io, json, os, posixpath, re, sys
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlparse, unquote
 
@@ -249,13 +251,45 @@ def slash_fix(href, page_url, root_abs=False):
     return path + "/" + suffix
 
 
+SELF_ABS = re.compile(r"https?://(?:www\.)?stellar-careers\.com(?=[/?#]|$)", re.I)
+
+
+def abs_to_rel(href, page_url, root_abs=False):
+    """自社の絶対URL（https://stellar-careers.com/…）のリンクを、相対パスにして返す。対象外なら None。
+    絶対URLのままだと、プレビュー（/homepage-preview/）で押したときに本番へ飛んでしまう（2026-10。O-01）。
+    root_abs=True（404.html 用）のときは / 始まりにする。トップへのリンクは CLAUDE.md の決まりどおり「.」「..」「../..」"""
+    raw = href.strip()
+    m = SELF_ABS.match(raw)
+    if not m:
+        return None
+    path, suffix = re.match(r"([^?#]*)(.*)$", raw[m.end():], re.S).groups()
+    target = unquote(path).strip("/")
+    if target.startswith("homepage-preview"):
+        return None
+    tail = "/" if target and is_dir_page(target) else ""
+    if root_abs:
+        return "/" + target + tail + suffix
+    base = urlparse(page_url).path            # 例: /insight/abc/
+    rel = posixpath.relpath("/" + target, base.rstrip("/") or "/")
+    if rel != "." and not rel.endswith(".."):
+        rel += tail
+    return rel + suffix
+
+
+def fix_href(href, page_url, root_abs=False):
+    """サイト内リンクを決まりの形（相対パス・ページは末尾スラッシュ付き）にした値。直す必要が無ければ None"""
+    v = abs_to_rel(href, page_url, root_abs) or href
+    v = slash_fix(v, page_url, root_abs) or v
+    return None if v == href else v
+
+
 A_TAG = re.compile(r"<a\b[^>]*>", re.I)
 A_HREF = re.compile(r'(\bhref=")([^"]*)(")')
 
 
 def fix_links(h, page_url, root_abs=False):
     def tag(m):
-        return A_HREF.sub(lambda a: a.group(1) + (slash_fix(a.group(2), page_url, root_abs) or a.group(2)) + a.group(3), m.group(0))
+        return A_HREF.sub(lambda a: a.group(1) + (fix_href(a.group(2), page_url, root_abs) or a.group(2)) + a.group(3), m.group(0))
     return A_TAG.sub(tag, h)
 
 
@@ -415,7 +449,11 @@ def check():
             r = urlparse(urljoin(url, H.unescape(href)))
             if r.netloc == "stellar-careers.com":
                 linked.add(unquote(r.path).strip("/"))
-        no_slash = [h for h in pg.links if slash_fix(h, url)]
+        abs_links = [h for h in pg.links if abs_to_rel(h, url)]
+        if abs_links:
+            err.append((where, "サイト内リンクが絶対URL %d件（例: %s）。python scripts/seo.py apply で相対パスに直る"
+                        % (len(abs_links), ", ".join(abs_links[:3]))))
+        no_slash = [h for h in pg.links if not abs_to_rel(h, url) and slash_fix(h, url)]
         if no_slash:
             err.append((where, "サイト内リンクの末尾にスラッシュが無い %d件（例: %s）。python scripts/seo.py apply で直る"
                         % (len(no_slash), ", ".join(no_slash[:3]))))
@@ -497,9 +535,9 @@ def check():
             if img.get("src") and resolve(url, img["src"]) is False:
                 err.append((where, "画像の参照切れ: %s" % img["src"]))
     if os.path.isfile(PAGE_404):
-        bad = [h for h in parse(PAGE_404).links if slash_fix(h, SITE + "/", root_abs=True)]
+        bad = [h for h in parse(PAGE_404).links if fix_href(h, SITE + "/", root_abs=True)]
         if bad:
-            err.append(("404.html", "相対パスか末尾スラッシュ無しのリンク %d件（例: %s）。404 はどの階層の URL でも出るので / 始まりにする。"
+            err.append(("404.html", "相対パス・絶対URL・末尾スラッシュ無しのリンク %d件（例: %s）。404 はどの階層の URL でも出るので / 始まりにする。"
                         "python scripts/seo.py apply で直る" % (len(bad), ", ".join(bad[:3]))))
     for p, pg in parsed.items():
         rel = rel_of(p)
