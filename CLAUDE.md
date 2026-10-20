@@ -43,6 +43,12 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
   `seo.py apply` が相対パスに直し、`check` はNGにする。canonical・og:*・構造化データ・フォームの `_next` は絶対URLのまま
 - メニューとフッターの「About us」は about-us ページへ（2026-10 まではトップを指していて、about-us はサイト内から辿れなかった）
 - h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
+- `<img>` には元の画像の width / height を付ける（読み込み中に表示がずれないように。`seo.py apply` が付け、`check` は無いとNG）。
+  見た目の大きさは CSS で決まる（style.css の `:where(img[width][height])` で auto に戻している）。画像を差し替えたら apply し直す
+- 記事・ブログの表紙画像には `fetchpriority="high"`、Google Fonts を使うページには `fonts.googleapis.com` への preconnect を入れる（最初に見える画像を先に読む。`seo.py apply` が入れ、`check` は無いとNG）。
+  画像は拡張子どおりの形式で置く（2026-10 まで、.webp なのに中身が PNG の画像が7枚あった）
+- トップの動画は、読み込み前の静止画（`assets/images/hero-bg-poster.webp`）と、幅840px以下用の軽い動画（`hero-bg-new-sp.mp4`）を持つ。
+  動画を差し替えるときは3つともそろえて作り直す
 - 構造化データの日付は、確かなものだけ入れる。ブログは画面の日付を datePublished にする。
   Insight とファーム記事は画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので入れない（git のコミット日は公開日ではない）
 - 検索に出さないページ（noindex）は `scripts/seo.py` の `NOINDEX_OK` に登録する。サイトマップからは自動で外れる
@@ -227,10 +233,14 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 - Article IDs can start with `-` (e.g., `-ilnF14x`)
 - `robots: all` on article pages (indexable in production; preview deploy injects `noindex, nofollow` via `.github/workflows/preview.yml`)
 - 記事の末尾（本文と戻るボタンのあいだ）に、無料相談ボタン「無料でキャリア相談する」と、同じカテゴリのほかの記事（最大3本）を置く。
-  `scripts/seo.py apply` がカテゴリ一覧ページのカードから作るので、手で書かない（`<aside class="ia-end">`）。2026-10 から
+  `scripts/seo.py apply` がカテゴリ一覧ページのカードから作るので、手で書かない（`<aside class="ia-end">`）。2026-10 から。
+  ステラコーチへの誘導は積極的にはしない（2026-10-20 森さん。記事末尾に案内を足さない）
 - 記事の戻るボタンは、その記事のカテゴリ一覧（例: 「転職体験記の一覧へ」→ `../../insight-case/`）へ戻る。
   どのカテゴリにも載っていない記事は Career tips（`../../insight-interview/`）へ。これも apply が直す。
   `/insight/` の一覧は 2026-07 に廃止し、今は Career tips への転送ページ
+- 本文に企業記事（industry-knowledge）のある社名が出てきたら、記事ごとに最初の1か所を企業記事へリンクする
+  （`<a class="ia-firm-link">`）。これも `scripts/seo.py apply` が入れるので手で書かない。2026-10 から。
+  呼び方の一覧は seo.py の `FIRM_ALIASES`、文脈上リンクしない箇所は `FIRM_LINK_SKIP`。企業記事を足したら呼び方も足す
 
 ### insight-case, insight-interview, insight-work
 - Category filter pages with tab navigation
