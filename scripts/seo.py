@@ -25,6 +25,7 @@ apply がそろえるもの:
     - 画像に遅延読み込み（loading="lazy" decoding="async"）を付ける。ロゴ・記事の表紙・ブログの表紙は
       開いてすぐ見えるので付けない（EAGER_IMG）（2026-10。P-03）
     - 画像に元の寸法（width / height）を付け、読み込み中に表示がずれないようにする。見た目の大きさは CSS のまま（2026-10。P-05）
+    - 記事・ブログの表紙画像に fetchpriority="high" を付け、fonts.googleapis.com へ preconnect する（2026-10。LCP）
     - アクセシビリティ: ロゴの代替テキストを「ステラキャリアズ」にし、別タブで開くリンクに rel="noopener" を付け、
       Insight 記事の本文の h1 を h2（class="rt-h1"。見た目は h1 と同じ）にする（2026-10。A-02・A-06・S-04）。
       <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
@@ -475,6 +476,26 @@ def size_images(h, page_path):
     return IMG_TAG.sub(rep, h)
 
 
+# ---------- 開いてすぐ見える画像を先に読む（2026-10。LCP） ----------
+# 記事の表紙・ブログの表紙は、ページを開いて最初に見える一番大きな画像（LCP）になる。
+# fetchpriority="high" で、ほかの画像より先に読み込ませる。Google Fonts の CSS を置いているサーバーへも先に接続しておく
+LCP_IMG = ("insight-article-cover", "blog-post-featured-img")
+FONT_PRECONNECT = '<link rel="preconnect" href="https://fonts.googleapis.com">'
+
+
+def needs_priority(tag):
+    return any(c in tag for c in LCP_IMG) and not re.search(r"\bfetchpriority=", tag, re.I)
+
+
+def prioritize(h):
+    h = IMG_TAG.sub(lambda m: m.group(0)[:4] + ' fetchpriority="high"' + m.group(0)[4:] if needs_priority(m.group(0)) else m.group(0), h)
+    if FONT_LINK.search(h) and FONT_PRECONNECT not in h:
+        m = re.search(r'[ \t]*<link rel="preconnect" href="https://fonts\.gstatic\.com"[^>]*>', h) or FONT_LINK.search(h)
+        indent = re.match(r"[ \t]*", m.group(0)).group(0)
+        h = h[:m.start()] + indent + FONT_PRECONNECT + "\n" + h[m.start():]
+    return h
+
+
 # ---------- アクセシビリティ（2026-10。診断 A-02・A-04・A-06・S-04） ----------
 # ロゴはトップへのリンクで、ほかに文字が無いので、代替テキストが空だと読み上げでリンク先が分からない
 LOGO_IMG = re.compile(r'(<img\b[^>]*class="[^"]*\b(?:header-logo-img|insight-cat-footer-logo)\b[^"]*"[^>]*\balt=")\s*(")')
@@ -632,6 +653,7 @@ def apply(paths):
             h = fix_body_h1(h)
         h = lazy_images(h)
         h = size_images(h, p)
+        h = prioritize(h)
         h = fix_logo_alt(h)
         h = fix_noopener(h)
         h = merge_fonts(h)
@@ -764,6 +786,10 @@ def check():
         no_size = [t for t in IMG_TAG.findall(raw_all) if missing_size(t, p)]
         if no_size:
             err.append((where, "寸法（width/height）の無い画像 %d枚（読み込み中に表示がずれる）。python scripts/seo.py apply で付く" % len(no_size)))
+        if [t for t in IMG_TAG.findall(raw_all) if needs_priority(t)]:
+            err.append((where, "記事の表紙画像に fetchpriority=\"high\" が無い（最初に見える画像が後回しになる）。python scripts/seo.py apply で付く"))
+        if FONT_LINK.search(raw_all) and FONT_PRECONNECT not in raw_all:
+            err.append((where, "Google Fonts のサーバー（fonts.googleapis.com）への preconnect が無い。python scripts/seo.py apply で入る"))
         if kind(rel) == "insight":
             raw = read(p)
             if 'class="ia-end"' not in raw:

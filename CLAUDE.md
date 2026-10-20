@@ -45,6 +45,8 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
 - h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
 - `<img>` には元の画像の width / height を付ける（読み込み中に表示がずれないように。`seo.py apply` が付け、`check` は無いとNG）。
   見た目の大きさは CSS で決まる（style.css の `:where(img[width][height])` で auto に戻している）。画像を差し替えたら apply し直す
+- 記事・ブログの表紙画像には `fetchpriority="high"`、Google Fonts を使うページには `fonts.googleapis.com` への preconnect を入れる（最初に見える画像を先に読む。`seo.py apply` が入れ、`check` は無いとNG）。
+  画像は拡張子どおりの形式で置く（2026-10 まで、.webp なのに中身が PNG の画像が7枚あった）
 - トップの動画は、読み込み前の静止画（`assets/images/hero-bg-poster.webp`）と、幅840px以下用の軽い動画（`hero-bg-new-sp.mp4`）を持つ。
   動画を差し替えるときは3つともそろえて作り直す
 - 構造化データの日付は、確かなものだけ入れる。ブログは画面の日付を datePublished にする。
