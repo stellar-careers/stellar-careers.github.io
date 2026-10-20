@@ -24,6 +24,7 @@ apply がそろえるもの:
       戻り先は Career tips。旧サイト（Studio）の空の埋め込みは消す（2026-10。C-03・C-04）
     - 画像に遅延読み込み（loading="lazy" decoding="async"）を付ける。ロゴ・記事の表紙・ブログの表紙は
       開いてすぐ見えるので付けない（EAGER_IMG）（2026-10。P-03）
+    - 画像に元の寸法（width / height）を付け、読み込み中に表示がずれないようにする。見た目の大きさは CSS のまま（2026-10。P-05）
     - アクセシビリティ: ロゴの代替テキストを「ステラキャリアズ」にし、別タブで開くリンクに rel="noopener" を付け、
       Insight 記事の本文の h1 を h2（class="rt-h1"。見た目は h1 と同じ）にする（2026-10。A-02・A-06・S-04）。
       <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
@@ -386,6 +387,94 @@ def lazy_images(h):
                        if needs_lazy(m.group(0)) else m.group(0), h)
 
 
+# ---------- 画像の寸法（2026-10。診断 P-05） ----------
+# <img> に元の画像の width / height を書くと、ブラウザが読み込む前に縦横比どおりの場所を空けておけるので、
+# 読み込み中に下の文章がずれない（CLS）。見た目の大きさは今までどおり CSS で決まる
+# （style.css の :where(img[width][height]) で width / height を auto に戻している）。
+# 画像の形式は中身の先頭で見分ける（拡張子が .webp で中身が PNG のファイルがあるため）。読めないものは付けない
+IMG_SRC = re.compile(r'\bsrc="([^"]+)"')
+
+
+def image_size(path):
+    """画像ファイルの (幅, 高さ) px。PNG・JPEG・GIF・WebP・SVG。読めないときは None（Pillow を使わず標準ライブラリだけで読む）"""
+    try:
+        with open(path, "rb") as f:
+            b = f.read()
+    except OSError:
+        return None
+    try:
+        if b.startswith(b"\x89PNG\r\n\x1a\n") and b[12:16] == b"IHDR":
+            return int.from_bytes(b[16:20], "big"), int.from_bytes(b[20:24], "big")
+        if b[:6] in (b"GIF87a", b"GIF89a"):
+            return int.from_bytes(b[6:8], "little"), int.from_bytes(b[8:10], "little")
+        if b[:4] == b"RIFF" and b[8:12] == b"WEBP":
+            kind = b[12:16]
+            if kind == b"VP8X":
+                return 1 + int.from_bytes(b[24:27], "little"), 1 + int.from_bytes(b[27:30], "little")
+            if kind == b"VP8 ":
+                return int.from_bytes(b[26:28], "little") & 0x3FFF, int.from_bytes(b[28:30], "little") & 0x3FFF
+            if kind == b"VP8L":
+                bits = int.from_bytes(b[21:25], "little")
+                return (bits & 0x3FFF) + 1, ((bits >> 14) & 0x3FFF) + 1
+            return None
+        if b[:3] == b"\xff\xd8\xff":
+            i = 2
+            while i + 9 < len(b):
+                if b[i] != 0xFF:
+                    i += 1
+                    continue
+                m = b[i + 1]
+                if m in (0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF):
+                    return int.from_bytes(b[i + 7:i + 9], "big"), int.from_bytes(b[i + 5:i + 7], "big")
+                if m in (0xD8, 0x01) or 0xD0 <= m <= 0xD7:
+                    i += 2
+                    continue
+                i += 2 + int.from_bytes(b[i + 2:i + 4], "big")
+            return None
+        head = b[:4096].decode("utf-8", "ignore")
+        svg = re.search(r"<svg\b[^>]*>", head)
+        if svg:
+            t = svg.group(0)
+            w, hh = re.search(r'\bwidth="([\d.]+)(?:px)?"', t), re.search(r'\bheight="([\d.]+)(?:px)?"', t)
+            if w and hh:
+                return round(float(w.group(1))), round(float(hh.group(1)))
+            vb = re.search(r'\bviewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)', t)
+            if vb:
+                return round(float(vb.group(1))), round(float(vb.group(2)))
+    except (IndexError, ValueError):
+        return None
+    return None
+
+
+def img_file(src, page_path):
+    """<img src> が指す docs 内のファイル。外部の画像・data: は None"""
+    src = H.unescape(src.split("?")[0].split("#")[0])
+    if re.match(r"^(?:[a-z]+:)?//|^data:", src, re.I):
+        return None
+    if src.startswith("/"):
+        p = os.path.join(DOCS, unquote(src.lstrip("/")).replace("/", os.sep))
+    else:
+        p = os.path.normpath(os.path.join(os.path.dirname(page_path), unquote(src).replace("/", os.sep)))
+    return p if p.startswith(DOCS) and os.path.isfile(p) else None
+
+
+def missing_size(tag, page_path):
+    """寸法を付けられるのに付いていない <img> なら (幅, 高さ)。付いている・付けられないものは None"""
+    if re.search(r"\b(?:width|height)=", tag, re.I):
+        return None
+    m = IMG_SRC.search(tag)
+    f = img_file(m.group(1), page_path) if m else None
+    wh = image_size(f) if f else None
+    return wh if wh and wh[0] > 0 and wh[1] > 0 else None
+
+
+def size_images(h, page_path):
+    def rep(m):
+        wh = missing_size(m.group(0), page_path)
+        return m.group(0)[:4] + ' width="%d" height="%d"' % wh + m.group(0)[4:] if wh else m.group(0)
+    return IMG_TAG.sub(rep, h)
+
+
 # ---------- アクセシビリティ（2026-10。診断 A-02・A-04・A-06・S-04） ----------
 # ロゴはトップへのリンクで、ほかに文字が無いので、代替テキストが空だと読み上げでリンク先が分からない
 LOGO_IMG = re.compile(r'(<img\b[^>]*class="[^"]*\b(?:header-logo-img|insight-cat-footer-logo)\b[^"]*"[^>]*\balt=")\s*(")')
@@ -519,7 +608,7 @@ def apply(paths):
     for p in paths:
         h0 = h = read(p)
         if p == PAGE_404:
-            h = merge_fonts(fix_noopener(fix_logo_alt(fix_links(h, SITE + "/", root_abs=True))))
+            h = size_images(merge_fonts(fix_noopener(fix_logo_alt(fix_links(h, SITE + "/", root_abs=True)))), p)
             if h != h0:
                 write(p, h)
                 changed += 1
@@ -542,6 +631,7 @@ def apply(paths):
             h = fix_article_end(h, rel.split("/")[1], cats, cards)
             h = fix_body_h1(h)
         h = lazy_images(h)
+        h = size_images(h, p)
         h = fix_logo_alt(h)
         h = fix_noopener(h)
         h = merge_fonts(h)
@@ -671,6 +761,9 @@ def check():
         not_lazy = [t for t in IMG_TAG.findall(read(p)) if needs_lazy(t)]
         if not_lazy:
             err.append((where, "遅延読み込み（loading=\"lazy\"）の無い画像 %d枚。python scripts/seo.py apply で付く" % len(not_lazy)))
+        no_size = [t for t in IMG_TAG.findall(raw_all) if missing_size(t, p)]
+        if no_size:
+            err.append((where, "寸法（width/height）の無い画像 %d枚（読み込み中に表示がずれる）。python scripts/seo.py apply で付く" % len(no_size)))
         if kind(rel) == "insight":
             raw = read(p)
             if 'class="ia-end"' not in raw:

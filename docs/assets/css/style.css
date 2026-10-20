@@ -20501,3 +20501,10 @@ a.text {
     font-size: 16px;
   }
 }
+/* 画像の寸法（2026-10。scripts/seo.py apply が <img> に元の width / height を付ける。診断 P-05）
+   属性は「読み込み前に縦横比どおりの場所を空ける」ためだけに使い、見た目の大きさは今までどおり各クラスの CSS で決める。
+   :where() で詳細度を0にしてあるので、クラスで幅や高さを決めている画像はそちらが勝つ */
+:where(img[width][height]) {
+  width: auto;
+  height: auto;
+}
