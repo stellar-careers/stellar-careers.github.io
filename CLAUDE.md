@@ -237,6 +237,9 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 - 記事の戻るボタンは、その記事のカテゴリ一覧（例: 「転職体験記の一覧へ」→ `../../insight-case/`）へ戻る。
   どのカテゴリにも載っていない記事は Career tips（`../../insight-interview/`）へ。これも apply が直す。
   `/insight/` の一覧は 2026-07 に廃止し、今は Career tips への転送ページ
+- 本文に企業記事（industry-knowledge）のある社名が出てきたら、記事ごとに最初の1か所を企業記事へリンクする
+  （`<a class="ia-firm-link">`）。これも `scripts/seo.py apply` が入れるので手で書かない。2026-10 から。
+  呼び方の一覧は seo.py の `FIRM_ALIASES`、文脈上リンクしない箇所は `FIRM_LINK_SKIP`。企業記事を足したら呼び方も足す
 
 ### insight-case, insight-interview, insight-work
 - Category filter pages with tab navigation
