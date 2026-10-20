@@ -27,6 +27,17 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
   別名（alternateName）に「ステラキャリアズ」「Stellar careers」「Stellar Careers」を並べている
 - 名前の似た別会社「株式会社ステラキャリア」（stellarcareer.jp）がある。混同されないよう、法人番号と所在地を会社概要に載せている
 
+## 公開の流れと、SEOチェックがNGのとき（2026-10-20 森さん決定）
+
+- 記事のPR（Issue から Copilot が作るもの）は、承認者（`.github/article-approvers.json`）が PR に「承認」などとコメントすると
+  `approve-by-comment.yml` がマージして公開する。この仕組みは残す（2026-07-27 に作られた廃止案 `feature/manual-merge-only` は使わない）。
+  CI（SEO check を含む）が1つでも失敗していると、マージせずに理由をコメントで返す
+- SEO check が NG のときに直す人
+  - 記事のPR（Copilot 作）: まず承認者が、その PR に「@copilot SEO check が失敗しています。…NG を 0 件にしてください」とコメントして Copilot に直させる
+    （失敗時の返信コメントに文面が出る）。直らない・Copilot が反応しないときは森さんが受け、Claude がそのブランチを直す
+  - それ以外のPR（エンジニア・Claude が作るもの）: PR を作った人が直してからマージする
+- NG のままマージしない。main への push でも同じ検査が走るので、もし main で NG が出たら森さんがすぐ直す
+
 ## SEO の仕組み（2026-10 SEO施策2〜4。同月の独立レビューを受けて改訂）
 
 ページを足したり直したりしたら、次の順に実行する。PR と main への push では `.github/workflows/seo-check.yml` が同じ検査を自動で走らせる。
