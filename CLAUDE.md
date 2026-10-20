@@ -43,6 +43,10 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
   `seo.py apply` が相対パスに直し、`check` はNGにする。canonical・og:*・構造化データ・フォームの `_next` は絶対URLのまま
 - メニューとフッターの「About us」は about-us ページへ（2026-10 まではトップを指していて、about-us はサイト内から辿れなかった）
 - h1 は1ページに1つ、題名に使う。カテゴリ名（Insight / Blog / Industry knowledge）は `<p>`。見た目はクラスで決まっている
+- `<img>` には元の画像の width / height を付ける（読み込み中に表示がずれないように。`seo.py apply` が付け、`check` は無いとNG）。
+  見た目の大きさは CSS で決まる（style.css の `:where(img[width][height])` で auto に戻している）。画像を差し替えたら apply し直す
+- トップの動画は、読み込み前の静止画（`assets/images/hero-bg-poster.webp`）と、幅840px以下用の軽い動画（`hero-bg-new-sp.mp4`）を持つ。
+  動画を差し替えるときは3つともそろえて作り直す
 - 構造化データの日付は、確かなものだけ入れる。ブログは画面の日付を datePublished にする。
   Insight とファーム記事は画面に日付が無く、旧サイトから移した記事は元の公開日も分からないので入れない（git のコミット日は公開日ではない）
 - 検索に出さないページ（noindex）は `scripts/seo.py` の `NOINDEX_OK` に登録する。サイトマップからは自動で外れる
