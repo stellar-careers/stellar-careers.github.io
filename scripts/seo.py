@@ -26,6 +26,8 @@ apply がそろえるもの:
       開いてすぐ見えるので付けない（EAGER_IMG）（2026-10。P-03）
     - 画像に元の寸法（width / height）を付け、読み込み中に表示がずれないようにする。見た目の大きさは CSS のまま（2026-10。P-05）
     - 記事・ブログの表紙画像に fetchpriority="high" を付け、fonts.googleapis.com へ preconnect する（2026-10。LCP）
+    - 企業記事に「この会社が出てくる記事」（Insight 記事の社名リンクの逆向き。最大5本）を入れる（2026-10）
+    - 企業一覧と Insight のカテゴリ一覧に、並んでいる記事の構造化データ（CollectionPage・ItemList）を入れる（2026-10）
     - アクセシビリティ: ロゴの代替テキストを「ステラキャリアズ」にし、別タブで開くリンクに rel="noopener" を付け、
       Insight 記事の本文の h1 を h2（class="rt-h1"。見た目は h1 と同じ）にする（2026-10。A-02・A-06・S-04）。
       <main> は apply では入れない（ページの骨組みごとに入れる位置が違うため）。check で無いページをNGにする
@@ -661,6 +663,64 @@ def link_firms(h, aid):
     return RT_REGION.sub(rep, h, count=1)
 
 
+# ---------- 企業記事から、その社が出てくる Insight 記事へ（2026-10） ----------
+# link_firms の逆向き。企業記事の「あわせて読みたい（同じカテゴリのほかの企業）」の下に、
+# その社へリンクしている Insight 記事を最大5本並べる。並びはカテゴリ一覧の掲載順（一覧に無い記事は後ろ）
+FIRM_MENTIONS = re.compile(r'<nav class="vc-related vc-mentions".*?</nav>', re.S)
+FIRM_RELATED = re.compile(r'<nav class="vc-related"[^>]*>.*?</nav>', re.S)
+MENTIONS_MAX = 5
+
+
+def firm_mentions(cards):
+    """{企業記事の slug: [(記事ID, 題名), ...]}。Insight 記事に link_firms をかけた結果から作る"""
+    order = [a for slug, _ in INSIGHT_CATS for a, _ in cards.get(slug, [])]
+    out = {}
+    for f in sorted(glob.glob(os.path.join(DOCS, "insight", "*", "index.html"))):
+        aid = os.path.basename(os.path.dirname(f))
+        h = read(f)
+        pg = parse_str(h)
+        m = re.search(r'<h1[^>]*insight-article-heading[^>]*>(.*?)</h1>', h, re.S)
+        if is_redirect(pg) or not indexable(pg) or not m:
+            continue
+        title = H.unescape(re.sub(r"<[^>]+>", "", m.group(1))).strip()
+        linked = re.findall(r'class="ia-firm-link" href="\.\./\.\./industry-knowledge/([^/"]+)/"', link_firms(h, aid))
+        for s in dict.fromkeys(linked):
+            out.setdefault(s, []).append((aid, title))
+    pos = lambda x: order.index(x[0]) if x[0] in order else len(order)
+    return {s: sorted(v, key=pos) for s, v in out.items()}
+
+
+def fix_firm_mentions(h, slug, mentions):
+    h = FIRM_MENTIONS.sub("", h)
+    items = mentions.get(slug, [])[:MENTIONS_MAX]
+    if not items:
+        return h
+    lis = "".join('<li><a href="../../insight/%s/">%s</a></li>' % (a, H.escape(t, quote=False)) for a, t in items)
+    block = ('<nav class="vc-related vc-mentions" aria-label="この会社が出てくる記事"><p class="vc-related-title">'
+             'この会社が出てくる記事</p><ul class="vc-related-list">%s</ul></nav>' % lis)
+    m = FIRM_RELATED.search(h) or re.search(r'(?=<a href="[^"]*" class="link sd insight-article-back-btn")', h)
+    return h[:m.end()] + block + h[m.end():] if m else h
+
+
+# ---------- 一覧ページの構造化データ（2026-10） ----------
+# 企業一覧と Insight のカテゴリ一覧に、「何が並んでいる一覧か」（CollectionPage と ItemList）を入れる
+LIST_PAGES = ("industry-knowledge", "insight-case", "insight-interview", "insight-work", "insight-firm")
+
+
+def list_items(rel, raw):
+    """一覧ページに並んでいる (URL, 名前)。画面の並び順"""
+    clean = lambda s: re.sub(r"\s+", " ", H.unescape(re.sub(r"<[^>]+>", " ", s))).strip()
+    if rel == "industry-knowledge":
+        seen, items = set(), []
+        for s, t in re.findall(r'<a href="([a-z0-9-]+)/"[^>]*>(.*?)</a>', raw, re.S):
+            if s not in seen and is_dir_page("industry-knowledge/" + s) and clean(t):
+                seen.add(s)
+                items.append((url_of("industry-knowledge/" + s), clean(t)))
+        return items
+    return [(url_of("insight/" + a), clean(t)) for a, t in re.findall(
+        r'<a href="\.\./insight/([^"/]+)/?"[^>]*class="[^"]*insight-cat-card"[^>]*>.*?<h3[^>]*>(.*?)</h3>', raw, re.S)]
+
+
 # ---------- Google Fonts の読み込みを1本にまとめる（2026-10。診断 P-06） ----------
 # 1書体・1太さごとに別の <link> で読み込んでいた（多いページで8本）。同じ書体と太さを1本の URL で取る
 FONT_LINK = re.compile(r'[ \t]*<link href="https://fonts\.googleapis\.com/css\?([^"]*)" rel="stylesheet">\r?\n?')
@@ -749,6 +809,12 @@ def page_ld(rel, pg, cats, raw=""):
         # よくある質問（2026-10 SEO施策5）。画面の問いと答えをそのまま使う
         graph.append({"@type": "FAQPage", "@id": url + "#faq", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]})
+    items = list_items(rel, raw) if rel in LIST_PAGES else []
+    if items:
+        graph.append({"@type": "CollectionPage", "@id": url + "#page", "url": url, "name": name, "inLanguage": "ja",
+                      "isPartOf": {"@id": WEBSITE_ID}, "mainEntity": {
+                          "@type": "ItemList", "numberOfItems": len(items), "itemListElement": [
+                              {"@type": "ListItem", "position": i + 1, "url": u, "name": t} for i, (u, t) in enumerate(items)]}})
     if rel:
         graph.append(crumbs(trail))
     return {"@context": "https://schema.org", "@graph": graph}
@@ -757,6 +823,7 @@ def page_ld(rel, pg, cats, raw=""):
 def apply(paths):
     cats = insight_category_map()
     cards = insight_cards()
+    mentions = firm_mentions(cards)
     changed = 0
     for p in paths:
         h0 = h = read(p)
@@ -784,6 +851,8 @@ def apply(paths):
             h = fix_article_end(h, rel.split("/")[1], cats, cards)
             h = fix_body_h1(h)
             h = link_firms(h, rel.split("/")[1])
+        if kind(rel) == "industry-knowledge" and indexable(pg):
+            h = fix_firm_mentions(h, rel.split("/")[1], mentions)
         h = lazy_images(h)
         h = size_images(h, p)
         h = prioritize(h)
@@ -853,6 +922,7 @@ def check():
     titles, descs, linked = {}, {}, set()
     pages = all_pages()
     parsed = {p: parse(p) for p in pages}
+    mentions = firm_mentions(insight_cards())
     for p, pg in parsed.items():
         rel = rel_of(p)
         where = rel or "(トップ)"
@@ -923,6 +993,8 @@ def check():
             err.append((where, "記事の表紙画像に fetchpriority=\"high\" が無い（最初に見える画像が後回しになる）。python scripts/seo.py apply で付く"))
         if FONT_LINK.search(raw_all) and FONT_PRECONNECT not in raw_all:
             err.append((where, "Google Fonts のサーバー（fonts.googleapis.com）への preconnect が無い。python scripts/seo.py apply で入る"))
+        if kind(rel) == "industry-knowledge" and fix_firm_mentions(raw_all, rel.split("/")[1], mentions) != raw_all:
+            err.append((where, "「この会社が出てくる記事」の一覧が無い・古い。python scripts/seo.py apply で直る"))
         if kind(rel) == "insight":
             raw = read(p)
             if 'class="ia-end"' not in raw:

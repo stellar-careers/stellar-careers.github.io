@@ -20508,3 +20508,12 @@ a.text {
   width: auto;
   height: auto;
 }
+
+/* 企業記事の「この会社が出てくる記事」（2026-10。scripts/seo.py apply が入れる）。
+   見た目は「あわせて読みたい」（.vc-related）と同じ枠で、記事の題名が長いので1行に1本ずつ並べる */
+.vc-mentions .vc-related-list {
+  display: block;
+}
+.vc-mentions .vc-related-list li + li {
+  border-top: 1px solid #ececec;
+}

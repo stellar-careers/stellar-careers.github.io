@@ -240,6 +240,9 @@ Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`)
 - 本文に企業記事（industry-knowledge）のある社名が出てきたら、記事ごとに最初の1か所を企業記事へリンクする
   （`<a class="ia-firm-link">`）。これも `scripts/seo.py apply` が入れるので手で書かない。2026-10 から。
   呼び方の一覧は seo.py の `FIRM_ALIASES`、文脈上リンクしない箇所は `FIRM_LINK_SKIP`。企業記事を足したら呼び方も足す
+- その逆向きとして、企業記事の「あわせて読みたい」の下に「この会社が出てくる記事」（最大5本）を `seo.py apply` が入れる（2026-10）。
+  中身は上の社名リンクから作るので、手で書かない。企業記事を作り直したあとも、build_firm_pages.py が最後に apply を呼ぶので入る
+- 企業一覧と Insight のカテゴリ一覧には、並んでいる記事の構造化データ（CollectionPage・ItemList）を apply が入れる（2026-10）
 
 ### insight-case, insight-interview, insight-work
 - Category filter pages with tab navigation
