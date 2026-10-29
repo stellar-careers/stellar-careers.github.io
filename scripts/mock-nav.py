@@ -25,10 +25,10 @@ def footer_nav(P):
     return (
 '<ul class="sd appear footer-nav-list">\n'
 f'              <li class="sd appear footer-nav-item"><a href="{P}about-us/" class="text link sd appear footer-nav-link">About us</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear footer-nav-link">Industry knowledge</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}insight-case/" class="text link sd appear footer-nav-link">Success stories</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}insight-interview/" class="text link sd appear footer-nav-link">Career tips</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}company/" class="text link sd appear footer-nav-link">Company</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear footer-nav-link">業界知見</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}insight-case/" class="text link sd appear footer-nav-link">転職体験記</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}insight-interview/" class="text link sd appear footer-nav-link">コラム</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}company/" class="text link sd appear footer-nav-link">会社情報</a></li>\n'
 '            </ul>')
 
 HNAV = re.compile(r'<ul[^>]*class="[^"]*\bheader-nav\b[^"]*"[^>]*>.*?</ul>', re.S)
