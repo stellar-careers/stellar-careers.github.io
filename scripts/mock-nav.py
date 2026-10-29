@@ -9,28 +9,26 @@ def header_nav(P):
     return (
 '<ul class="sd appear header-nav">\n'
 f'            <li class="sd appear header-nav-item"><a href="{P}about-us/" class="text link sd appear header-nav-link">About us</a></li>\n'
-f'            <li class="sd appear header-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear header-nav-link">Industry knowledge</a></li>\n'
-f'            <li class="sd appear header-nav-item"><a href="{P}insight-case/" class="text link sd appear header-nav-link">Success stories</a></li>\n'
-f'            <li class="sd appear header-nav-item header-has-dropdown"><a href="{P}insight-interview/" class="text link sd appear header-nav-link">Career tips</a>\n'
+f'            <li class="sd appear header-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear header-nav-link">業界知見</a></li>\n'
+f'            <li class="sd appear header-nav-item"><a href="{P}insight-case/" class="text link sd appear header-nav-link">転職体験記</a></li>\n'
+f'            <li class="sd appear header-nav-item header-has-dropdown"><a href="{P}insight-interview/" class="text link sd appear header-nav-link">コラム</a>\n'
 '              <ul class="header-dropdown">\n'
 f'                <li><a href="{P}insight-interview/" class="header-dropdown-link">面接対策</a></li>\n'
 f'                <li><a href="{P}insight-work/" class="header-dropdown-link">仕事術</a></li>\n'
 f'                <li><a href="{P}blog/" class="header-dropdown-link">ニュース・告知</a></li>\n'
 '              </ul>\n'
 '            </li>\n'
-f'            <li class="sd appear header-nav-item"><a href="{P}stellar-coach/" class="text link sd appear header-nav-link">Stellar Coach</a></li>\n'
-f'            <li class="sd appear header-nav-item"><a href="{P}company/" class="text link sd appear header-nav-link">Company</a></li>\n'
+f'            <li class="sd appear header-nav-item"><a href="{P}company/" class="text link sd appear header-nav-link">会社情報</a></li>\n'
 '          </ul>')
 
 def footer_nav(P):
     return (
 '<ul class="sd appear footer-nav-list">\n'
 f'              <li class="sd appear footer-nav-item"><a href="{P}about-us/" class="text link sd appear footer-nav-link">About us</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear footer-nav-link">Industry knowledge</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}insight-case/" class="text link sd appear footer-nav-link">Success stories</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}insight-interview/" class="text link sd appear footer-nav-link">Career tips</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}stellar-coach/" class="text link sd appear footer-nav-link">Stellar Coach</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}company/" class="text link sd appear footer-nav-link">Company</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear footer-nav-link">業界知見</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}insight-case/" class="text link sd appear footer-nav-link">転職体験記</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}insight-interview/" class="text link sd appear footer-nav-link">コラム</a></li>\n'
+f'              <li class="sd appear footer-nav-item"><a href="{P}company/" class="text link sd appear footer-nav-link">会社情報</a></li>\n'
 '            </ul>')
 
 HNAV = re.compile(r'<ul[^>]*class="[^"]*\bheader-nav\b[^"]*"[^>]*>.*?</ul>', re.S)

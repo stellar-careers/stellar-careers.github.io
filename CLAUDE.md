@@ -55,7 +55,7 @@ Originally built with Nuxt.js + Studio.Design CMS; fully converted to pure stati
 - 移動・廃止したURLには、待ち時間0の meta refresh と転送先への canonical を持つ転送ページを置く（GitHub Pages はサーバー側の301転送ができない）。
   転送ページは seo.py が自動で見分け、サイトマップと検査の対象から外す。今ある転送ページ:
   `docs/insight/`（→ Career tips）、`docs/our-people/`（→ トップの所属エージェント）、`docs/ceo-message/`（→ 会社情報の代表メッセージ）、
-  `docs/insight/Hx7mK3pQ/`（→ 本文が同一の insight/OWsiXgjE）
+  `docs/insight/Hx7mK3pQ/`（→ 本文が同一の insight/OWsiXgjE）、`docs/stellar-coach/`（→ トップ。2026-10 に公開終了）
 - Insight の全記事一覧（/insight/）と Our people は 2026-07 のリニューアル（3c5a7db）で廃止した。復活させない。
   同じリニューアルで「マッキンゼー」の表記を「外資系コンサルファーム」に置き換えている。
   表紙画像にその文字が残る記事は、SNS用の画像（og:image）をサイト共通の画像にしてある。
@@ -94,7 +94,8 @@ Save all screenshots to `.screenshots/` (gitignored).
     ├── our-people/
     ├── policy/
     ├── privacy/
-    ├── stellar-coach/             Tab UI + scroll animations
+    ├── stellar-coach/             Redirect to top (page retired 2026-10)
+    ├── coach-privacy/             ステラコーチのプライバシーポリシー（サイト内リンクなし）
     ├── assets/
     │   ├── css/style.css          Single CSS file (~19,400 lines)
     │   ├── js/main.js             Vanilla JS (352 lines)
@@ -215,18 +216,15 @@ Pure vanilla JS, no framework. Initializes on DOMContentLoaded:
 | Hamburger menu | `.header-hamburger`, `.header-nav` | Mobile nav toggle |
 | Stories scroll | `.stories-list`, `.stories-scroll-btn` | Horizontal scroll 300px/click |
 | Track marquee | `.track-logos` | Auto-scroll via requestAnimationFrame |
-| Coach tabs | `[role="tablist"]`, `[role="tab"]` | ARIA tab UI with keyboard nav |
-| Coach fade-up | `.coach-fade-up` | IntersectionObserver scroll animation |
 
 Icons use Material Symbols with `textContent` (e.g., `el.textContent = 'pause'`).
 
 ## Special Pages
 
-### stellar-coach
-- Tab UI with ARIA roles (`role="tablist"`, `role="tab"`, `role="tabpanel"`)
-- Fragment links: `href="#coach-service"`, `href="#coach-cta-line"` etc.
-- Scroll-triggered fade-up animations (`.coach-fade-up` + `.is-visible`)
-- Brand colors via `--coach-*` CSS custom properties
+### stellar-coach（2026-10 に公開終了）
+- 今はトップへの転送ページ。メニュー・フッター・トップの提供価値カードからのリンクも外した
+- `coach-privacy/`（アプリ用のプライバシーポリシー）は残している
+- style.css の `coach-*` と main.js のタブ処理は未使用のまま残っている
 
 ### insight/{id}
 - 30+ article pages at depth 2
