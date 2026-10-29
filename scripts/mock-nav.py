@@ -18,7 +18,6 @@ f'                <li><a href="{P}insight-work/" class="header-dropdown-link">�
 f'                <li><a href="{P}blog/" class="header-dropdown-link">ニュース・告知</a></li>\n'
 '              </ul>\n'
 '            </li>\n'
-f'            <li class="sd appear header-nav-item"><a href="{P}stellar-coach/" class="text link sd appear header-nav-link">Stellar Coach</a></li>\n'
 f'            <li class="sd appear header-nav-item"><a href="{P}company/" class="text link sd appear header-nav-link">Company</a></li>\n'
 '          </ul>')
 
@@ -29,7 +28,6 @@ f'              <li class="sd appear footer-nav-item"><a href="{P}about-us/" cla
 f'              <li class="sd appear footer-nav-item"><a href="{P}industry-knowledge/" class="text link sd appear footer-nav-link">Industry knowledge</a></li>\n'
 f'              <li class="sd appear footer-nav-item"><a href="{P}insight-case/" class="text link sd appear footer-nav-link">Success stories</a></li>\n'
 f'              <li class="sd appear footer-nav-item"><a href="{P}insight-interview/" class="text link sd appear footer-nav-link">Career tips</a></li>\n'
-f'              <li class="sd appear footer-nav-item"><a href="{P}stellar-coach/" class="text link sd appear footer-nav-link">Stellar Coach</a></li>\n'
 f'              <li class="sd appear footer-nav-item"><a href="{P}company/" class="text link sd appear footer-nav-link">Company</a></li>\n'
 '            </ul>')
 
