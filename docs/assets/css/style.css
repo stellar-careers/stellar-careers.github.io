@@ -20114,16 +20114,19 @@ a.text {
    1241〜1359px は各要素の余白を詰めて1行に収め、
    1240px以下はナビをハンバーガーメニューへ格納する（CTAはバーに残す）。
    ======================================== */
-/* ナビをロゴとCTAの間で中央寄せし、ロゴ横だけに余白が偏らないようにする。
+/* ナビを日本語の4項目にしてから中央寄せだと両側に大きな余白が出るため、
+   ナビはCTAの左に右寄せでまとめ、項目の間隔を広げる。
    ナビをバー内に表示する幅のみ適用（ハンバーガーメニューの見た目は変えない） */
 @media (min-width: 1241px) {
   .header-actions {
     flex: 1 1 auto;
+    justify-content: flex-end;
   }
 
   .header-nav {
-    margin-left: auto;
-    margin-right: auto;
+    gap: 36px;
+    --gh-4: 36px;
+    margin-right: 16px;
   }
 
   .header-nav-link,
@@ -20144,8 +20147,8 @@ a.text {
   }
 
   .header-nav {
-    gap: 14px;
-    --gh-4: 14px;
+    gap: 28px;
+    --gh-4: 28px;
   }
 
   .header-nav-link,
