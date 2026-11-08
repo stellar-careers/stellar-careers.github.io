@@ -14,6 +14,18 @@ After editing any `.html` file, ALWAYS run `npx htmlhint <file>` and fix all rep
 
 After editing any `.css` file, ALWAYS run `npx stylelint <file>` and fix all reported errors before considering the task complete.
 
+## SEO の検査（PR の SEO check）
+
+記事やページを足した・直したら、PR を完了にする前に次を実行し、`seo.py check` の NG を 0 件にする。
+PR では同じ検査（SEO check）が自動で走り、NG があるとコメントでの承認・公開ができない。
+
+    python scripts/seo.py apply
+    python scripts/gen-sitemap.py
+    python scripts/seo.py check
+
+PR のコメントで「SEO check が失敗しています」と頼まれたときも、この3つを実行して NG を直し、同じ PR に push する。
+NG の直し方は、`seo.py check` の出力と CLAUDE.md の「SEO の仕組み」に書いてある。
+
 ## PR の作成ルール
 
 Issue を元に作業した場合、PR のタイトルと説明は以下のルールに従う。

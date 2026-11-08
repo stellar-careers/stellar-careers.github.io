@@ -121,7 +121,11 @@ jobs:
 
             if (badRuns.length || badStatuses.length) {
               const names = [...badRuns.map(r => r.name), ...badStatuses.map(s => s.context)].join(', ');
-              await reply(`CI が失敗しているためマージできません🙏（${names}）。修正後にもう一度「承認」とコメントしてください。`);
+              // SEO の自動チェックが失敗したときは、直し方も案内する（2026-10-20 決定。CLAUDE.md「SEOチェックがNGのとき」）
+              const seoHint = /seo/i.test(names)
+                ? '\n\nSEO check の失敗は、このPRに「@copilot SEO check が失敗しています。python scripts/seo.py apply と python scripts/gen-sitemap.py を実行し、python scripts/seo.py check の NG を 0 件にしてください」とコメントすると、Copilot が直します。直らないとき（Copilot が反応しないときも）は森さんに連絡してください。'
+                : '';
+              await reply(`CI が失敗しているためマージできません🙏（${names}）。修正後にもう一度「承認」とコメントしてください。${seoHint}`);
               return;
             }
             if (pendingRuns.length || statusPending) {

@@ -5,8 +5,10 @@ name: SEO check
 #   python scripts/seo.py apply           # 構造化データ・メタ情報をそろえる
 #   python scripts/gen-sitemap.py         # サイトマップを作り直す
 #   python scripts/seo.py check           # 検査（NG 0件になるまで）
-# 記事 PR のコメント承認は、この検査が通らないとマージできない。NG が出たら、承認者ではなく
-# PR の作成者（Copilot の場合は依頼した人）が上の手順で直す。
+# 記事 PR のコメント承認は、この検査が通らないとマージできない。NG のときに直す人は CLAUDE.md の
+# 「公開の流れと、SEOチェックがNGのとき」のとおり（2026-10-20 決定）: 記事PR（Copilot 作）は承認者が
+# 「@copilot …NG を 0 件にしてください」とコメントして直させ、直らなければ森さんが受けて Claude が直す。
+# それ以外のPRは、作った人が直してからマージする。
 
 on:
   pull_request:
