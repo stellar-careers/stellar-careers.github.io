@@ -15,11 +15,21 @@
   <link href="https://fonts.googleapis.com/css?display=swap&amp;family=Noto+Sans+JP%3A400,700%7CLato%3A400,700" rel="stylesheet">
   <style>
     /* URLを知っている人だけに見せる資料ページ（どこからもリンクしない・検索に出さない） */
-    .pitch-main { display: flex; flex-direction: column; align-items: center; width: 100%; padding: 2.5rem 1.25rem 4rem; background: #f3f4f6; }
-    .pitch-label { font-family: Lato, sans-serif; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.1em; color: #888; margin-bottom: 0.75rem; }
-    .pitch-title { font-size: 1.5rem; font-weight: 700; color: #222; margin-bottom: 1.5rem; text-align: center; line-height: 1.5; }
-    /* PDF をブラウザの表示機能でそのまま見せる。画面の高さいっぱいに広げる */
-    .pitch-viewer { width: 100%; max-width: 1200px; height: calc(100dvh - 120px); min-height: 480px; border: 0; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08); }
+    /* 開いたときにスライド1枚がちょうど画面に収まるよう、PDF の表示枠を 16:9 にして画面の高さに合わせる */
+    .pitch-main {
+      --pitch-bar: 56px;   /* ブラウザの PDF 表示についている操作バーの高さ */
+      --pitch-top: 150px;  /* ヘッダー・題名・余白の合計 */
+      display: flex; flex-direction: column; align-items: center; width: 100%;
+      padding: 1rem 1rem 3rem; background: #f3f4f6; container-type: inline-size;
+    }
+    .pitch-title { font-size: 1.125rem; font-weight: 700; color: #222; margin-bottom: 0.75rem; text-align: center; line-height: 1.5; }
+    .pitch-viewer {
+      /* 横幅いっぱい、ただし高さが画面からはみ出さない幅まで */
+      --pitch-w: min(100cqw, calc((100dvh - var(--pitch-top) - var(--pitch-bar)) * 16 / 9));
+      width: var(--pitch-w);
+      height: calc(var(--pitch-w) * 9 / 16 + var(--pitch-bar));
+      border: 0; background: #525659; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
     .pitch-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem; }
     .pitch-btn { display: inline-block; padding: 0.9rem 2.25rem; border-radius: 4px; font-size: 0.9375rem; font-weight: 700; text-decoration: none; transition: opacity 0.2s; }
     .pitch-btn:hover { opacity: 0.8; }
@@ -27,9 +37,8 @@
     .pitch-btn-main { background: #222; color: #fff; }
     .pitch-note { font-size: 0.8125rem; color: #666; margin-top: 0.75rem; text-align: center; }
     @media (max-width: 540px) {
-      .pitch-main { padding: 2rem 0.75rem 3rem; }
-      .pitch-title { font-size: 1.25rem; }
-      .pitch-viewer { height: 70dvh; }
+      .pitch-main { padding: 0.75rem 0.5rem 2.5rem; }
+      .pitch-title { font-size: 1rem; }
     }
   </style>
 </head>
@@ -62,9 +71,8 @@
       </nav>
     </header><main class="page-main">
     <div class="pitch-main">
-      <p class="pitch-label">RECRUITING</p>
       <h1 class="pitch-title">ステラキャリアズ CA採用ピッチ資料</h1>
-      <iframe class="pitch-viewer" src="stellar-careers-ca-pitch.pdf#view=FitH&amp;navpanes=0" title="ステラキャリアズ CA採用ピッチ資料（PDF）"></iframe>
+      <iframe class="pitch-viewer" src="stellar-careers-ca-pitch.pdf#view=Fit&amp;navpanes=0&amp;pagemode=none" title="ステラキャリアズ CA採用ピッチ資料（PDF）"></iframe>
       <p class="pitch-note">資料が表示されない場合は「PDFを開く」からご覧ください。</p>
       <div class="pitch-actions">
         <a href="stellar-careers-ca-pitch.pdf" class="pitch-btn pitch-btn-sub" target="_blank" rel="noopener">PDFを開く</a>
