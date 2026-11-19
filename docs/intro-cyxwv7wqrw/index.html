@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ステラキャリアズとエージェントのご紹介 | ステラキャリアズ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="apple-touch-icon" type="image/png" href="../assets/images/favicon.png">
+  <link href="https://fonts.googleapis.com/css?display=swap&amp;family=Noto+Sans+JP%3A400,700%7CLato%3A400,700" rel="stylesheet">
+  <style>
+    /* URLを知っている人だけに見せる資料ページ（どこからもリンクしない・検索に出さない） */
+    /* サイトのヘッダー・フッターは置かず、スライドを画面いっぱいに1枚ずつ見せる */
+    html { scroll-snap-type: y mandatory; }
+    body { margin: 0; background: #e9ebef; font-family: 'Noto Sans JP', sans-serif; }
+    .intro-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .intro-slide {
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh; height: 100dvh; scroll-snap-align: start;
+      box-sizing: border-box; padding: 60px 0 8px;  /* 上はHPへ戻るボタンの分をあける */
+    }
+    /* 16:9 のスライドを、縦横どちらもはみ出さない最大の大きさで表示する */
+    .intro-slide img {
+      display: block; width: min(100%, calc((100dvh - 68px) * 16 / 9)); height: auto;
+      aspect-ratio: 16 / 9; box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12); background: #fff;
+    }
+    /* HP へ戻るボタン（画面の右上に浮かせる）。資料と同じ紺と金で、ロゴの書体を使う */
+    .intro-home {
+      position: fixed; top: 10px; right: 14px; z-index: 10;
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      padding: 0.5rem 0.6rem 0.5rem 1.15rem; border-radius: 999px;
+      background: #0c1f3f; color: #fff; text-decoration: none;
+      border: 1px solid #b8965f;
+      box-shadow: 0 6px 18px rgba(12, 31, 63, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .intro-home-logo { font-family: 'Times New Roman', Times, serif; font-size: 1.05rem; letter-spacing: 0.01em; line-height: 1; }
+    .intro-home-label {
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; color: #d9bd8c;
+      padding-left: 0.7rem; border-left: 1px solid rgba(217, 189, 140, 0.45); line-height: 1.2;
+    }
+    .intro-home-arrow {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%; background: #b8965f; color: #0c1f3f;
+      transition: transform 0.25s ease;
+    }
+    .intro-home-arrow svg { width: 14px; height: 14px; }
+    .intro-home:hover { transform: translateY(-2px); background: #132c55; box-shadow: 0 10px 24px rgba(12, 31, 63, 0.35); }
+    .intro-home:hover .intro-home-arrow { transform: translateX(3px); }
+    .intro-home:focus-visible { outline: 2px solid #b8965f; outline-offset: 3px; }
+    @media (max-width: 540px) {
+      .intro-home { top: 6px; right: 8px; gap: 0.5rem; padding: 0.35rem 0.4rem 0.35rem 0.9rem; }
+      .intro-home-logo { font-size: 0.9rem; }
+      .intro-home-label { font-size: 0.6875rem; padding-left: 0.5rem; }
+      .intro-home-arrow { width: 22px; height: 22px; }
+      /* スマホの縦向きは1画面に1枚にすると余白ばかりになるので、続けて並べる */
+      html { scroll-snap-type: none; }
+      .intro-slide { height: auto; padding: 4px 0; }
+      .intro-slide:first-of-type { padding-top: 48px; }
+    }
+  </style>
+</head>
+
+<body>
+  <a href=".." class="intro-home" aria-label="ステラキャリアズの公式サイトへ">
+    <span class="intro-home-logo">Stellar careers</span>
+    <span class="intro-home-label">公式サイトへ</span>
+    <span class="intro-home-arrow" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+  </a>
+  <main>
+    <h1 class="intro-title">ステラキャリアズとエージェントのご紹介</h1>
+    <section class="intro-slide"><img src="slides/01.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 1枚目" fetchpriority="high"></section>
+    <section class="intro-slide"><img src="slides/02.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 2枚目" loading="lazy"></section>
+    <section class="intro-slide"><img src="slides/03.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 3枚目" loading="lazy"></section>
+    <section class="intro-slide"><img src="slides/04.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 4枚目" loading="lazy"></section>
+    <section class="intro-slide"><img src="slides/05.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 5枚目" loading="lazy"></section>
+  </main>
+</body>
+
+</html>
