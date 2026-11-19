@@ -20,6 +20,7 @@ const MIME_TYPES = {
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
+  '.pdf': 'application/pdf',
   '.mp4': 'video/mp4',
   '.woff2': 'font/woff2',
   '.woff': 'font/woff',

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ステラキャリアズのご紹介 | ステラキャリアズ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="../assets/css/style.css" crossorigin="">
+  <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+  <link rel="apple-touch-icon" type="image/png" href="../assets/images/favicon.png">
+  <link href="https://fonts.googleapis.com/css?display=swap&amp;family=Noto+Sans+JP%3A400,700%7CLato%3A400,700" rel="stylesheet">
+  <style>
+    /* URLを知っている人だけに見せる資料ページ（どこからもリンクしない・検索に出さない） */
+    /* 開いたときにスライド1枚がちょうど画面に収まるよう、PDF の表示枠を 16:9 にして画面の高さに合わせる */
+    .pitch-main {
+      --pitch-bar: 56px;   /* ブラウザの PDF 表示についている操作バーの高さ */
+      --pitch-top: 180px;  /* ヘッダー・題名・案内文・余白の合計 */
+      display: flex; flex-direction: column; align-items: center; width: 100%;
+      padding: 1rem 1rem 3rem; background: #f3f4f6; container-type: inline-size;
+    }
+    .pitch-title { font-size: 1.125rem; font-weight: 700; color: #222; margin-bottom: 0.25rem; text-align: center; line-height: 1.5; }
+    .pitch-viewer {
+      /* 横幅いっぱい、ただし高さが画面からはみ出さない幅まで */
+      --pitch-w: min(100cqw, calc((100dvh - var(--pitch-top) - var(--pitch-bar)) * 16 / 9));
+      width: var(--pitch-w);
+      height: calc(var(--pitch-w) * 9 / 16 + var(--pitch-bar));
+      border: 0; background: #525659; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    .pitch-note { font-size: 0.8125rem; color: #666; margin-bottom: 0.75rem; text-align: center; }
+    .pitch-note a { color: #222; font-weight: 700; text-decoration: underline; }
+    @media (max-width: 540px) {
+      .pitch-main { padding: 0.75rem 0.5rem 2.5rem; }
+      .pitch-note { font-size: 0.75rem; }
+      .pitch-title { font-size: 1rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="sd appear">
+    <header id="header-1" class="sd header-bar">
+      <nav class="sd appear header-inner"><a href=".." class="link sd appear header-logo-link"><img width="1920" height="341" class="sd header-logo-img" alt="ステラキャリアズ" src="../assets/images/s-1920x341_3be523ec-2eb6-4ef1-a736-9a99cdf53566.svg"></a>
+        <div class="sd appear header-actions">
+          <ul class="sd appear header-nav">
+            <li class="sd appear header-nav-item"><a href="../industry-knowledge/" class="text link sd appear header-nav-link">業界知見</a></li>
+            <li class="sd appear header-nav-item"><a href="../insight-case/" class="text link sd appear header-nav-link">転職体験記</a></li>
+            <li class="sd appear header-nav-item header-has-dropdown"><a href="../insight-interview/" class="text link sd appear header-nav-link">コラム</a>
+              <ul class="header-dropdown">
+                <li><a href="../insight-interview/" class="header-dropdown-link">面接対策</a></li>
+                <li><a href="../insight-work/" class="header-dropdown-link">仕事術</a></li>
+                <li><a href="../blog/" class="header-dropdown-link">ニュース・告知</a></li>
+              </ul>
+            </li>
+            <li class="sd appear header-nav-item"><a href="../company/" class="text link sd appear header-nav-link">会社情報</a></li>
+          </ul>
+          <div class="sd appear header-cta-primary">
+            <a href="../contact-candidate/" class="sd appear header-cta-primary-btn"><span class="text link sd appear header-cta-primary-text">求職者お問い合わせ</span></a>
+          </div>
+          <div class="sd appear header-cta-secondary">
+            <a href="../contact-others/" class="sd appear header-cta-secondary-btn"><span class="text link sd appear header-cta-secondary-text">その他お問い合わせ</span></a>
+          </div><button type="button" class="link sd appear header-hamburger"><i class="icon material-icons sd appear header-hamburger-icon">menu</i></button>
+        </div>
+      </nav>
+    </header><main class="page-main">
+    <div class="pitch-main">
+      <h1 class="pitch-title">ステラキャリアズのご紹介</h1>
+      <p class="pitch-note">資料が表示されない場合は<a href="stellar-careers.pdf" target="_blank" rel="noopener">こちらからPDFを開いて</a>ご覧ください。</p>
+      <iframe class="pitch-viewer" src="stellar-careers.pdf#view=Fit&amp;navpanes=0&amp;pagemode=none" title="ステラキャリアズのご紹介（PDF）"></iframe>
+    </div>
+    </main><footer id="footer-2" class="sd appear footer">
+      <div class="sd appear footer-inner">
+        <nav class="sd appear footer-nav">
+          <div class="sd appear footer-brand"><a href=".." class="text link sd appear footer-brand-link">Stellar careers</a></div>
+          <ul class="sd appear footer-nav-list">
+              <li class="sd appear footer-nav-item"><a href="../industry-knowledge/" class="text link sd appear footer-nav-link">業界知見</a></li>
+              <li class="sd appear footer-nav-item"><a href="../insight-case/" class="text link sd appear footer-nav-link">転職体験記</a></li>
+              <li class="sd appear footer-nav-item"><a href="../insight-interview/" class="text link sd appear footer-nav-link">コラム</a></li>
+              <li class="sd appear footer-nav-item"><a href="../company/" class="text link sd appear footer-nav-link">会社情報</a></li>
+            </ul>
+        </nav>
+        <div class="sd appear footer-divider"></div>
+        <div class="sd appear footer-bottom">
+          <p class="text sd appear footer-copyright">© Stellar careers 2025</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <style>
+    :root {
+      --s-font-d380383b: Lato;
+      --s-font-e4bb6038: 'Times New Roman';
+      --s-font-369aeb64: 'Noto Sans JP';
+      --s-font-408cba0e: Poppins;
+      --s-font-b4a177fd: Montserrat;
+      --s-font-44a317bd: 'Noto Sans';
+      --s-font-bf8928f7: Inter;
+    }
+  </style>
+  <script src="../assets/js/main.js"></script>
+  </body>
+
+</html>
