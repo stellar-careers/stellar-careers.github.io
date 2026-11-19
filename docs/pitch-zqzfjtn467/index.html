@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CA採用ピッチ資料 | ステラキャリアズ</title>
+  <title>ステラキャリアズのご紹介 | ステラキャリアズ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   <link rel="stylesheet" href="../assets/css/style.css" crossorigin="">
@@ -18,11 +18,11 @@
     /* 開いたときにスライド1枚がちょうど画面に収まるよう、PDF の表示枠を 16:9 にして画面の高さに合わせる */
     .pitch-main {
       --pitch-bar: 56px;   /* ブラウザの PDF 表示についている操作バーの高さ */
-      --pitch-top: 150px;  /* ヘッダー・題名・余白の合計 */
+      --pitch-top: 180px;  /* ヘッダー・題名・案内文・余白の合計 */
       display: flex; flex-direction: column; align-items: center; width: 100%;
       padding: 1rem 1rem 3rem; background: #f3f4f6; container-type: inline-size;
     }
-    .pitch-title { font-size: 1.125rem; font-weight: 700; color: #222; margin-bottom: 0.75rem; text-align: center; line-height: 1.5; }
+    .pitch-title { font-size: 1.125rem; font-weight: 700; color: #222; margin-bottom: 0.25rem; text-align: center; line-height: 1.5; }
     .pitch-viewer {
       /* 横幅いっぱい、ただし高さが画面からはみ出さない幅まで */
       --pitch-w: min(100cqw, calc((100dvh - var(--pitch-top) - var(--pitch-bar)) * 16 / 9));
@@ -30,14 +30,11 @@
       height: calc(var(--pitch-w) * 9 / 16 + var(--pitch-bar));
       border: 0; background: #525659; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
-    .pitch-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem; }
-    .pitch-btn { display: inline-block; padding: 0.9rem 2.25rem; border-radius: 4px; font-size: 0.9375rem; font-weight: 700; text-decoration: none; transition: opacity 0.2s; }
-    .pitch-btn:hover { opacity: 0.8; }
-    .pitch-btn-sub { background: #fff; color: #222; border: 1px solid #222; }
-    .pitch-btn-main { background: #222; color: #fff; }
-    .pitch-note { font-size: 0.8125rem; color: #666; margin-top: 0.75rem; text-align: center; }
+    .pitch-note { font-size: 0.8125rem; color: #666; margin-bottom: 0.75rem; text-align: center; }
+    .pitch-note a { color: #222; font-weight: 700; text-decoration: underline; }
     @media (max-width: 540px) {
       .pitch-main { padding: 0.75rem 0.5rem 2.5rem; }
+      .pitch-note { font-size: 0.75rem; }
       .pitch-title { font-size: 1rem; }
     }
   </style>
@@ -71,13 +68,9 @@
       </nav>
     </header><main class="page-main">
     <div class="pitch-main">
-      <h1 class="pitch-title">ステラキャリアズ CA採用ピッチ資料</h1>
-      <iframe class="pitch-viewer" src="stellar-careers-ca-pitch.pdf#view=Fit&amp;navpanes=0&amp;pagemode=none" title="ステラキャリアズ CA採用ピッチ資料（PDF）"></iframe>
-      <p class="pitch-note">資料が表示されない場合は「PDFを開く」からご覧ください。</p>
-      <div class="pitch-actions">
-        <a href="stellar-careers-ca-pitch.pdf" class="pitch-btn pitch-btn-sub" target="_blank" rel="noopener">PDFを開く</a>
-        <a href=".." class="pitch-btn pitch-btn-main">ステラキャリアズのトップページへ</a>
-      </div>
+      <h1 class="pitch-title">ステラキャリアズのご紹介</h1>
+      <p class="pitch-note">資料が表示されない場合は<a href="stellar-careers.pdf" target="_blank" rel="noopener">こちらからPDFを開いて</a>ご覧ください。</p>
+      <iframe class="pitch-viewer" src="stellar-careers.pdf#view=Fit&amp;navpanes=0&amp;pagemode=none" title="ステラキャリアズのご紹介（PDF）"></iframe>
     </div>
     </main><footer id="footer-2" class="sd appear footer">
       <div class="sd appear footer-inner">
