@@ -7,7 +7,6 @@
   <title>ステラキャリアズとエージェントのご紹介 | ステラキャリアズ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-  <link rel="stylesheet" href="../assets/css/style.css" crossorigin="">
   <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
   <meta name="referrer" content="no-referrer">
   <link rel="icon" type="image/png" href="../assets/images/favicon.png">
@@ -15,91 +14,48 @@
   <link href="https://fonts.googleapis.com/css?display=swap&amp;family=Noto+Sans+JP%3A400,700%7CLato%3A400,700" rel="stylesheet">
   <style>
     /* URLを知っている人だけに見せる資料ページ（どこからもリンクしない・検索に出さない） */
-    /* スライド1枚がちょうど画面に収まるよう、16:9 の画像を画面の高さに合わせて並べる */
-    .intro-main {
-      --intro-top: 150px;  /* ヘッダー・題名・上下の余白の合計（1枚目が開いた画面に収まるように） */
-      display: flex; flex-direction: column; align-items: center; gap: 1.5rem; width: 100%;
-      padding: 1rem 1rem 3rem; background: #f3f4f6; container-type: inline-size;
-    }
-    .intro-title { font-size: 1.125rem; font-weight: 700; color: #222; text-align: center; line-height: 1.5; margin-bottom: -0.75rem; }
+    /* サイトのヘッダー・フッターは置かず、スライドを画面いっぱいに1枚ずつ見せる */
+    html { scroll-snap-type: y mandatory; }
+    body { margin: 0; background: #e9ebef; font-family: 'Noto Sans JP', sans-serif; }
+    .intro-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
     .intro-slide {
-      width: min(100cqw, calc((100dvh - var(--intro-top)) * 16 / 9));
-      aspect-ratio: 16 / 9; background: #fff; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      scroll-margin-top: 90px;
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh; height: 100dvh; scroll-snap-align: start;
+      box-sizing: border-box; padding: 52px 0 8px;  /* 上はHPへ戻るボタンの分をあける */
     }
-    .intro-slide img { display: block; width: 100%; height: 100%; }
+    /* 16:9 のスライドを、縦横どちらもはみ出さない最大の大きさで表示する */
+    .intro-slide img {
+      display: block; width: min(100%, calc((100dvh - 60px) * 16 / 9)); height: auto;
+      aspect-ratio: 16 / 9; box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12); background: #fff;
+    }
+    /* HP へ戻るボタン（画面の右上に浮かせる） */
+    .intro-home {
+      position: fixed; top: 12px; right: 12px; z-index: 10;
+      padding: 0.55rem 1rem; border-radius: 999px; background: rgba(17, 24, 39, 0.82); color: #fff;
+      font-size: 0.8125rem; font-weight: 700; text-decoration: none; letter-spacing: 0.02em;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); transition: background 0.2s;
+    }
+    .intro-home:hover { background: rgba(17, 24, 39, 1); }
     @media (max-width: 540px) {
-      .intro-main { padding: 0.75rem 0.5rem 2.5rem; gap: 0.75rem; }
-      .intro-title { font-size: 1rem; margin-bottom: 0; }
+      .intro-home { top: 8px; right: 8px; padding: 0.45rem 0.8rem; font-size: 0.75rem; }
+      /* スマホの縦向きは1画面に1枚にすると余白ばかりになるので、続けて並べる */
+      html { scroll-snap-type: none; }
+      .intro-slide { height: auto; padding: 4px 0; }
+      .intro-slide:first-of-type { padding-top: 44px; }
     }
   </style>
 </head>
 
 <body>
-
-  <div class="sd appear">
-    <header id="header-1" class="sd header-bar">
-      <nav class="sd appear header-inner"><a href=".." class="link sd appear header-logo-link"><img width="1920" height="341" class="sd header-logo-img" alt="ステラキャリアズ" src="../assets/images/s-1920x341_3be523ec-2eb6-4ef1-a736-9a99cdf53566.svg"></a>
-        <div class="sd appear header-actions">
-          <ul class="sd appear header-nav">
-            <li class="sd appear header-nav-item"><a href="../industry-knowledge/" class="text link sd appear header-nav-link">業界知見</a></li>
-            <li class="sd appear header-nav-item"><a href="../insight-case/" class="text link sd appear header-nav-link">転職体験記</a></li>
-            <li class="sd appear header-nav-item header-has-dropdown"><a href="../insight-interview/" class="text link sd appear header-nav-link">コラム</a>
-              <ul class="header-dropdown">
-                <li><a href="../insight-interview/" class="header-dropdown-link">面接対策</a></li>
-                <li><a href="../insight-work/" class="header-dropdown-link">仕事術</a></li>
-                <li><a href="../blog/" class="header-dropdown-link">ニュース・告知</a></li>
-              </ul>
-            </li>
-            <li class="sd appear header-nav-item"><a href="../company/" class="text link sd appear header-nav-link">会社情報</a></li>
-          </ul>
-          <div class="sd appear header-cta-primary">
-            <a href="../contact-candidate/" class="sd appear header-cta-primary-btn"><span class="text link sd appear header-cta-primary-text">求職者お問い合わせ</span></a>
-          </div>
-          <div class="sd appear header-cta-secondary">
-            <a href="../contact-others/" class="sd appear header-cta-secondary-btn"><span class="text link sd appear header-cta-secondary-text">その他お問い合わせ</span></a>
-          </div><button type="button" class="link sd appear header-hamburger"><i class="icon material-icons sd appear header-hamburger-icon">menu</i></button>
-        </div>
-      </nav>
-    </header><main class="page-main">
-    <div class="intro-main">
-      <h1 class="intro-title">ステラキャリアズとエージェントのご紹介</h1>
-      <div class="intro-slide"><img loading="lazy" decoding="async" src="slides/01.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 1枚目" fetchpriority="high"></div>
-      <div class="intro-slide"><img src="slides/02.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 2枚目" loading="lazy"></div>
-      <div class="intro-slide"><img src="slides/03.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 3枚目" loading="lazy"></div>
-      <div class="intro-slide"><img src="slides/04.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 4枚目" loading="lazy"></div>
-      <div class="intro-slide"><img src="slides/05.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 5枚目" loading="lazy"></div>
-    </div>
-    </main><footer id="footer-2" class="sd appear footer">
-      <div class="sd appear footer-inner">
-        <nav class="sd appear footer-nav">
-          <div class="sd appear footer-brand"><a href=".." class="text link sd appear footer-brand-link">Stellar careers</a></div>
-          <ul class="sd appear footer-nav-list">
-              <li class="sd appear footer-nav-item"><a href="../industry-knowledge/" class="text link sd appear footer-nav-link">業界知見</a></li>
-              <li class="sd appear footer-nav-item"><a href="../insight-case/" class="text link sd appear footer-nav-link">転職体験記</a></li>
-              <li class="sd appear footer-nav-item"><a href="../insight-interview/" class="text link sd appear footer-nav-link">コラム</a></li>
-              <li class="sd appear footer-nav-item"><a href="../company/" class="text link sd appear footer-nav-link">会社情報</a></li>
-            </ul>
-        </nav>
-        <div class="sd appear footer-divider"></div>
-        <div class="sd appear footer-bottom">
-          <p class="text sd appear footer-copyright">© Stellar careers 2025</p>
-        </div>
-      </div>
-    </footer>
-  </div>
-  <style>
-    :root {
-      --s-font-d380383b: Lato;
-      --s-font-e4bb6038: 'Times New Roman';
-      --s-font-369aeb64: 'Noto Sans JP';
-      --s-font-408cba0e: Poppins;
-      --s-font-b4a177fd: Montserrat;
-      --s-font-44a317bd: 'Noto Sans';
-      --s-font-bf8928f7: Inter;
-    }
-  </style>
-  <script src="../assets/js/main.js"></script>
-  </body>
+  <a href=".." class="intro-home">ステラキャリアズ HP へ</a>
+  <main>
+    <h1 class="intro-title">ステラキャリアズとエージェントのご紹介</h1>
+    <section class="intro-slide"><img src="slides/01.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 1枚目" fetchpriority="high"></section>
+    <section class="intro-slide"><img src="slides/02.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 2枚目" loading="lazy"></section>
+    <section class="intro-slide"><img src="slides/03.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 3枚目" loading="lazy"></section>
+    <section class="intro-slide"><img src="slides/04.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 4枚目" loading="lazy"></section>
+    <section class="intro-slide"><img src="slides/05.webp" width="1920" height="1080" alt="ステラキャリアズとエージェントのご紹介 5枚目" loading="lazy"></section>
+  </main>
+</body>
 
 </html>
